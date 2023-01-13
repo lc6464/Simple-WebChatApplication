@@ -1,6 +1,6 @@
 {
-	"name": "simplewebchatapplication",
-	"version": "1.0.0",
+	"name": "simple-web_chat_application",
+	"version": "0.1.0",
 	"private": true,
 	"description": "",
 	"main": "index.js",
@@ -10,7 +10,7 @@
 		"publish": "npm run release && dotnet publish -p:PublishProfile=win-x64-based-readytorun"
 	},
 	"keywords": [],
-	"author": "",
+	"author": "LC",
 	"license": "ISC",
 	"devDependencies": {
 		"clean-webpack-plugin": "4.0.0",
