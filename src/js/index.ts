@@ -3,7 +3,7 @@ import * as signalRProtocols from "@microsoft/signalr-protocol-msgpack";
 
 import Swal from 'sweetalert2/src/sweetalert2.js';
 //import '@sweetalert2/theme-dark/dark.css';
-import "./css/main.css";
+import "../css/main.css";
 
 const divMessages: HTMLDivElement = document.querySelector("#divMessages"),
 	tbMessage: HTMLInputElement = document.querySelector("#tbMessage"),
