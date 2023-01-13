@@ -25,6 +25,8 @@
 	"dependencies": {
 		"@microsoft/signalr": "^7.0.2",
 		"@microsoft/signalr-protocol-msgpack": "^7.0.2",
-		"@types/node": "^18.11.18"
+		"@sweetalert2/theme-dark": "^5.0.15",
+		"@types/node": "^18.11.18",
+		"sweetalert2": "^11.7.0"
 	}
 }

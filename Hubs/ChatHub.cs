@@ -3,16 +3,35 @@
 namespace SignalRWebpack.Hubs;
 
 public class ChatHub : Hub {
-	private readonly IMemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());
-	private Group? jointGroup;
-	
+	private Group? JointGroup {
+		
+		//get => Cache.MemoryCache.Get<Group>($"ChatHub JointGroup of {Context.ConnectionId}");
+		get {
+			var result = Cache.MemoryCache.Get<Group>($"ChatHub JointGroup of {Context.ConnectionId}");
+			Console.WriteLine(result?.Name ?? "<null>");
+			Console.WriteLine(Context.ConnectionId);
+			
+			return result;
+		}
+		set {
+			if (value is null) {
+				Cache.MemoryCache.Remove($"ChatHub JointGroup of {Context.ConnectionId}");
+			} else {
+				Console.WriteLine(Cache.Set($"ChatHub JointGroup of {Context.ConnectionId}", value, TimeSpan.FromHours(1)).Name);
+				Console.WriteLine(Context.ConnectionId);
+			}
+		}
+	}
+
 
 	public async Task NewMessage(string username, string message) =>
-		await Clients.All.SendAsync("messageReceived", username, message);
+		await (JointGroup is null ?
+			Clients.Caller.SendAsync("groupResult", "sendFailed", "warning", "您尚未加入任何群组。") :
+			Clients.Group(JointGroup.Name).SendAsync("messageReceived", username, message));
 
 
 	public async Task JoinGroup(string name, string password) {
-		if (!memoryCache.TryGetValue<List<Group>>("ChatHub Groups", out var groups) || !groups!.Any(group => group.Name == name)) {
+		if (!Cache.MemoryCache.TryGetValue<List<Group>>("ChatHub Groups", out var groups) || !groups!.Any(group => group.Name == name)) {
 			await Clients.Caller.SendAsync("groupResult", "joinFailed", "warning", "此群组不存在！");
 			return;
 		}
@@ -24,71 +43,75 @@ public class ChatHub : Hub {
 			return;
 		}
 
-		jointGroup = group;
+		JointGroup = group;
 		lock (group) {
 			group.MemberCount++;
 		}
 		
 		await Groups.AddToGroupAsync(Context.ConnectionId, name);
-		await Clients.Caller.SendAsync("messageReceived", "Server", "You are in the group!");
-		await Clients.OthersInGroup(name).SendAsync("messageReceived", "Server", $"{Context.ConnectionId} has joined the group!");
+		await Clients.Caller.SendAsync("groupResult", "joinSuccess", "success", "加入群组成功！");
+		await Clients.OthersInGroup(name).SendAsync("messageReceived", "Server", $"{Context.ConnectionId} 已加入群组！");
 
 	}
 
 	public async Task LeaveGroup() {
-		if (jointGroup is null) {
+		if (JointGroup is null) {
 			await Clients.Caller.SendAsync("groupResult", "leaveFailed", "warning", "你没有加入任何群组！");
 			return;
 		}
 
-		lock (jointGroup) {
-			jointGroup.MemberCount--;
-			if (jointGroup.MemberCount == 0) {
-				var groups = memoryCache.Get<List<Group>>("ChatHub Groups")!;
+		lock (JointGroup) {
+			JointGroup.MemberCount--;
+			if (JointGroup.MemberCount == 0) {
+				var groups = Cache.MemoryCache.Get<List<Group>>("ChatHub Groups")!;
 				lock (groups) {
-					groups.Remove(jointGroup);
+					groups.Remove(JointGroup);
 				}
 			}
 		}
 
-		await Clients.OthersInGroup(jointGroup.Name).SendAsync("messageReceived", "Server", $"{Context.ConnectionId} 已离开群组！");
-		await Groups.RemoveFromGroupAsync(Context.ConnectionId, jointGroup.Name);
+		await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageReceived", "Server", $"{Context.ConnectionId} 已离开群组！");
+		await Groups.RemoveFromGroupAsync(Context.ConnectionId, JointGroup.Name);
 		await Clients.Caller.SendAsync("groupResult", "leaveSuccess", "success", "你已经成功离开群组！");
 
-		jointGroup = null;
+		JointGroup = null;
 	}
 
 	public async Task CreateGroup(string name, string password) {
-		if (memoryCache.TryGetValue<List<Group>>("ChatHub Groups", out var groups) && groups!.Any(group => group.Name == name)) {
-			await Clients.Caller.SendAsync("groupResult", "createFailed", "warning", "此群组已存在！请更换群组名称！");
+		if (Cache.MemoryCache.TryGetValue<List<Group>>("ChatHub Groups", out var groups) && groups!.Any(group => group.Name == name)) {
+			await Clients.Caller.SendAsync("groupResult", "createFailed", "error", "此群组已存在！请更换群组名称！");
 			return;
 		}
 
-		var group = new Group(name, password);
+		var group = new Group(name, password) { MemberCount = 1 };
 		if (groups is null) {
-			memoryCache.Set("ChatHub Groups", new List<Group> { group });
+			Cache.MemoryCache.Set("ChatHub Groups", new List<Group> { group });
 		} else {
 			lock (groups) {
 				groups.Add(group);
+				// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				Cache.Set("ChatHub Groups", groups, TimeSpan.FromHours(2));
 			}
 		}
+
+		JointGroup = group;
 
 		await Groups.AddToGroupAsync(Context.ConnectionId, name);
 		await Clients.Caller.SendAsync("groupResult", "createSuccess", "success", "你已经成功创建群组！");
 	}
 
 	public override async Task OnDisconnectedAsync(Exception? exception) {
-		if (jointGroup is not null) {
-			lock (jointGroup) {
-				jointGroup.MemberCount--;
-				if (jointGroup.MemberCount == 0) {
-					var groups = memoryCache.Get<List<Group>>("ChatHub Groups")!;
+		if (JointGroup is not null) {
+			lock (JointGroup) {
+				JointGroup.MemberCount--;
+				if (JointGroup.MemberCount == 0) {
+					var groups = Cache.MemoryCache.Get<List<Group>>("ChatHub Groups")!;
 					lock (groups) {
-						groups.Remove(jointGroup);
+						groups.Remove(JointGroup);
 					}
 				}
 			}
-			jointGroup = null;
+			JointGroup = null;
 		}
 		
 		await base.OnDisconnectedAsync(exception);
