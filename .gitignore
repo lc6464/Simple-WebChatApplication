@@ -350,5 +350,6 @@ MigrationBackup/
 .ionide/
 
 
-# wwwroot 是自动输出的，所以别上传了
+# 由程序生成
 wwwroot/
+src/*.js

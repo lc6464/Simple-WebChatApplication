@@ -1,4 +1,5 @@
 import * as signalR from "@microsoft/signalr";
+import * as signalRProtocols from "@microsoft/signalr-protocol-msgpack";
 import "./css/main.css";
 
 const divMessages: HTMLDivElement = document.querySelector("#divMessages"),
@@ -9,6 +10,7 @@ const divMessages: HTMLDivElement = document.querySelector("#divMessages"),
 
 const connection = new signalR.HubConnectionBuilder()
 	.withUrl("/hub")
+	.withHubProtocol(new signalRProtocols.MessagePackHubProtocol())
 	.build();
 
 connection.on("messageReceived", (username: string, message: string) => {
