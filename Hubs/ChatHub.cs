@@ -111,9 +111,13 @@ public class ChatHub : Hub {
 					}
 				}
 			}
+			
+			await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageReceived", "Server", $"{Context.ConnectionId} 已离开群组！");
+			await Groups.RemoveFromGroupAsync(Context.ConnectionId, JointGroup.Name);
 			JointGroup = null;
 		}
 		
+
 		await base.OnDisconnectedAsync(exception);
 	}
 
