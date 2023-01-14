@@ -2,7 +2,6 @@ import * as signalR from "@microsoft/signalr";
 import * as signalRProtocols from "@microsoft/signalr-protocol-msgpack";
 
 import Swal, { SweetAlertIcon } from 'sweetalert2';
-//import Swal from 'sweetalert2/src/sweetalert2.js';
 import "./css/index.css";
 
 const messagesDiv: HTMLDivElement = document.querySelector("#messages"),
@@ -95,12 +94,12 @@ connection.start().catch((err) => document.write(err));
 
 messageInput.addEventListener("keydown", (e: KeyboardEvent) => {
 	if (e.key === "Enter") {
-		connection.send("newMessage", userNameInput.value, messageInput.value)
+		connection.send("sendMessage", userNameInput.value, messageInput.value)
 			.then(() => (messageInput.value = ""));
 	}
 });
 
-sendMessageButton.addEventListener("click", () => connection.send("newMessage", userNameInput.value, messageInput.value)
+sendMessageButton.addEventListener("click", () => connection.send("sendMessage", userNameInput.value, messageInput.value)
 	.then(() => (messageInput.value = "")));
 
 
