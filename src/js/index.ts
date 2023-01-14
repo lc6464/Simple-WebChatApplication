@@ -2,7 +2,7 @@ import * as signalR from "@microsoft/signalr";
 import * as signalRProtocols from "@microsoft/signalr-protocol-msgpack";
 
 import Swal, { SweetAlertIcon } from 'sweetalert2';
-import "./css/index.css";
+import "../css/index.css";
 
 const messagesDiv: HTMLDivElement = document.querySelector("#messages"),
 	messageInput: HTMLInputElement = document.querySelector("#message"),

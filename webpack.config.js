@@ -5,11 +5,14 @@ const path = require("path"),
 	CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-	entry: "./src/index.ts",
+	mode: "development",
+	entry: {
+		index: "./src/js/index.js",
+		login: "./src/js/login.js"
+	},
 	output: {
 		path: path.resolve(__dirname, "wwwroot"),
-		filename: "[name].[chunkhash].js",
-		publicPath: "/",
+		filename: "js/[name].[chunkhash].js",		publicPath: "/",
 	},
 	resolve: {
 		extensions: [".js", ".ts"],
@@ -30,6 +33,11 @@ module.exports = {
 		new CleanWebpackPlugin(),
 		new HtmlWebpackPlugin({
 			template: "./src/index.html",
+			filename: "index.html"
+		}),
+		new HtmlWebpackPlugin({
+			template: "./src/login.html",
+			filename: "login.html"
 		}),
 		new MiniCssExtractPlugin({
 			filename: "css/[name].[chunkhash].css",

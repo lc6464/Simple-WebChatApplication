@@ -1,1 +1,1 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
+import '../css/login.css'

@@ -28,6 +28,10 @@
 		"@microsoft/signalr-protocol-msgpack": "^7.0.2",
 		"@sweetalert2/theme-dark": "^5.0.15",
 		"@types/node": "^18.11.18",
+		"autoprefixer": "^10.4.13",
+		"bootstrap": "^5.2.3",
+		"postcss-loader": "^7.0.2",
+		"sass-loader": "^13.2.0",
 		"sweetalert2": "^11.7.0"
 	}
 }
