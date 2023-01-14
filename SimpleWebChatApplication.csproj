@@ -19,4 +19,10 @@
 	<ItemGroup>
 		<Using Include="Microsoft.Extensions.Caching.Memory" />
 	</ItemGroup>
+	<ItemGroup>
+		<Content Update="src/**" CopyToOutputDirectory="Never" />
+		<Content Update="package*.json" CopyToOutputDirectory="Never" />
+		<None Update="src/**" CopyToOutputDirectory="Never" />
+		<None Update="package*.json" CopyToOutputDirectory="Never" />
+	</ItemGroup>
 </Project>

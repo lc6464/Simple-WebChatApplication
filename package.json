@@ -7,7 +7,7 @@
 	"scripts": {
 		"build": "webpack --mode=development --watch",
 		"release": "webpack --mode=production",
-		"publish": "npm run release && dotnet publish -p:PublishProfile=win-x64-based-readytorun"
+		"publish": "npm run release && echo 请自行在 Visual Studio 中发布！"
 	},
 	"keywords": [],
 	"author": "LC",
