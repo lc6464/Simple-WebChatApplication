@@ -1,0 +1,6 @@
+﻿@page
+@model ErrorModel
+@section NavLinks {<a href="~/">首页</a><a href="https://lcwebsite.cn/">主站</a><a href="https://lcwebsite.cn/web/contact.aspx">联系站长</a>}
+@section Header {<h1>发生了错误！</h1>}
+<h2>在请求过程中发生了错误，请<a href="https://lcwebsite.cn/web/contact.aspx" title="联系站长">联系站长</a>处理。</h2>
+@if (Model.ShowRequestId) {<div><strong>请求 ID：</strong><span>@Model.RequestId</span></div>}

@@ -1,14 +1,14 @@
 import * as signalR from "@microsoft/signalr";
 import * as signalRProtocols from "@microsoft/signalr-protocol-msgpack";
 
-import Swal from 'sweetalert2/src/sweetalert2.js';
-//import '@sweetalert2/theme-dark/dark.css';
-import "./css/main.css";
+import Swal, { SweetAlertIcon } from 'sweetalert2';
+//import Swal from 'sweetalert2/src/sweetalert2.js';
+import "./css/index.css";
 
-const divMessages: HTMLDivElement = document.querySelector("#divMessages"),
-	tbMessage: HTMLInputElement = document.querySelector("#tbMessage"),
-	tbUsername: HTMLInputElement = document.querySelector("#tbUsername"),
-	btnSend: HTMLButtonElement = document.querySelector("#btnSend"),
+const messagesDiv: HTMLDivElement = document.querySelector("#messages"),
+	messageInput: HTMLInputElement = document.querySelector("#message"),
+	userNameInput: HTMLInputElement = document.querySelector("#userName"),
+	sendMessageButton: HTMLButtonElement = document.querySelector("#sendMessage"),
 	groupNameInput: HTMLInputElement = document.querySelector("#groupName"),
 	jointGroupNameSpan: HTMLSpanElement = document.querySelector("#jointGroupName"),
 	groupPasswordInput: HTMLInputElement = document.querySelector("#groupPassword"),
@@ -22,7 +22,7 @@ let jointGroupName: string = null,
 
 
 const connection = new signalR.HubConnectionBuilder()
-	.withUrl("/hub")
+	.withUrl("/chat")
 	.withHubProtocol(new signalRProtocols.MessagePackHubProtocol())
 	.build();
 
@@ -31,11 +31,11 @@ connection.on("messageReceived", (username: string, message: string) => {
 
 	m.innerHTML = `<div class="message-author">${username}</div><div>${message}</div>`;
 
-	divMessages.appendChild(m);
-	divMessages.scrollTop = divMessages.scrollHeight;
+	messagesDiv.appendChild(m);
+	messagesDiv.scrollTop = messagesDiv.scrollHeight;
 });
 
-connection.on("groupResult", (result: string, icon: string, message: string) => {
+connection.on("groupResult", (result: string, icon: SweetAlertIcon, message: string) => {
 	switch (result) {
 		case 'joinSuccess':
 			jointGroupName = joiningGroupName;
@@ -51,7 +51,7 @@ connection.on("groupResult", (result: string, icon: string, message: string) => 
 			break;
 		case 'joinFailed':
 			joiningGroupName = null;
-			Swal.fire('加入失敗', message, icon);
+			Swal.fire('加入失败', message, icon);
 			break;
 		case 'leaveSuccess':
 			jointGroupName = null;
@@ -93,15 +93,15 @@ connection.on("groupResult", (result: string, icon: string, message: string) => 
 
 connection.start().catch((err) => document.write(err));
 
-tbMessage.addEventListener("keydown", (e: KeyboardEvent) => {
+messageInput.addEventListener("keydown", (e: KeyboardEvent) => {
 	if (e.key === "Enter") {
-		connection.send("newMessage", tbUsername.value, tbMessage.value)
-			.then(() => (tbMessage.value = ""));
+		connection.send("newMessage", userNameInput.value, messageInput.value)
+			.then(() => (messageInput.value = ""));
 	}
 });
 
-btnSend.addEventListener("click", () => connection.send("newMessage", tbUsername.value, tbMessage.value)
-	.then(() => (tbMessage.value = "")));
+sendMessageButton.addEventListener("click", () => connection.send("newMessage", userNameInput.value, messageInput.value)
+	.then(() => (messageInput.value = "")));
 
 
 joinGroupButton.addEventListener("click", () => {

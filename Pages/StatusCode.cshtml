@@ -1,0 +1,7 @@
+﻿@page "/StatusCode/{statusCode:int:range(400,600)}"
+@model StatusCodeModel
+@section NavLinks {<a href="~/">首页</a><a href="https://lcwebsite.cn/">主站</a><a href="https://lcwebsite.cn/web/contact.aspx">联系站长</a>}
+@section InnerStyles {<style>html { text-align: center; }</style>}
+@section Header {<h1>@Model.Title</h1>}
+<h2>@Model.Message</h2>
+<div>您请求的资源路径：@Model.OriginalPathAndQuery</div>

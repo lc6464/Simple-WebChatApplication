@@ -1,7 +1,8 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const path = require("path"),
+	HtmlWebpackPlugin = require("html-webpack-plugin"),
+	{ CleanWebpackPlugin } = require("clean-webpack-plugin"),
+	MiniCssExtractPlugin = require("mini-css-extract-plugin"),
+	CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
 	entry: "./src/index.ts",
@@ -32,6 +33,14 @@ module.exports = {
 		}),
 		new MiniCssExtractPlugin({
 			filename: "css/[name].[chunkhash].css",
+		}),
+		new CopyWebpackPlugin({
+			patterns: [
+				{
+					from: "./src/wwwroot",
+					to: "./",
+				},
+			],
 		}),
 	],
 };

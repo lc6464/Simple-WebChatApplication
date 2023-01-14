@@ -1,20 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<title>ASP.NET Core SignalR with TypeScript and Webpack</title>
-	</head>
-	<body>
-		<div id="divMessages" class="messages"></div>
-		<div class="input-zone">
-			<label id="lblUsername">Username: <input id="tbUsername" class="input-zone-input" type="text" /></label>
-			<label id="lblMessage">Message: <input id="tbMessage" class="input-zone-input" type="text" /></label>
-			<button id="btnSend">Send</button>
-		</div>
-		<div>
-			<label>群组名：<input id="groupName" type="text" /><span id="jointGroupName"></span></label>
-			<label id="groupPasswordLabel">密码：<input id="groupPassword" type="password" /></label>
-			<button id="joinGroup">加入</button><button id="createGroup">创建</button><button id="leaveGroup">离开</button>
-		</div>
-	</body>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="author" content="LC" />
+	<meta name="author" content="execute233" />
+	<meta name="renderer" content="webkit" />
+	<title>Web 实时聊天</title>
+</head>
+<body>
+	<nav></nav>
+	<header><h1>简单的 Web 实时聊天应用</h1></header>
+	<main>
+		<section id="welcomePage"></section>
+		<section id="loginPage"></section>
+		<section id="registerPage"></section>
+	</main>
+	<div id="messages"></div>
+	<div>
+		<label>Username: <input id="userName" type="text" /></label>
+		<label>Message: <input id="message" type="text" /></label>
+		<button id="sendMessage">Send</button>
+	</div>
+	<div>
+		<label>群组名：<input id="groupName" type="text" /><span id="jointGroupName"></span></label>
+		<label id="groupPasswordLabel">密码：<input id="groupPassword" type="password" /></label>
+		<button id="joinGroup">加入</button><button id="createGroup">创建</button><button id="leaveGroup">离开</button>
+	</div>
+	<footer></footer>
+</body>
 </html>
