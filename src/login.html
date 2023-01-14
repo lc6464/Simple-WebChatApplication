@@ -1,32 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1"/>
-		<title>登陆或注册</title>
-		<link rel="stylesheet" href="css/bootstrap.min.css">
-		<link rel="stylesheet" href="css/login.css">
-	</head>
-	<body>
-		<div id="main">
-			<div id="sign-div">
-				<form id="sign" method="post">
-					<h1>登录</h1>
-					<label for="sign-input-account">输入账号：</label>
-					<input id="sign-input-account" class="form-control" name="account" placeholder="账号" type="text">
-					<label for="sign-input-password" class="center">输入密码：</label>
-					<input id="sign-input-password" class="form-control" name="password" placeholder="密码" type="password">
-					<input class="btn" id="sign-button" type="submit" value="登录">
-					<label for="register-button" style="display: none"></label>
-					<input class="btn" id="register-button" value="注册">
-					<div>
-						<a href=" " id="forget-password">忘记密码？</a>
-					</div>
-				</form>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="author" content="LC" />
+	<meta name="author" content="execute233" />
+	<meta name="renderer" content="webkit" />
+	<title>登录 | Web 实时聊天</title>
+</head>
+<body>
+	<header><h1>登录</h1></header>
+	<main>
+		<form>
+			<label>用户名：<input name="account" class="form-control" placeholder="账号" type="text" /></label>
+			<label>密码：<input name="password" class="form-control" placeholder="密码" type="password" /></label>
+			<button id="login">登录</button>
+			<div>
+				<a href="" id="forget-password">忘记密码？</a>
 			</div>
-			<div id="register">
-
-			</div>
-		</div>
-	</body>
+		</form>
+	</main>
+</body>
 </html>

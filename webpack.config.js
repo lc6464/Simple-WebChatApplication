@@ -7,12 +7,14 @@ const path = require("path"),
 module.exports = {
 	mode: "development",
 	entry: {
-		index: "./src/js/index.js",
-		login: "./src/js/login.js"
+		index: "./src/ts/index.ts",
+		login: "./src/ts/login.ts",
+		chat: "./src/ts/chat.ts",
 	},
 	output: {
 		path: path.resolve(__dirname, "wwwroot"),
-		filename: "js/[name].[chunkhash].js",		publicPath: "/",
+		filename: "js/[name].[chunkhash].js",
+		publicPath: "/",
 	},
 	resolve: {
 		extensions: [".js", ".ts"],
@@ -38,6 +40,10 @@ module.exports = {
 		new HtmlWebpackPlugin({
 			template: "./src/login.html",
 			filename: "login.html"
+		}),
+		new HtmlWebpackPlugin({
+			template: "./src/chat.html",
+			filename: "chat.html"
 		}),
 		new MiniCssExtractPlugin({
 			filename: "css/[name].[chunkhash].css",

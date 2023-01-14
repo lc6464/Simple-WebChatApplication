@@ -1,16 +1,19 @@
 @import "~bootstrap/dist/css/bootstrap.min.css";
+@import '@sweetalert2/theme-dark/dark.css';
+
 * {
 	padding: 0;
 	margin: 0;
 	box-sizing: border-box;
 }
+
 body {
 	min-height: 100vh;
 	text-align: center;
 	background: rgba(0,0,0,0.05);
 }
 
-#main {
+main {
 	color: black;
 	min-width: 300px;
 	min-height: 400px;
@@ -26,9 +29,11 @@ body {
 	border-radius: 25px;
 	backdrop-filter: blur(2px);
 }
-#main > label {
+
+main > label {
 	text-align: left;
 }
+
 /*登陆界面*/
 #sign-div {
 	outline: none;
@@ -82,7 +87,7 @@ body {
 	border: solid rgba(0, 0, 0, 0.5) 1px;
 }
 /* 按钮 */
-.btn {
+button {
 	color: black;
 	background-color: rgba(0, 0, 0, 0.15);
 	border: solid rgba(0, 0, 0, 0.5) 1px;

@@ -21,7 +21,7 @@ let jointGroupName: string = null,
 
 
 const connection = new signalR.HubConnectionBuilder()
-	.withUrl("/chat")
+	.withUrl("/chathub")
 	.withHubProtocol(new signalRProtocols.MessagePackHubProtocol())
 	.build();
 

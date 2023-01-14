@@ -47,12 +47,12 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment()) {
 	app.UseExceptionHandler("/Error")
 		.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
-	
+
 	if (builder.Configuration.GetValue<bool>("Https:Use")) {
 		_ = app.UseHttpsRedirection()
 		.UseHsts();
 	}
-	
+
 }
 
 app.UseResponseCompression()
@@ -78,6 +78,6 @@ app.MapRazorPages();
 
 app.MapControllers();
 
-app.MapHub<ChatHub>("/chat");
+app.MapHub<ChatHub>("/chathub");
 
 app.Run();
