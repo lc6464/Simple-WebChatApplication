@@ -16,6 +16,8 @@ public class ChatHub : Hub {
 		set {
 			if (value is null) {
 				Cache.MemoryCache.Remove($"ChatHub JointGroup of {Context.ConnectionId}");
+				Console.WriteLine($"Remove JointGroup.");
+				Console.WriteLine(Context.ConnectionId);
 			} else {
 				Console.WriteLine(Cache.Set($"ChatHub JointGroup of {Context.ConnectionId}", value, TimeSpan.FromHours(1)).Name);
 				Console.WriteLine(Context.ConnectionId);
@@ -85,12 +87,10 @@ public class ChatHub : Hub {
 
 		var group = new Group(name, password) { MemberCount = 1 };
 		if (groups is null) {
-			Cache.MemoryCache.Set("ChatHub Groups", new List<Group> { group });
+			Cache.Set("ChatHub Groups", new List<Group> { group }, TimeSpan.FromHours(2));
 		} else {
 			lock (groups) {
 				groups.Add(group);
-				// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				Cache.Set("ChatHub Groups", groups, TimeSpan.FromHours(2));
 			}
 		}
 
@@ -111,9 +111,13 @@ public class ChatHub : Hub {
 					}
 				}
 			}
+			
+			await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageReceived", "Server", $"{Context.ConnectionId} 已离开群组！");
+			await Groups.RemoveFromGroupAsync(Context.ConnectionId, JointGroup.Name);
 			JointGroup = null;
 		}
 		
+
 		await base.OnDisconnectedAsync(exception);
 	}
 
