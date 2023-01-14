@@ -353,3 +353,4 @@ MigrationBackup/
 # 由程序生成
 /wwwroot/
 /src/**/*.js
+.config/
