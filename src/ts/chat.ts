@@ -94,28 +94,28 @@ connection.start().catch((err) => document.write(err));
 
 messageInput.addEventListener("keydown", (e: KeyboardEvent) => {
 	if (e.key === "Enter") {
-		connection.send("sendMessage", userNameInput.value, messageInput.value)
+		connection.send("sendMessageAsync", userNameInput.value, messageInput.value)
 			.then(() => (messageInput.value = ""));
 	}
 });
 
-sendMessageButton.addEventListener("click", () => connection.send("sendMessage", userNameInput.value, messageInput.value)
+sendMessageButton.addEventListener("click", () => connection.send("sendMessageAsync", userNameInput.value, messageInput.value)
 	.then(() => (messageInput.value = "")));
 
 
 joinGroupButton.addEventListener("click", () => {
 	joiningGroupName = groupNameInput.value;
-	connection.send("joinGroup", joiningGroupName, groupPasswordInput.value).catch((err) => {
+	connection.send("joinGroupAsync", joiningGroupName, groupPasswordInput.value).catch((err) => {
 		joiningGroupName = null;
 		Swal.fire('加入失败', err, 'error');
 	});
 });
 
-leaveGroupButton.addEventListener("click", () => connection.send("leaveGroup").catch((err) => Swal.fire('离开失败', err, 'error')));
+leaveGroupButton.addEventListener("click", () => connection.send("leaveGroupAsync").catch((err) => Swal.fire('离开失败', err, 'error')));
 
 createGroupButton.addEventListener("click", () => {
 	joiningGroupName = groupNameInput.value;
-	connection.send("createGroup", joiningGroupName, groupPasswordInput.value).catch((err) => {
+	connection.send("createGroupAsync", joiningGroupName, groupPasswordInput.value).catch((err) => {
 		joiningGroupName = null;
 		Swal.fire('创建失败', err, 'error');
 	});

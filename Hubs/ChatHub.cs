@@ -15,14 +15,14 @@ public class ChatHub : Hub {
 	}
 
 
-	public async Task SendMessage(string message) =>
+	public async Task SendMessageAsync(string message) =>
 		await (JointGroup is null ?
 			Clients.Caller.SendAsync("groupResult", "sendFailed", "warning", "您尚未加入任何群组。") :
 			Clients.Group(JointGroup.Name).SendAsync("messageReceived", Context.ConnectionId, message));
 
 
-	public async Task JoinGroup(string name, string password) {
-		if (!Cache.MemoryCache.TryGetValue<List<Group>>("ChatHub Groups", out var groups) || !groups!.Any(group => group.Name == name)) {
+	public async Task JoinGroupAsync(string name, string password) {
+		if (!Cache.MemoryCache.TryGetValue<List<Group>>("ChatHub Groups", out var groups) || groups!.All(group => group.Name != name)) {
 			await Clients.Caller.SendAsync("groupResult", "joinFailed", "warning", "此群组不存在！");
 			return;
 		}
@@ -45,7 +45,7 @@ public class ChatHub : Hub {
 
 	}
 
-	public async Task LeaveGroup() {
+	public async Task LeaveGroupAsync() {
 		if (JointGroup is null) {
 			await Clients.Caller.SendAsync("groupResult", "leaveFailed", "warning", "你没有加入任何群组！");
 			return;
@@ -68,7 +68,7 @@ public class ChatHub : Hub {
 		JointGroup = null;
 	}
 
-	public async Task CreateGroup(string name, string password) {
+	public async Task CreateGroupAsync(string name, string password) {
 		if (Cache.MemoryCache.TryGetValue<List<Group>>("ChatHub Groups", out var groups) && groups!.Any(group => group.Name == name)) {
 			await Clients.Caller.SendAsync("groupResult", "createFailed", "error", "此群组已存在！请更换群组名称！");
 			return;
