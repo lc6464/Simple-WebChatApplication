@@ -18,7 +18,7 @@ public class ChatHub : Hub {
 	public async Task SendMessageAsync(string message) =>
 		await (JointGroup is null ?
 			Clients.Caller.SendAsync("groupResult", "sendFailed", "warning", "您尚未加入任何群组。") :
-			Clients.Group(JointGroup.Name).SendAsync("messageReceived", Context.ConnectionId, message));
+			Clients.Group(JointGroup.Name).SendAsync("messageReceived", Context.ConnectionId, message, DateTime.Now.ToString("yyyy-M-d H:mm:ss")));
 
 
 	public async Task JoinGroupAsync(string name, string password) {

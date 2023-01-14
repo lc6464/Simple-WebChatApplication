@@ -2,7 +2,7 @@ import * as signalR from "@microsoft/signalr";
 import * as signalRProtocols from "@microsoft/signalr-protocol-msgpack";
 
 import Swal, { SweetAlertIcon } from 'sweetalert2';
-import "../css/index.css";
+import "../css/chat.css";
 
 const messagesDiv: HTMLDivElement = document.querySelector("#messages"),
 	messageInput: HTMLInputElement = document.querySelector("#message"),
@@ -25,12 +25,21 @@ const connection = new signalR.HubConnectionBuilder()
 	.withHubProtocol(new signalRProtocols.MessagePackHubProtocol())
 	.build();
 
-connection.on("messageReceived", (username: string, message: string) => {
-	const m = document.createElement("div");
+connection.on("messageReceived", (username: string, message: string, time: string) => {
+	const container = document.createElement("div"),
+		userNameDiv = document.createElement("div"),
+		messageDiv = document.createElement("div");
 
-	m.innerHTML = `<div class="message-author">${username}</div><div>${message}</div>`;
+	userNameDiv.className = "messageUserName";
+	messageDiv.className = "messageText";
 
-	messagesDiv.appendChild(m);
+	userNameDiv.innerText = username;
+	messageDiv.innerText = `${time} ${message}`;
+
+	container.appendChild(userNameDiv);
+	container.appendChild(messageDiv);
+
+	messagesDiv.appendChild(container);
 	messagesDiv.scrollTop = messagesDiv.scrollHeight;
 });
 
@@ -94,13 +103,15 @@ connection.start().catch((err) => document.write(err));
 
 messageInput.addEventListener("keydown", (e: KeyboardEvent) => {
 	if (e.key === "Enter") {
-		connection.send("sendMessageAsync", userNameInput.value, messageInput.value)
-			.then(() => (messageInput.value = ""));
+		sendMessageButton.click();
 	}
 });
 
-sendMessageButton.addEventListener("click", () => connection.send("sendMessageAsync", userNameInput.value, messageInput.value)
-	.then(() => (messageInput.value = "")));
+sendMessageButton.addEventListener("click", () => {
+	if (messageInput.value.trim() !== '') {
+		connection.send("sendMessageAsync", messageInput.value).then(() => (messageInput.value = ""));
+	}
+});
 
 
 joinGroupButton.addEventListener("click", () => {
@@ -119,4 +130,10 @@ createGroupButton.addEventListener("click", () => {
 		joiningGroupName = null;
 		Swal.fire('创建失败', err, 'error');
 	});
+});
+
+groupPasswordInput.addEventListener("keydown", (e: KeyboardEvent) => {
+	if (e.key === "Enter") {
+		joinGroupButton.click();
+	}
 });

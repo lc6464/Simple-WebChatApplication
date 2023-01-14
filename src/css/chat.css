@@ -1,6 +1,21 @@
-﻿@import '@sweetalert2/theme-dark/dark.css';
+@import '@sweetalert2/theme-dark/dark.css';
 
 
 #leaveGroup, #jointGroupName {
 	display: none;
+}
+
+#messages {
+	width: 95vw;
+	min-height: 10em;
+	max-height: 30em;
+	border: .1em solid #999;
+	border-radius: 1em;
+	padding: .5em .8em;
+	overflow-y: auto;
+}
+
+.messageUserName {
+	font-weight: bold;
+	font-size: 1.1em;
 }

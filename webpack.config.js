@@ -5,7 +5,6 @@ const path = require("path"),
 	CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-	mode: "development",
 	entry: {
 		index: "./src/ts/index.ts",
 		login: "./src/ts/login.ts",
@@ -35,15 +34,18 @@ module.exports = {
 		new CleanWebpackPlugin(),
 		new HtmlWebpackPlugin({
 			template: "./src/index.html",
-			filename: "index.html"
+			filename: "index.html",
+			chunks: ["index"],
 		}),
 		new HtmlWebpackPlugin({
 			template: "./src/login.html",
-			filename: "login.html"
+			filename: "login.html",
+			chunks: ["login"],
 		}),
 		new HtmlWebpackPlugin({
 			template: "./src/chat.html",
-			filename: "chat.html"
+			filename: "chat.html",
+			chunks: ["chat"],
 		}),
 		new MiniCssExtractPlugin({
 			filename: "css/[name].[chunkhash].css",
