@@ -1,7 +1,6 @@
-﻿using System.Text;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 
-namespace SignalRWebpack.Hubs;
+namespace SimpleWebChatApplication.Hubs;
 
 internal class Group {
 	private const int SaltLength = 16;
@@ -11,12 +10,12 @@ internal class Group {
 	/// 群组成员数量
 	/// </summary>
 	public ulong MemberCount { get; set; } = 0;
-	
+
 	/// <summary>
 	/// 群组名称
 	/// </summary>
 	public string Name { get; init; }
-	
+
 	/// <summary>
 	/// 群组密码的盐
 	/// </summary>
@@ -38,7 +37,7 @@ internal class Group {
 		var combinedData = new byte[passwordData.Length + PasswordSalt.Length];
 		Buffer.BlockCopy(passwordData, 0, combinedData, 0, passwordData.Length);
 		Buffer.BlockCopy(PasswordSalt, 0, combinedData, passwordData.Length, PasswordSalt.Length);
-		SHA256.HashData(combinedData, computeResult);
+		_ = SHA256.HashData(combinedData, computeResult);
 		return PasswordHash.SequenceEqual(computeResult);
 	}
 
@@ -57,6 +56,6 @@ internal class Group {
 		var combinedData = new byte[passwordData.Length + PasswordSalt.Length];
 		Buffer.BlockCopy(passwordData, 0, combinedData, 0, passwordData.Length);
 		Buffer.BlockCopy(PasswordSalt, 0, combinedData, passwordData.Length, PasswordSalt.Length);
-		SHA256.HashData(combinedData, PasswordHash);
+		_ = SHA256.HashData(combinedData, PasswordHash);
 	}
 }
