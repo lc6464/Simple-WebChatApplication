@@ -351,5 +351,5 @@ MigrationBackup/
 
 
 # 由程序生成
-wwwroot/
-src/*.js
+/wwwroot/
+/src/**/*.js
