@@ -8,6 +8,7 @@
 }
 
 body {
+	background: url("api/background");
 	min-height: 100vh;
 	text-align: center;
 	background: rgba(0,0,0,0.05);
