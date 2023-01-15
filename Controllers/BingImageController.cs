@@ -160,7 +160,7 @@ public class BingImageController : ControllerBase {
 
 	[HttpGet]
 	public async Task<string?> GetAsync(int id = 0) {
-		var cacheAge = DateTime.Today.AddDays(1) - DateTime.Now;
+		
 
 		_id = id;
 		var target = DateTime.Today.AddDays(-id); // 当前时间和目标日期
@@ -171,6 +171,7 @@ public class BingImageController : ControllerBase {
 		if (_memoryCache.TryGetValue(cacheKey, out string? url)) { // 内存缓存
 			_logger.LogDebug("已命中内存缓存：{}", cacheKey);
 			_logger.LogDebug("输出的 URL：{}", url);
+			Response.Headers.CacheControl = "public,max-age=" + (int)(DateTime.Today.AddDays(1) - DateTime.Now).TotalSeconds; // 缓存时间
 			Response.Redirect("https://cn.bing.com" + url); // 重定向
 			return null;
 		}
@@ -213,7 +214,8 @@ public class BingImageController : ControllerBase {
 			}
 		}
 
-
+		
+		var cacheAge = DateTime.Today.AddDays(1) - DateTime.Now;
 		Response.Headers.CacheControl = "public,max-age=" + (int)cacheAge.TotalSeconds; // 缓存时间
 		_ = _memoryCache.Set(cacheKey, url, cacheAge);
 		_logger.LogDebug("已将 {} 写入内存缓存 {} ，有效时间 {}。", url, cacheKey, cacheAge);
