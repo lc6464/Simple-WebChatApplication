@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,10 +7,21 @@
 	<meta name="author" content="execute233" />
 	<meta name="renderer" content="webkit" />
 	<link rel="icon" href="favicon.svg" />
-
 	<title>注册 | Web 实时聊天</title>
 </head>
-	<body>
-
-	</body>
+<body>
+	<main>
+		<h1>注册</h1>
+		<form><!-- 这个其实是从登录那里抄来的，还要改 -->
+			<label for="account">用户名：</label>
+			<input name="account" id="account" placeholder="请输入用户名" type="text" />
+			<label for="password">密码：</label>
+			<input name="password" id="password" placeholder="请输入密码" type="password" />
+			<button id="login" type="button">注册</button>
+			<div id="more-operation">
+				<a href="login.html">登录已有账户</a>
+			</div>
+		</form>
+	</main>
+</body>
 </html>
