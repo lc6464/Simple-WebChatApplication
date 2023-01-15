@@ -9,6 +9,7 @@ module.exports = {
 		index: "./src/ts/index.ts",
 		login: "./src/ts/login.ts",
 		chat: "./src/ts/chat.ts",
+		register: "./src/ts/register.ts"
 	},
 	output: {
 		path: path.resolve(__dirname, "wwwroot"),
@@ -53,6 +54,11 @@ module.exports = {
 			template: "./src/chat.html",
 			filename: "chat.html",
 			chunks: ["chat"],
+		}),
+		new HtmlWebpackPlugin({
+			template: "./src/register.html",
+			filename: "register.html",
+			chunk: ["register"],
 		}),
 		new MiniCssExtractPlugin({
 			filename: "css/[name].[chunkhash].css",
