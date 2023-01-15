@@ -160,7 +160,7 @@ public class BingImageController : ControllerBase {
 
 	[HttpGet]
 	public async Task<string?> GetAsync(int id = 0) {
-		
+
 
 		_id = id;
 		var target = DateTime.Today.AddDays(-id); // 当前时间和目标日期
@@ -214,7 +214,7 @@ public class BingImageController : ControllerBase {
 			}
 		}
 
-		
+
 		var cacheAge = DateTime.Today.AddDays(1) - DateTime.Now;
 		Response.Headers.CacheControl = "public,max-age=" + (int)cacheAge.TotalSeconds; // 缓存时间
 		_ = _memoryCache.Set(cacheKey, url, cacheAge);
