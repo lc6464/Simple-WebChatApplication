@@ -70,7 +70,7 @@ app.UseResponseCompression()
 	})
 	.UseDefaultFiles()
 	.UseStaticFiles(new StaticFileOptions {
-		OnPrepareResponse = context => context.Context.Response.Headers.CacheControl = "public,max-age=2592000" // 30天
+		OnPrepareResponse = context => context.Context.Response.Headers.CacheControl = app.Environment.IsDevelopment() ? "no-cache" : "public,max-age=2592000" // 30天
 	});
 
 
