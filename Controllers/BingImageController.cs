@@ -212,7 +212,7 @@ public class BingImageController : ControllerBase {
 			}
 		}
 
-		
+
 		var cacheAge = DateTime.Today.AddDays(1) - DateTime.Now;
 		Response.Headers.CacheControl = "public,max-age=" + (int)cacheAge.TotalSeconds; // 缓存时间
 		_ = _memoryCache.Set(cacheKey, url, cacheAge);
