@@ -34,10 +34,6 @@ main > label {
 	text-align: left;
 }
 
-/*登陆界面*/
-#sign-div {
-	outline: none;
-}
 #sign {
 	margin: auto;
 	padding: 30px 0;
@@ -45,29 +41,21 @@ main > label {
 	height: 80%;
 	display: grid;
 	grid-template-columns: 100%;
-	grid-template-rows: 20% 5% 20% 5% 20% 20% 20%;
-	grid-row-gap: 5%;
+	grid-template-rows: 20% 15% 15% 15% 15% 10%;
+	grid-row-gap: 7%;
 }
 #sign > * {
 	display: inline-grid;
 }
-#sign > h1 {
-	text-align: center;
-}
-#sign > a {
-	font-size: 20px;
-	width: auto;
-	text-align: right;
-}
-#sign > a:link {
-	font-size: 10px;
-	color: blue;
-}
+
 #sign > label {
+	width: 100%;
+	height: 100%;
 	text-align: left;
 }
 #sign > div > a {
 	font-size: 15px;
+	text-align: right;
 }
 /* 表单输入 */
 .form-control {
@@ -87,26 +75,25 @@ main > label {
 	border: solid rgba(0, 0, 0, 0.5) 1px;
 }
 /* 按钮 */
-button {
+.btn {
 	color: black;
 	background-color: rgba(0, 0, 0, 0.15);
 	border: solid rgba(0, 0, 0, 0.5) 1px;
 	margin: auto;
 	width: 80%;
+	height: 100%;
 }
+/* 获得鼠标焦点，鼠标悬浮 */
 .btn:focus, .btn:hover {
 	background-color: rgba(0, 0, 0, 0.3);
 	transition: ease-in-out 300ms;
 	border: solid rgba(0, 0, 0, 0.5) 1px;
 }
+/* 失去鼠标焦点 */
 .btn:focus-within {
 	background-color: rgba(0, 0, 0, 0.15);
 	transition: ease-in-out 300ms;
 	border: solid rgba(0, 0, 0, 0.5) 1px;
-}
-
-#forget-password {
-	text-align: right;
 }
 
 /* 注册界面 */
