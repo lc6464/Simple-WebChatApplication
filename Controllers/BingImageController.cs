@@ -170,7 +170,7 @@ public class BingImageController : ControllerBase {
 			_logger.LogDebug("已命中内存缓存：{}", cacheKey);
 			_logger.LogDebug("输出的 URL：{}", url);
 			Response.Headers.CacheControl = "public,max-age=" + (int)(DateTime.Today.AddDays(1) - DateTime.Now).TotalSeconds; // 缓存时间
-			Response.Redirect("https://cn.bing.com" + url); // 重定向
+			Response.Redirect("https://cn.bing.com" + url, false, true); // 重定向
 			return null;
 		}
 
@@ -218,7 +218,7 @@ public class BingImageController : ControllerBase {
 		_ = _memoryCache.Set(cacheKey, url, cacheAge);
 		_logger.LogDebug("已将 {} 写入内存缓存 {} ，有效时间 {}。", url, cacheKey, cacheAge);
 		_logger.LogDebug("输出的 URL：{}", url);
-		Response.Redirect("https://cn.bing.com" + url); // 重定向
+		Response.Redirect("https://cn.bing.com" + url, false, true); // 重定向
 		return null;
 	}
 }

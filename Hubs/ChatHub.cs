@@ -22,7 +22,7 @@ public class ChatHub : Hub {
 
 
 	public async Task JoinGroupAsync(string name, string password) {
-		if (!Cache.MemoryCache.TryGetValue<List<Group>>("ChatHub Groups", out var groups) || groups!.All(group => group.Name != name)) {
+		if (!Cache.MemoryCache.TryGetValue<List<Group>>("ChatHub Groups", out var groups) || !groups!.Exists(group => group.Name == name)) {
 			await Clients.Caller.SendAsync("groupResult", "joinFailed", "warning", "此群组不存在！");
 			return;
 		}
@@ -69,7 +69,7 @@ public class ChatHub : Hub {
 	}
 
 	public async Task CreateGroupAsync(string name, string password) {
-		if (Cache.MemoryCache.TryGetValue<List<Group>>("ChatHub Groups", out var groups) && groups!.Any(group => group.Name == name)) {
+		if (Cache.MemoryCache.TryGetValue<List<Group>>("ChatHub Groups", out var groups) && groups!.Exists(group => group.Name == name)) {
 			await Clients.Caller.SendAsync("groupResult", "createFailed", "error", "此群组已存在！请更换群组名称！");
 			return;
 		}
