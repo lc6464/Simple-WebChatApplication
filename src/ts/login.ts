@@ -36,7 +36,7 @@ loginButton.addEventListener('click', async () => {
 	const { success, result, message } = await fetchData();
 	if (success) {
 		if (result.success) {
-			location.href = '/chat';
+			location.href = '/chat.html';
 		} else {
 			Swal.fire('登录失败', result.message, 'error');
 		}
