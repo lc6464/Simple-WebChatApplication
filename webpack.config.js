@@ -2,17 +2,44 @@ const path = require("path"),
 	HtmlWebpackPlugin = require("html-webpack-plugin"),
 	{ CleanWebpackPlugin } = require("clean-webpack-plugin"),
 	MiniCssExtractPlugin = require("mini-css-extract-plugin"),
-	CopyWebpackPlugin = require("copy-webpack-plugin");
+	CopyWebpackPlugin = require("copy-webpack-plugin"),
+	fs = require("fs");
+
+const files = fs.readdirSync(path.resolve("./src/"), { withFileTypes: true }),
+	htmlFiles = files.filter((file) => file.isFile() && file.name.endsWith(".html")),
+	entries = htmlFiles.map((file) => file.name.replace(".html", "")),
+	entry = {},
+	plugins = [];
+
+plugins.push(new CleanWebpackPlugin());
+
+entries.forEach(entryName => {
+	entry[entryName] = `./src/ts/${entryName}.ts`;
+	plugins.push(new HtmlWebpackPlugin({
+		template: `./src/${entryName}.html`,
+		filename: `${entryName}.html`,
+		chunks: [entryName],
+	}));
+});
+
+plugins.push(new MiniCssExtractPlugin({
+	filename: "css/[name].[chunkhash].css",
+}));
+
+plugins.push(new CopyWebpackPlugin({
+	patterns: [
+		{
+			from: "./src/wwwroot",
+			to: "./",
+		},
+	],
+}));
+
 
 module.exports = {
-	entry: {
-		index: "./src/ts/index.ts",
-		login: "./src/ts/login.ts",
-		chat: "./src/ts/chat.ts",
-		register: "./src/ts/register.ts"
-	},
+	entry,
 	output: {
-		path: path.resolve(__dirname, "wwwroot"),
+		path: path.resolve("./wwwroot"),
 		filename: "js/[name].[chunkhash].js",
 		publicPath: "/",
 	},
@@ -38,38 +65,5 @@ module.exports = {
 			},
 		],
 	},
-	plugins: [
-		new CleanWebpackPlugin(),
-		new HtmlWebpackPlugin({
-			template: "./src/index.html",
-			filename: "index.html",
-			chunks: ["index"],
-		}),
-		new HtmlWebpackPlugin({
-			template: "./src/login.html",
-			filename: "login.html",
-			chunks: ["login"],
-		}),
-		new HtmlWebpackPlugin({
-			template: "./src/chat.html",
-			filename: "chat.html",
-			chunks: ["chat"],
-		}),
-		new HtmlWebpackPlugin({
-			template: "./src/register.html",
-			filename: "register.html",
-			chunk: ["register"],
-		}),
-		new MiniCssExtractPlugin({
-			filename: "css/[name].[chunkhash].css",
-		}),
-		new CopyWebpackPlugin({
-			patterns: [
-				{
-					from: "./src/wwwroot",
-					to: "./",
-				},
-			],
-		}),
-	],
+	plugins,
 };
