@@ -29,6 +29,6 @@
 		"@sweetalert2/theme-dark": "^5.0.15",
 		"@types/node": "^18.11.18",
 		"bootstrap": "^5.2.3",
-		"sweetalert2": "^11.6.13"
+		"sweetalert2": "^11.4.8"
 	}
 }
