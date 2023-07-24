@@ -15,9 +15,6 @@
 <body>
 	<nav><div id="navLogo"><a id="navLogoLink" target="_self" href="~/"><img id="navLogoImage" src="~/favicon.svg" alt="Logo" /><span id="navLogoText">Web 实时聊天</span></a></div><div id="navLinks">@await RenderSectionAsync("NavLinks", false)</div></nav>
 	<header>@await RenderSectionAsync("Header", false)</header>
-	<main>@RenderBody()</main>
-	<footer>
-		<div id="mainCopyright">Copyright © @(DateTime.Now.Year == 2023 ? 2023 : $"2023-{DateTime.Now.Year}") LC. All rights reserved. &nbsp; LC 版权所有</div>@await RenderSectionAsync("FooterAddition", false)
-	</footer>@await RenderSectionAsync("EndScripts", false)@await RenderSectionAsync("BodyAddition", false)
+	<main>@RenderBody()</main>@await RenderSectionAsync("EndScripts", false)@await RenderSectionAsync("BodyAddition", false)
 </body>
 </html>

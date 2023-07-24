@@ -1,16 +1,21 @@
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.min.js';
 
 import '../css/login.css';
 
 const form: HTMLFormElement = document.querySelector('form'),
-	loginButton: HTMLButtonElement = document.querySelector('#login');
+	loginButton: HTMLButtonElement = document.querySelector('#login'),
+	resetPasswordAnchor: HTMLAnchorElement = document.querySelector('#reset-password');
 
 form.addEventListener('submit', e => e.preventDefault());
+resetPasswordAnchor.addEventListener('click', e => {
+	e.preventDefault();
+	Swal.fire('重置密码', '请联系管理员重置密码。', 'info');
+});
 
 async function fetchData() {
 	let message = '';
 	try {
-		const response = await fetch('/api/user/login', {
+		const response = await fetch('api/user/login', {
 			body: new FormData(form),
 			method: 'post'
 		});
@@ -36,7 +41,7 @@ loginButton.addEventListener('click', async () => {
 	const { success, result, message } = await fetchData();
 	if (success) {
 		if (result.success) {
-			location.href = '/chat.html';
+			Swal.fire('登录成功', '即将跳转到聊天页面。', 'success').then(() => { location.href = 'chat.html'; });
 		} else {
 			Swal.fire('登录失败', result.message, 'error');
 		}
