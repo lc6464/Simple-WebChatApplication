@@ -1,6 +1,4 @@
 ﻿using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Logging;
-
 namespace SimpleWebChatApplication.Services;
 /// <summary>
 /// 获取数据库的类。
@@ -123,5 +121,5 @@ public class DataProvider : IDataProvider {
 	/// <summary>
 	/// 当前应用程序版本。
 	/// </summary>
-	public Version AppVersion => typeof(DataProvider).Assembly.GetName().Version!;
+	public Version AppVersion => Controllers.Models.Hello.Version;
 }
