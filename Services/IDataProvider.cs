@@ -49,4 +49,9 @@ public interface IDataProvider {
 	/// <param name="command">命令</param>
 	/// <returns>数据读取器。</returns>
 	public SqliteDataReader CmdExeReader(SqliteCommand command);
+
+	/// <summary>
+	/// 当前应用程序版本。
+	/// </summary>
+	public Version AppVersion => typeof(DataProvider).Assembly.GetName().Version!;
 }
