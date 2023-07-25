@@ -1,0 +1,110 @@
+html {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background-color: #414141;
+	margin: 0;
+	padding: 0 .5em;
+}
+
+header {
+	text-align: center;
+}
+
+body::before {
+	content: "-";
+	display: block;
+	height: 2.5em;
+	opacity: 0;
+}
+
+img, audio, video, object, iframe, button, embed, input, textarea, svg {
+	vertical-align: middle;
+}
+
+a:link, a:visited {
+	color: white;
+}
+
+a:hover {
+	background: rgba(100, 190, 255, 0.4);
+}
+
+a:active {
+	color: black;
+	background: #8CF;
+}
+
+a {
+	transition: background 0.3s linear, color 0.3s linear;
+}
+
+nav {
+	text-align: left;
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	z-index: 99999;
+	user-select: none;
+	background: #252525;
+	border-radius: 0 0 1em 1em;
+	border: 0.02em solid #999;
+	line-height: 2.5em;
+}
+
+#navLogo, #navLogoText, #navLinks, #navLinks a {
+	display: inline-block;
+}
+
+#navLogoLink {
+	color: white;
+	text-decoration: none;
+	background: none;
+}
+
+#navLogoText {
+	font-size: 1.6em;
+}
+
+#navLogoImage {
+	vertical-align: top;
+	height: 2.5em;
+	margin: 0 0.6em;
+}
+
+#navLinks {
+	float: right;
+}
+
+	#navLinks a {
+		font-size: 1.6em;
+		padding: 0 0.4em;
+		text-decoration: underline;
+	}
+
+
+@media ( max-width: 768px ) {
+	nav, #navLogoText, #navLinks a {
+		font-size: 1.5em;
+		line-height: 2em;
+	}
+
+	#navLogoImage {
+		height: 2em;
+	}
+}
+
+@media ( max-width: 512px ) {
+	body::before {
+		height: 5em;
+	}
+}
+
+@media ( max-width: 480px ) {
+	body::before {
+		height: 7.5em;
+	}
+}
