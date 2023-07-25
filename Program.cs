@@ -1,7 +1,7 @@
-﻿using LC6464.ASPNET.AddResponseHeaders;
+﻿using System.Security.Cryptography;
+using LC6464.ASPNET.AddResponseHeaders;
 using MessagePack;
 using SimpleWebChatApplication.Hubs;
-using System.Security.Cryptography;
 
 if (args.Length == 2 && args[0] == "install") { // install <Password>
 	Console.WriteLine("请保证你的密码强度足够，否则可能会被破解！");
