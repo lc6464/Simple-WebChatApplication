@@ -27,8 +27,8 @@ public struct IP {
 	/// <summary>
 	/// 构造函数
 	/// </summary>
-	/// <param name="info">当前的 <see cref="IBackendConfiguration"/></param>
-	public IP(IBackendConfiguration info) {
+	/// <param name="info">当前的 <see cref="IHttpConnectionInfo"/></param>
+	public IP(IHttpConnectionInfo info) {
 		_address = info.RemoteAddress;
 		Protocol = info.Protocol;
 	}
@@ -36,12 +36,12 @@ public struct IP {
 	/// <summary>
 	/// 读取 IP 地址
 	/// </summary>
-	public string? Address => _address?.ToString();
+	public readonly string? Address => _address?.ToString();
 
 	/// <summary>
 	/// 读取地址族
 	/// </summary>
-	public string? Family => _address?.AddressFamily switch {
+	public readonly string? Family => _address?.AddressFamily switch {
 		AddressFamily.InterNetwork => "IPv4",
 		AddressFamily.InterNetworkV6 => "IPv6",
 		_ => _address?.AddressFamily.ToString()

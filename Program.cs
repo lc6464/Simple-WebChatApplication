@@ -1,6 +1,23 @@
 ﻿using LC6464.ASPNET.AddResponseHeaders;
 using MessagePack;
 using SimpleWebChatApplication.Hubs;
+using System.Security.Cryptography;
+
+if (args.Length == 2 && args[0] == "install") { // install <Password>
+	Console.WriteLine("请保证你的密码强度足够，否则可能会被破解！");
+	var password = args[1].Trim();
+	var salt = new Span<byte>(new byte[64]);
+	RandomNumberGenerator.Fill(salt);
+	using HMACSHA512 sha512 = new(salt.ToArray());
+	var hash = sha512.ComputeHash(Encoding.UTF8.GetBytes(password));
+	Console.WriteLine($"密码为：{password}");
+	Console.WriteLine($"密码的哈希值为：{Convert.ToBase64String(hash)}");
+	Console.WriteLine($"密码的盐值为：{Convert.ToBase64String(salt)}");
+	Console.WriteLine("请将以上哈希值和盐值数据写入 appsettings.json，重启应用程序后生效。");
+	Console.WriteLine("如果是第一次设置软件，建议将数据库密码一并更改，");
+	Console.WriteLine("并添加一些联系方式。");
+	return;
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
