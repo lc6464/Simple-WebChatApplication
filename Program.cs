@@ -67,9 +67,9 @@ app.UseResponseCompression()
 	}).UseAddResponseHeaders(builder.Configuration.GetValue<bool>("Https:Use")
 	? new HeaderDictionary {
 		{ "Expect-CT", "max-age=31536000; enforce" },
-		{ "Content-Security-Policy", $"upgrade-insecure-requests; default-src 'self'; img-src 'self'; frame-ancestors 'self'{usingUnsafeEval}" }
+		{ "Content-Security-Policy", $"upgrade-insecure-requests; default-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'self'{usingUnsafeEval}" }
 	} : new HeaderDictionary {
-		{ "Content-Security-Policy", $"default-src 'self'; img-src 'self'; frame-ancestors 'self'{usingUnsafeEval}" }
+		{ "Content-Security-Policy", $"default-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'self'{usingUnsafeEval}" }
 	})
 	.UseDefaultFiles()
 	.UseStaticFiles(new StaticFileOptions {
