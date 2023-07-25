@@ -27,8 +27,8 @@ public struct IP {
 	/// <summary>
 	/// 构造函数
 	/// </summary>
-	/// <param name="info">当前的 <see cref="IHttpConnectionInfo"/></param>
-	public IP(IHttpConnectionInfo info) {
+	/// <param name="info">当前的 <see cref="IBackendConfiguration"/></param>
+	public IP(IBackendConfiguration info) {
 		_address = info.RemoteAddress;
 		Protocol = info.Protocol;
 	}

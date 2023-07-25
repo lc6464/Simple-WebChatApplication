@@ -6,9 +6,9 @@ namespace SimpleWebChatApplication.Controllers;
 public class GetIPController : ControllerBase {
 	private readonly ILogger<GetIPController> _logger;
 	private readonly IHttp304 _http304;
-	private readonly IHttpConnectionInfo _info;
+	private readonly IBackendConfiguration _info;
 
-	public GetIPController(ILogger<GetIPController> logger, IHttpConnectionInfo info, IHttp304 http304) {
+	public GetIPController(ILogger<GetIPController> logger, IBackendConfiguration info, IHttp304 http304) {
 		_logger = logger;
 		_http304 = http304;
 		_info = info;

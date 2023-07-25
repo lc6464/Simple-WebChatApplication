@@ -5,9 +5,9 @@ namespace SimpleWebChatApplication.Controllers;
 [Route("api/[controller]")]
 public class HelloController : ControllerBase {
 	private readonly ILogger<HelloController> _logger;
-	private readonly IHttpConnectionInfo _info;
+	private readonly IBackendConfiguration _info;
 
-	public HelloController(ILogger<HelloController> logger, IHttpConnectionInfo info) {
+	public HelloController(ILogger<HelloController> logger, IBackendConfiguration info) {
 		_logger = logger;
 		_info = info;
 	}
