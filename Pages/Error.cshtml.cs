@@ -16,7 +16,7 @@ public class ErrorModel : PageModel {
 	public void OnGet() {
 		RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
 		ViewData["Title"] = "错误";
-		ViewData["Keywords"] = "LC,网站,测试,错误";
-		ViewData["Description"] = "LC的测试站的错误页。";
+		ViewData["Keywords"] = "错误";
+		ViewData["Description"] = "此应用程序在运行过程中发生了错误，请联系站长处理。";
 	}
 }

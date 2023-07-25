@@ -1,6 +1,6 @@
 ﻿@page "/StatusCode/{statusCode:int:range(400,600)}"
 @model StatusCodeModel
-@section NavLinks {<a href="~/">首页</a><a href="~/chat.html">聊天</a><a href="~/Contact">联系站长</a>}
+@section NavLinks {<a href="~/" target="_self">首页</a><a href="~/chat.html" target="_self">聊天</a><a href="~/Contact" target="_self">联系站长</a>}
 @section InnerStyles {<style>html { text-align: center; }</style>}
 @section Header {<h1>@Model.Title</h1>}
 <h2>@Model.Message</h2>

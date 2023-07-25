@@ -9,7 +9,7 @@
 	<meta property="og:site_name" content="Web 实时聊天"/><meta property="og:locale" content="zh_CN"/>
 	<meta property="og:title" content="@ViewData["Title"] | Web 实时聊天" /><meta property="og:description" content="@ViewData["Description"]"/>
 	<meta property="og:url" content="@(ViewData["OGUrl"] ?? $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.PathBase}{Context.Request.Path}{Context.Request.QueryString}")"/>
-	<meta name="keywords" content="@ViewData["Keywords"]"/><meta name="description" content="@ViewData["Description"]"/>
+	<meta name="keywords" content="实时聊天,websocket,聊天,@ViewData["Keywords"]"/><meta name="description" content="@ViewData["Description"]"/>
 	<title>@ViewData["Title"] | Web 实时聊天</title>@await RenderSectionAsync("InnerStyles", false)@await RenderSectionAsync("PreloadScripts", false)@await RenderSectionAsync("HeadAddition", false)
 </head>
 <body>
