@@ -6,7 +6,7 @@ public readonly struct Hello {
 	private static readonly Assembly assembly = typeof(Hello).Assembly;
 	public Hello(HttpContext context) => IP = new(context.Connection.RemoteIpAddress, context.Request.Protocol);
 
-	public Hello(IBackendConfiguration info) => IP = new(info);
+	public Hello(IHttpConnectionInfo info) => IP = new(info);
 
 	public DateTime Time { get; } = DateTime.Now;
 	public Version Version { get; } = assembly.GetName().Version!;
