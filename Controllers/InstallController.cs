@@ -9,6 +9,6 @@ public class InstallController : ControllerBase {
 	[HttpPost]
 	[ResponseCache(CacheProfileName = "NoStore")]
 	public void Post() {
-		
+
 	}
 }
