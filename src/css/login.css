@@ -1,94 +1,101 @@
-@import "~bootstrap/dist/css/bootstrap.min.css";
 @import '@sweetalert2/theme-dark/dark.css';
 
 body {
-	background: url("api/background");
-	min-height: 100vh;
+	margin: 0;
+	padding: 0;
 	text-align: center;
-	background: rgba(0,0,0,0.05);
+	height: 100vh;
 }
 
+
 main {
-	color: black;
-	min-width: 300px;
-	min-height: 400px;
-	width: 25%;
-	height: 50%;
+	min-width: 38vw;
+	min-height: 55vh;
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	background-color: rgba(0, 0, 0, 0.1);
+	background: rgba(255, 255, 255, .3);
 	overflow: hidden;
-	border: solid rgba(0, 0, 0, 0.4) 1px;
-	border-radius: 25px;
-	backdrop-filter: blur(2px);
+	border-radius: 3em;
+	padding: 1em 2em;
 }
 
-main > label {
-	text-align: left;
-}
 
-#sign {
-	margin: auto;
-	padding: 30px 0;
-	width: 80%;
-	height: 80%;
+form {
 	display: grid;
-	grid-template-columns: 100%;
-	grid-template-rows: 20% 15% 15% 15% 15% 10%;
-	grid-row-gap: 7%;
-}
-#sign > * {
-	display: inline-grid;
+	align-items: center;
+	grid-template-columns: 1fr 3fr;
+	grid-template-rows: 1fr 1fr 1.5fr 1.5fr;
+	font-size: 1.2em;
 }
 
-#sign > label {
-	width: 100%;
-	height: 100%;
-	text-align: left;
+label {
+	margin: .5em .2em;
+	text-align: right;
+	cursor: pointer;
 }
-#sign > div > a {
-	font-size: 15px;
+
+input {
+	height: 2.5em;
+	width: 85%;
+	border-radius: 1em;
+	padding: 0 1em;
+	display: inline-block;
+	transition: all ease-in-out .5s;
+	border: solid rgba(0, 0, 0, 0.8) .1em;
+	background: rgba(0, 0, 0, .4);
+	color: white;
+	font-size: 1em;
+}
+
+#login, #more-operation, #register {
+	grid-column-start: 1;
+	grid-column-end: 3;
+}
+
+#more-operation {
 	text-align: right;
 }
-/* 表单输入 */
-.form-control {
-	color: black;
-	background-color: rgba(0, 0, 0, 0.2);
-	border: solid rgba(0, 0, 0, 0.5) 1px;
-}
-/* 表单得到焦点，鼠标悬浮 */
-.form-control:focus, .form-control:hover {
-	transition: ease-in-out 300ms;
-	background-color: rgba(0, 0, 0, 0.1);
-}
-/* 表单失去焦点 */
-.form-control:focus-within {
-	transition: ease-in-out 300ms;
-	background-color: rgba(0, 0, 0, 0.2);
-	border: solid rgba(0, 0, 0, 0.5) 1px;
-}
-/* 按钮 */
-.btn {
-	color: black;
-	background-color: rgba(0, 0, 0, 0.15);
-	border: solid rgba(0, 0, 0, 0.5) 1px;
-	margin: auto;
-	width: 80%;
-	height: 100%;
-}
-/* 获得鼠标焦点，鼠标悬浮 */
-.btn:focus, .btn:hover {
-	background-color: rgba(0, 0, 0, 0.3);
-	transition: ease-in-out 300ms;
-	border: solid rgba(0, 0, 0, 0.5) 1px;
-}
-/* 失去鼠标焦点 */
-.btn:focus-within {
-	background-color: rgba(0, 0, 0, 0.15);
-	transition: ease-in-out 300ms;
-	border: solid rgba(0, 0, 0, 0.5) 1px;
+
+#login, #register {
+	width: 6em;
+	height: 3em;
+	border-radius: 1.2em;
+	font-size: 1.2em;
+	margin: 1em auto;
+	cursor: pointer;
+	background: rgba(0, 0, 0, 0.3);
+	border: solid rgba(0, 0, 0, 0.5) .1em;
+	transition: all ease-in-out .5s;
+	color: white;
 }
 
-/* 注册界面 */
+
+/* 表单得到焦点，鼠标悬浮 */
+input:focus, input:hover {
+	background: rgba(0, 0, 0, 0.3);
+}
+
+
+a {
+	display: inline-block;
+	margin: 0 .3em;
+	padding: .2em .5em;
+	border-radius: .5em;
+	transition: all ease-in-out .5s;
+}
+
+	a:link, a:visited {
+		color: lightblue;
+		background: rgba(0, 0, 0, .5);
+	}
+
+	a:hover {
+		color: cornflowerblue;
+	}
+
+	a:active {
+		color: black;
+		background: lightblue;
+	}

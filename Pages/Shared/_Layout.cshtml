@@ -9,15 +9,12 @@
 	<meta property="og:site_name" content="Web 实时聊天"/><meta property="og:locale" content="zh_CN"/>
 	<meta property="og:title" content="@ViewData["Title"] | Web 实时聊天" /><meta property="og:description" content="@ViewData["Description"]"/>
 	<meta property="og:url" content="@(ViewData["OGUrl"] ?? $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.PathBase}{Context.Request.Path}{Context.Request.QueryString}")"/>
-	<meta name="keywords" content="@ViewData["Keywords"]"/><meta name="description" content="@ViewData["Description"]"/>
+	<meta name="keywords" content="实时聊天,websocket,聊天,@ViewData["Keywords"]"/><meta name="description" content="@ViewData["Description"]"/>
 	<title>@ViewData["Title"] | Web 实时聊天</title>@await RenderSectionAsync("InnerStyles", false)@await RenderSectionAsync("PreloadScripts", false)@await RenderSectionAsync("HeadAddition", false)
 </head>
 <body>
 	<nav><div id="navLogo"><a id="navLogoLink" target="_self" href="~/"><img id="navLogoImage" src="~/favicon.svg" alt="Logo" /><span id="navLogoText">Web 实时聊天</span></a></div><div id="navLinks">@await RenderSectionAsync("NavLinks", false)</div></nav>
 	<header>@await RenderSectionAsync("Header", false)</header>
-	<main>@RenderBody()</main>
-	<footer>
-		<div id="mainCopyright">Copyright © @(DateTime.Now.Year == 2023 ? 2023 : $"2023-{DateTime.Now.Year}") LC. All rights reserved. &nbsp; LC 版权所有</div>@await RenderSectionAsync("FooterAddition", false)
-	</footer>@await RenderSectionAsync("EndScripts", false)@await RenderSectionAsync("BodyAddition", false)
+	<main>@RenderBody()</main>@await RenderSectionAsync("EndScripts", false)@await RenderSectionAsync("BodyAddition", false)
 </body>
 </html>

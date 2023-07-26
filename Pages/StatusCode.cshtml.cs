@@ -69,7 +69,7 @@ public class StatusCodeModel : PageModel {
 			_ => $"{statusCode} | Status Code Not Found",
 		};
 
-		ViewData["Keywords"] = "LC,网站,测试,错误,HTTP 状态码";
+		ViewData["Keywords"] = "错误,HTTP 状态码";
 
 		ViewData["Description"] = Message = statusCode switch {
 			400 => "请求语法错误，服务器无法理解！",

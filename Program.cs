@@ -1,6 +1,25 @@
-﻿using LC6464.ASPNET.AddResponseHeaders;
+﻿using System.Security.Cryptography;
+using LC6464.ASPNET.AddResponseHeaders;
 using MessagePack;
 using SimpleWebChatApplication.Hubs;
+using SimpleWebChatApplication.Services;
+
+if (args.Length == 2 && args[0] == "install") { // install <Password>
+	Console.WriteLine("请保证你的密码强度足够，否则可能会被破解！");
+	var password = args[1].Trim();
+	if (!CheckingTools.IsPasswordComplicated(password)) {
+		Console.WriteLine("密码强度不足！");
+		return;
+	}
+	var hash = CheckingTools.HashPassword(password, out var salt);
+	Console.WriteLine($"密码为：{password}");
+	Console.WriteLine($"密码的哈希值为：{Convert.ToBase64String(hash)}");
+	Console.WriteLine($"密码的盐值为：{Convert.ToBase64String(salt)}");
+	Console.WriteLine("请将以上哈希值和盐值数据写入 appsettings.json，重启应用程序后生效。");
+	Console.WriteLine("如果是第一次设置软件，建议将数据库密码一并更改，");
+	Console.WriteLine("并添加一些联系方式。");
+	return;
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,15 +32,15 @@ builder.Services
 		options.HttpsPort = builder.Configuration.GetValue<ushort>("Https:Port");
 	}).AddHsts(options => {
 		options.ExcludedHosts.Add("localhost");
-		options.IncludeSubDomains = true;
 		options.MaxAge = TimeSpan.FromDays(365);
-		options.Preload = true;
 	}).AddResponseCompression(options => {
 		options.EnableForHttps = true;
 		options.ExcludedMimeTypes = new[] { "application/json" }; // 这压缩不是浪费性能吗？没起太大作用
 	}).AddControllers(options => {
 		options.CacheProfiles.Add("Private30d", new() { Duration = 2592000, Location = ResponseCacheLocation.Client });
 		options.CacheProfiles.Add("Public30d", new() { Duration = 2592000, Location = ResponseCacheLocation.Any });
+		options.CacheProfiles.Add("Private7d", new() { Duration = 604800, Location = ResponseCacheLocation.Client });
+		options.CacheProfiles.Add("Public7d", new() { Duration = 604800, Location = ResponseCacheLocation.Any });
 		options.CacheProfiles.Add("Private1d", new() { Duration = 86400, Location = ResponseCacheLocation.Client });
 		options.CacheProfiles.Add("Public1d", new() { Duration = 86400, Location = ResponseCacheLocation.Any });
 		options.CacheProfiles.Add("Private1h", new() { Duration = 3600, Location = ResponseCacheLocation.Client });
@@ -44,15 +63,18 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
+var usingUnsafeEval = "; script-src 'self' 'unsafe-eval'"; // 用于开发环境
+
 if (!app.Environment.IsDevelopment()) {
 	app.UseExceptionHandler("/Error")
 		.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
 
 	if (builder.Configuration.GetValue<bool>("Https:Use")) {
-		_ = app.UseHttpsRedirection()
-		.UseHsts();
+		app.UseHttpsRedirection()
+			.UseHsts();
 	}
 
+	usingUnsafeEval = "";
 }
 
 app.UseResponseCompression()
@@ -64,13 +86,13 @@ app.UseResponseCompression()
 	}).UseAddResponseHeaders(builder.Configuration.GetValue<bool>("Https:Use")
 	? new HeaderDictionary {
 		{ "Expect-CT", "max-age=31536000; enforce" },
-		{ "Content-Security-Policy", "upgrade-insecure-requests; default-src 'self'; img-src 'self' https://*.bing.com/th; frame-ancestors 'self'" }
+		{ "Content-Security-Policy", $"upgrade-insecure-requests; default-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'self'{usingUnsafeEval}" }
 	} : new HeaderDictionary {
-		{ "Content-Security-Policy", "default-src 'self'; img-src 'self' https://*.bing.com/th; frame-ancestors 'self'" }
+		{ "Content-Security-Policy", $"default-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'self'{usingUnsafeEval}" }
 	})
 	.UseDefaultFiles()
 	.UseStaticFiles(new StaticFileOptions {
-		OnPrepareResponse = context => context.Context.Response.Headers.CacheControl = "public,max-age=2592000" // 30天
+		OnPrepareResponse = context => context.Context.Response.Headers.CacheControl = app.Environment.IsDevelopment() ? "no-cache" : "public,max-age=1209600" // 14天
 	});
 
 

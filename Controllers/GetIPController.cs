@@ -21,6 +21,6 @@ public class GetIPController : ControllerBase {
 		var address = _info.RemoteAddress;
 		_logger.LogDebug("GetIP: Client {}:{} on {}", address?.AddressFamily == AddressFamily.InterNetworkV6 ? $"[{address}]" : address, _info.RemotePort, _info.Protocol);
 
-		return _http304.TrySet(true, _info.Protocol) ? null : (new(_info));
+		return _http304.TrySet(true, _info.Protocol) ? null : new(_info);
 	}
 }

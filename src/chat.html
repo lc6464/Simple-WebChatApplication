@@ -6,16 +6,20 @@
 	<meta name="author" content="LC" />
 	<meta name="author" content="execute233" />
 	<meta name="renderer" content="webkit" />
-	<link rel="icon" href="wwwroot/favicon.svg" />
+	<link rel="icon" href="favicon.svg" />
+	<link rel="stylesheet" href="css/common.css" />
 	<title>聊天 | Web 实时聊天</title>
 </head>
 <body>
-	<nav></nav>
+	<nav>
+		<div id="navLogo"><a id="navLogoLink" target="_self" href="./"><img id="navLogoImage" src="favicon.svg" alt="Logo" /><span id="navLogoText">Web 实时聊天</span></a></div>
+		<div id="navLinks"><a href="./" target="_self">首页</a><a href="chat.html" target="_self">聊天</a><a href="contact" target="_self">联系站长</a></div>
+	</nav>
 	<header><h1>简单的 Web 实时聊天应用</h1></header>
 	<main>
 		<div id="messages"></div>
 		<div>
-			<label>用户名：<input id="userName" type="text" /></label>
+			<label>用户名：<input id="userName" type="text" disabled /></label>
 			<label>消息：<input id="message" type="text" /></label>
 			<button id="sendMessage">发送</button>
 		</div>

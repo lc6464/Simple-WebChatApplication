@@ -1,12 +1,12 @@
 import * as signalR from "@microsoft/signalr";
 import * as signalRProtocols from "@microsoft/signalr-protocol-msgpack";
 
-import Swal, { SweetAlertIcon } from 'sweetalert2';
+import Swal, { SweetAlertIcon } from 'sweetalert2/dist/sweetalert2.min.js';
 import "../css/chat.css";
 
 const messagesDiv: HTMLDivElement = document.querySelector("#messages"),
 	messageInput: HTMLInputElement = document.querySelector("#message"),
-	userNameInput: HTMLInputElement = document.querySelector("#userName"),
+	//userNameInput: HTMLInputElement = document.querySelector("#userName"),
 	sendMessageButton: HTMLButtonElement = document.querySelector("#sendMessage"),
 	groupNameInput: HTMLInputElement = document.querySelector("#groupName"),
 	jointGroupNameSpan: HTMLSpanElement = document.querySelector("#jointGroupName"),
