@@ -98,7 +98,7 @@ public class DataProvider : IDataProvider {
 	/// <param name="command">命令</param>
 	/// <returns>数据读取器。</returns>
 	public SqliteDataReader CmdExeReader(SqliteCommand command) {
-		using var reader = command.ExecuteReader();
+		var reader = command.ExecuteReader();
 		command.Dispose();
 		return reader;
 	}

@@ -33,7 +33,7 @@ public partial class CheckingTools : ICheckingTools {
 		cmd.Transaction = transaction;
 		cmd.CommandText = "SELECT * FROM Users WHERE Name = '@Name'";
 		cmd.Parameters.AddWithValue("@Name", name);
-		using var reader = cmd.ExecuteReader();
+		var reader = cmd.ExecuteReader();
 		transaction.Commit();
 		return reader;
 	}
