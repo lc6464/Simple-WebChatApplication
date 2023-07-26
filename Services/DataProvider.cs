@@ -26,7 +26,7 @@ public class DataProvider : IDataProvider {
 		using var transaction = Connection.BeginTransaction();
 		CmdExeNonQuery(transaction, "Create Table if not exists Users (ID integer primary key autoincrement, Name varchar(32) unique not null, Nick varchar(32), Hash blob not null, Salt blob not null)");
 		CmdExeNonQuery(transaction, "Create Table if not exists AppInfo (ID integer primary key autoincrement, Key varchar(128) unique not null, Value blob, Length integer not null)");
-		var reader = CmdExeReader(transaction, "Select Value from AppInfo where Key = 'Version'");
+		using var reader = CmdExeReader(transaction, "Select Value from AppInfo where Key = 'Version'");
 		// 处理版本
 		if (reader.Read()) {
 			var dataLength = reader.GetInt32(1);
@@ -98,7 +98,7 @@ public class DataProvider : IDataProvider {
 	/// <param name="command">命令</param>
 	/// <returns>数据读取器。</returns>
 	public SqliteDataReader CmdExeReader(SqliteCommand command) {
-		var reader = command.ExecuteReader();
+		using var reader = command.ExecuteReader();
 		command.Dispose();
 		return reader;
 	}

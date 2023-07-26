@@ -5,7 +5,14 @@ internal static class Cache {
 
 	public static T Set<T>(object key, T value, TimeSpan slidingExpiration) {
 		using var entry = MemoryCache.CreateEntry(key);
-		_ = entry.SetSlidingExpiration(slidingExpiration);
+		entry.SetSlidingExpiration(slidingExpiration);
+		entry.Value = value;
+		return value;
+	}
+	public static T Set<T>(object key, T value, TimeSpan slidingExpiration, TimeSpan absoluteExpiration) {
+		using var entry = MemoryCache.CreateEntry(key);
+		entry.SetSlidingExpiration(slidingExpiration);
+		entry.SetAbsoluteExpiration(absoluteExpiration);
 		entry.Value = value;
 		return value;
 	}

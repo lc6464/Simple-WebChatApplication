@@ -1,8 +1,18 @@
-﻿namespace SimpleWebChatApplication.Services;
+﻿using Microsoft.Data.Sqlite;
+
+namespace SimpleWebChatApplication.Services;
 /// <summary>
 /// 一些常用的检查工具。
 /// </summary>
 public interface ICheckingTools {
+	/// <summary>
+	/// 获取用户信息读取器。
+	/// </summary>
+	/// <param name="name">用户名</param>
+	/// <returns>对应的 <see cref="SqliteDataReader"/>。</returns>
+	public SqliteDataReader GetUserReader(string name);
+
+
 	/// <summary>
 	/// 检查用户名是否可用。
 	/// </summary>
