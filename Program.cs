@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using LC6464.ASPNET.AddResponseHeaders;
+﻿using LC6464.ASPNET.AddResponseHeaders;
 using MessagePack;
 using SimpleWebChatApplication.Hubs;
 using SimpleWebChatApplication.Services;
@@ -7,11 +6,11 @@ using SimpleWebChatApplication.Services;
 if (args.Length == 2 && args[0] == "install") { // install <Password>
 	Console.WriteLine("请保证你的密码强度足够，否则可能会被破解！");
 	var password = args[1].Trim();
-	if (!CheckingTools.IsPasswordComplicated(password)) {
+	if (!ICheckingTools.IsPasswordComplicated(password)) {
 		Console.WriteLine("密码强度不足！");
 		return;
 	}
-	var hash = CheckingTools.HashPassword(password, out var salt);
+	var hash = ICheckingTools.HashPassword(password, out var salt);
 	Console.WriteLine($"密码为：{password}");
 	Console.WriteLine($"密码的哈希值为：{Convert.ToBase64String(hash)}");
 	Console.WriteLine($"密码的盐值为：{Convert.ToBase64String(salt)}");
@@ -59,6 +58,8 @@ builder.Services // 添加 SignalR 服务
 		options.SerializerOptions = MessagePackSerializerOptions.Standard.WithSecurity(MessagePackSecurity.UntrustedData));
 
 builder.Services.AddRazorPages();
+
+builder.Services.AddSevicesInProject();
 
 
 var app = builder.Build();

@@ -1,9 +1,10 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Text.RegularExpressions;
+using Microsoft.Data.Sqlite;
 namespace SimpleWebChatApplication.Services;
 /// <summary>
 /// 获取数据库的类。
 /// </summary>
-public class DataProvider : IDataProvider {
+public partial class DataProvider : IDataProvider {
 	/// <summary>
 	/// 默认构造函数。
 	/// </summary>
@@ -54,6 +55,29 @@ public class DataProvider : IDataProvider {
 		}
 		transaction.Commit();
 	}
+
+	/// <summary>
+	/// 获取用户信息读取器。
+	/// </summary>
+	/// <param name="name">用户名</param>
+	/// <returns>对应的 <see cref="SqliteDataReader"/>。</returns>
+	public SqliteDataReader GetUserReader(string name) {
+		using var transaction = Connection.BeginTransaction();
+		using var cmd = Connection.CreateCommand();
+		cmd.Transaction = transaction;
+		cmd.CommandText = "SELECT * FROM Users WHERE Name = '@Name'";
+		cmd.Parameters.AddWithValue("@Name", name);
+		var reader = cmd.ExecuteReader();
+		transaction.Commit();
+		return reader;
+	}
+
+	/// <summary>
+	/// 检查用户名是否可用。
+	/// </summary>
+	/// <param name="name">用户名</param>
+	/// <returns>若可用则为 <see langword="false"/>，否则为 <see langword="true"/>。</returns>
+	public bool IsNameAvailable(string name) => !(name.Length is < 4 or > 32 || !NameRegex().IsMatch(name) || GetUserReader(name).HasRows);
 
 	/// <summary>
 	/// 在指定的事务中执行指定的命令。
@@ -122,4 +146,8 @@ public class DataProvider : IDataProvider {
 	/// 当前应用程序版本。
 	/// </summary>
 	public Version AppVersion => Controllers.Models.Hello.Version;
+
+
+	[GeneratedRegex(@"^[A-Za-z][A-Za-z\d\-_]+$")]
+	private static partial Regex NameRegex();
 }

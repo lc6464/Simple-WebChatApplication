@@ -1,8 +1,15 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using SimpleWebChatApplication.Services;
 
 namespace SimpleWebChatApplication.Hubs;
 
 public class ChatHub : Hub {
+	private readonly ICheckingTools _tools;
+	private HttpContext? _httpContext;
+	private string? _name;
+
+	public ChatHub(ICheckingTools checkingTools) => _tools = checkingTools;
+
 	private Group? JointGroup {
 		get => Cache.MemoryCache.Get<Group>($"ChatHub JointGroup of {Context.ConnectionId}");
 		set {
@@ -13,7 +20,6 @@ public class ChatHub : Hub {
 			}
 		}
 	}
-
 
 	public async Task SendMessageAsync(string message) =>
 		await (JointGroup is null ?
@@ -110,4 +116,21 @@ public class ChatHub : Hub {
 		await base.OnDisconnectedAsync(exception);
 	}
 
+	public override async Task OnConnectedAsync() {
+		var context = Context.GetHttpContext();
+		if (context is null) {
+			await Clients.Caller.SendAsync("groupResult", "connectFailed", "error", "无法获取 HttpContext！");
+			Context.Abort();
+			return;
+		}
+		_httpContext = context;
+		if (!_tools.IsLogin()) {
+			await Clients.Caller.SendAsync("groupResult", "connectFailed", "error", "你尚未登录！");
+			Context.Abort();
+			return;
+		}
+		_name = $"{_httpContext.Session.GetString("Nick")} ({_httpContext.Session.GetString("Name")})";
+		_httpContext.Session.SetString("HubID", Context.ConnectionId);
+		await base.OnConnectedAsync();
+	}
 }
