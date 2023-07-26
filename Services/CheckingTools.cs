@@ -71,10 +71,32 @@ public partial class CheckingTools : ICheckingTools {
 	/// </summary>
 	/// <returns>若已登录，则为 <see langword="true"/>，否则为 <see langword="false"/>。</returns>
 	public bool IsLogin() {
-
-		// 写累了，等会再写。
-		var a = false;
-		return a;
+		var account = Session.GetString("Name");
+		if (account is null) {
+			Session.Clear();
+			return false;
+		}
+		using var reader = GetUserReader(account);
+		if (!reader.HasRows) {
+			Session.Clear();
+			return false;
+		}
+		var hash = new byte[64];
+		reader.GetBytes(3, 0, hash, 0, 64);
+		var salt = new byte[16];
+		reader.GetBytes(4, 0, salt, 0, 16);
+		var sessionHash = Session.Get("Hash");
+		var sessionSalt = Session.Get("Salt");
+		if (sessionHash is null || sessionSalt is null) {
+			Session.Clear();
+			return false;
+		}
+		if (!hash.SequenceEqual(sessionHash) || !salt.SequenceEqual(sessionSalt)) {
+			Session.Clear();
+			return false;
+		}
+		Session.SetString("Nick", reader.GetString(2));
+		return true;
 	}
 
 	public static ReadOnlySpan<byte> HashPassword(string password, out Span<byte> salt) {
@@ -112,7 +134,7 @@ public partial class CheckingTools : ICheckingTools {
 	[GeneratedRegex(@"\d")]
 	private static partial Regex NumberRegex();
 
-	[GeneratedRegex(@"(?<a>.)\k<a>{3,}")]
+	[GeneratedRegex(@"(?<a>.)\k<a>{3}")]
 	private static partial Regex RepeatRegex();
 
 	[GeneratedRegex(@"^[A-Za-z][A-Za-z\d\-_]+$")]
