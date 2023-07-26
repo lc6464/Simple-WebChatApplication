@@ -2,7 +2,7 @@
 
 namespace SimpleWebChatApplication.Services;
 /// <summary>
-/// 获取用户信息。
+/// 获取数据库。
 /// </summary>
 public interface IDataProvider {
 	/// <summary>

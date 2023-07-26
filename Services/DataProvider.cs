@@ -24,7 +24,7 @@ public class DataProvider : IDataProvider {
 		Connection = new(ConnectionString);
 		Connection.Open();
 		using var transaction = Connection.BeginTransaction();
-		CmdExeNonQuery(transaction, "Create Table if not exists User (ID integer primary key autoincrement, Name varchar(32) unique not null, Nick varchar(32), Hash blob not null, Salt blob not null)");
+		CmdExeNonQuery(transaction, "Create Table if not exists Users (ID integer primary key autoincrement, Name varchar(32) unique not null, Nick varchar(32), Hash blob not null, Salt blob not null)");
 		CmdExeNonQuery(transaction, "Create Table if not exists AppInfo (ID integer primary key autoincrement, Key varchar(128) unique not null, Value blob, Length integer not null)");
 		var reader = CmdExeReader(transaction, "Select Value from AppInfo where Key = 'Version'");
 		// 处理版本

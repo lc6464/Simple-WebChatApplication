@@ -12,7 +12,8 @@ public class LoginController : ControllerBase {
 
 	[HttpPost]
 	[ResponseCache(CacheProfileName = "NoStore")]
-	public Models.Login Post() {
+	public Models.Login Post(string? account, string? password) {
+		//HttpContext.Session.SetString("account", account);
 
 		return new();
 	}

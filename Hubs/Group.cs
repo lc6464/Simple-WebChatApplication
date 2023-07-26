@@ -30,7 +30,7 @@ internal class Group {
 	/// 验证给定的密码是否与当前群组的密码相匹配。
 	/// </summary>
 	/// <param name="password">给定的密码</param>
-	/// <returns>若匹配，则为 <see cref="true"/>；否则为 <see cref="false"/>。</returns>
+	/// <returns>若匹配，则为 <see langword="true"/>；否则为 <see langword="false"/>。</returns>
 	public bool VerifyPassword(string password) {
 		var computeResult = new byte[HashLength];
 		var passwordData = Encoding.Unicode.GetBytes(password);
