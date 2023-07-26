@@ -11,10 +11,10 @@ public readonly struct Hello {
 	public Hello(IHttpConnectionInfo info) => IP = new(info);
 
 	public readonly DateTime Time => DateTime.Now;
-	
+
 	public static readonly string Copyright = ((AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyCopyrightAttribute))!).Copyright;
 
-	public const string  Text = "Welcome to Simple WebChat Application.";
+	public const string Text = "Welcome to Simple WebChat Application.";
 
 	public IP IP { get; init; }
 }
