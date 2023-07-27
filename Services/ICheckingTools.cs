@@ -64,7 +64,7 @@ public partial interface ICheckingTools {
 	/// <param name="hash">正确密码的哈希</param>
 	/// <param name="salt">对应的盐值</param>
 	/// <returns>若正确，则为 <see langword="true"/>，否则为 <see langword="false"/>。</returns>
-	public static bool ComfirmPassword(string password, ReadOnlySpan<byte> hash, ReadOnlySpan<byte> salt) => hash.SequenceEqual(HashPassword(password, salt));
+	public static bool VerifyPassword(string password, ReadOnlySpan<byte> hash, ReadOnlySpan<byte> salt) => hash.SequenceEqual(HashPassword(password, salt));
 
 
 

@@ -43,7 +43,7 @@ public class LoginController : ControllerBase {
 		reader.GetBytes(3, 0, hash, 0, 64);
 		var salt = new byte[16];
 		reader.GetBytes(4, 0, salt, 0, 16);
-		if (!ICheckingTools.ComfirmPassword(password, hash, salt)) {
+		if (!ICheckingTools.VerifyPassword(password, hash, salt)) {
 			Hubs.Cache.Set($"TryLoginCount of {account}", count++, TimeSpan.FromMinutes(30), TimeSpan.FromHours(2));
 			return new() { Success = false, Code = 6, Message = "用户名或密码错误。" };
 		}

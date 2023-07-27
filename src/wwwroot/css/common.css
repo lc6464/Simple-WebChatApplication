@@ -1,10 +1,9 @@
 html {
-	margin: 0;
-	padding: 0;
+	background: black;
+	color: white;
 }
 
 body {
-	background-color: #414141;
 	margin: 0;
 	padding: 0 .5em;
 }
@@ -41,28 +40,34 @@ a {
 	transition: background 0.3s linear, color 0.3s linear;
 }
 
+body::before {
+	content: "-";
+	display: block;
+	height: 2.5rem;
+	opacity: 0;
+}
+
 nav {
 	text-align: left;
 	position: fixed;
 	left: 0;
 	top: 0;
 	width: 100%;
-	z-index: 99999;
+	z-index: 500;
 	user-select: none;
-	background: #252525;
-	border-radius: 0 0 1em 1em;
-	border: 0.02em solid #999;
-	line-height: 2.5em;
-}
-
-#navLogo, #navLogoText, #navLinks, #navLinks a {
-	display: inline-block;
+	background: rgba(30, 30, 30, .8);
+	border-radius: 0 0 .7em .7em;
+	border: .05em solid #999;
+	display: grid;
+	grid-template-columns: 1fr 20em;
+	align-items: center;
 }
 
 #navLogoLink {
 	color: white;
 	text-decoration: none;
 	background: none;
+	line-height: 2.5em;
 }
 
 #navLogoText {
@@ -72,39 +77,35 @@ nav {
 #navLogoImage {
 	vertical-align: top;
 	height: 2.5em;
-	margin: 0 0.6em;
+	margin: 0 .6em;
 }
 
 #navLinks {
-	float: right;
+	justify-self: right;
 }
 
 	#navLinks a {
 		font-size: 1.6em;
-		padding: 0 0.4em;
+		padding: .1em .4em;
 		text-decoration: underline;
+		border-radius: .4em;
 	}
 
-
-@media ( max-width: 768px ) {
-	nav, #navLogoText, #navLinks a {
-		font-size: 1.5em;
-		line-height: 2em;
+@media ( max-width: 580px ) {
+	nav {
+		grid-template-columns: 1fr;
 	}
 
-	#navLogoImage {
-		height: 2em;
-	}
-}
-
-@media ( max-width: 512px ) {
 	body::before {
-		height: 5em;
+		height: 5rem;
 	}
-}
 
-@media ( max-width: 480px ) {
-	body::before {
-		height: 7.5em;
+	#navLinks {
+		padding: .2em .1em;
 	}
+
+		#navLinks a {
+			font-size: 1.5em;
+			padding: .1em .2em;
+		}
 }

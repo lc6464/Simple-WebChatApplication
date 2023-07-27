@@ -54,8 +54,9 @@ public interface IDataProvider {
 	/// </summary>
 	/// <param name="transaction">事物</param>
 	/// <param name="commandText">命令</param>
+	/// <param name="command">创建的 <see cref="SqliteCommand"/> 实例</param>
 	/// <returns>数据读取器。</returns>
-	public SqliteDataReader CmdExeReader(SqliteTransaction transaction, string commandText);
+	public SqliteDataReader CmdExeReader(SqliteTransaction transaction, string commandText, out SqliteCommand command);
 
 	/// <summary>
 	/// 在指定的事务中执行指定的命令。
