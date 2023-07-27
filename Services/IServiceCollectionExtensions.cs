@@ -8,6 +8,6 @@ public static class IServiceCollectionExtensions {
 	/// </summary>
 	/// <param name="services"><see cref="IServiceCollection">builder.Services</see></param>
 	/// <returns>当前的 <see cref="IServiceCollection"/>，用于链式调用。</returns>
-	public static IServiceCollection AddConfiguration(this IServiceCollection services) =>
-		services.AddSingleton<IDataProvider, DataProvider>();
+	public static IServiceCollection AddSevicesInProject(this IServiceCollection services) =>
+		services.AddSingleton<IDataProvider, DataProvider>().AddScoped<ICheckingTools, CheckingTools>();
 }

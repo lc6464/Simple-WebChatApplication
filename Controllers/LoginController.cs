@@ -27,13 +27,14 @@ public class LoginController : ControllerBase {
 		}
 		Hubs.Cache.MemoryCache.TryGetValue($"TryLoginCount of {account}", out int count);
 		if (count > 5) {
+			_logger.LogWarning("用户 {} 尝试登录次数过多，最后一次 IP 地址为 {}。", account, HttpContext.Connection.RemoteIpAddress);
 			return new() { Success = false, Code = 7, Message = "尝试登录次数过多，请在30分钟后重试。" };
 		}
-		if (account.Length is < 4 or > 32 || !CheckingTools.IsPasswordComplicated(password)) {
+		if (account.Length is < 4 or > 32 || !ICheckingTools.IsPasswordComplicated(password)) {
 			Hubs.Cache.Set($"TryLoginCount of {account}", count++, TimeSpan.FromMinutes(30), TimeSpan.FromHours(2));
 			return new() { Success = false, Code = 6, Message = "用户名或密码错误。" };
 		}
-		using var reader = _tools.GetUserReader(account);
+		using var reader = _provider.GetUserReader(account);
 		if (!reader.Read()) {
 			Hubs.Cache.Set($"TryLoginCount of {account}", count++, TimeSpan.FromMinutes(30), TimeSpan.FromHours(2));
 			return new() { Success = false, Code = 6, Message = "用户名或密码错误。" };
@@ -42,7 +43,7 @@ public class LoginController : ControllerBase {
 		reader.GetBytes(3, 0, hash, 0, 64);
 		var salt = new byte[16];
 		reader.GetBytes(4, 0, salt, 0, 16);
-		if (!CheckingTools.ComfirmPassword(password, hash, salt)) {
+		if (!ICheckingTools.VerifyPassword(password, hash, salt)) {
 			Hubs.Cache.Set($"TryLoginCount of {account}", count++, TimeSpan.FromMinutes(30), TimeSpan.FromHours(2));
 			return new() { Success = false, Code = 6, Message = "用户名或密码错误。" };
 		}

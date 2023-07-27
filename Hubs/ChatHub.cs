@@ -1,8 +1,16 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using SimpleWebChatApplication.Services;
 
 namespace SimpleWebChatApplication.Hubs;
 
 public class ChatHub : Hub {
+	private readonly ICheckingTools _tools;
+	private HttpContext? _httpContext;
+	private string DisplayName => $"{_httpContext?.Session.GetString("Nick")} ({_httpContext?.Session.GetString("Name")})";
+
+	public ChatHub(ICheckingTools checkingTools) => _tools = checkingTools;
+
+
 	private Group? JointGroup {
 		get => Cache.MemoryCache.Get<Group>($"ChatHub JointGroup of {Context.ConnectionId}");
 		set {
@@ -14,11 +22,10 @@ public class ChatHub : Hub {
 		}
 	}
 
-
 	public async Task SendMessageAsync(string message) =>
 		await (JointGroup is null ?
 			Clients.Caller.SendAsync("groupResult", "sendFailed", "warning", "您尚未加入任何群组。") :
-			Clients.Group(JointGroup.Name).SendAsync("messageReceived", Context.ConnectionId, message, DateTime.Now.ToString("yyyy-M-d H:mm:ss")));
+			Clients.Group(JointGroup.Name).SendAsync("messageReceived", DisplayName, message, DateTime.Now.ToString("yyyy-M-d H:mm:ss")));
 
 
 	public async Task JoinGroupAsync(string name, string password) {
@@ -41,7 +48,7 @@ public class ChatHub : Hub {
 
 		await Groups.AddToGroupAsync(Context.ConnectionId, name);
 		await Clients.Caller.SendAsync("groupResult", "joinSuccess", "success", "加入群组成功！");
-		await Clients.OthersInGroup(name).SendAsync("messageReceived", "Server", $"{Context.ConnectionId} 已加入群组！");
+		await Clients.OthersInGroup(name).SendAsync("messageReceived", "Server", $"{DisplayName} 已加入群组！");
 
 	}
 
@@ -61,7 +68,7 @@ public class ChatHub : Hub {
 			}
 		}
 
-		await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageReceived", "Server", $"{Context.ConnectionId} 已离开群组！");
+		await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageReceived", "Server", $"{DisplayName} 已离开群组！");
 		await Groups.RemoveFromGroupAsync(Context.ConnectionId, JointGroup.Name);
 		await Clients.Caller.SendAsync("groupResult", "leaveSuccess", "success", "你已经成功离开群组！");
 
@@ -101,7 +108,7 @@ public class ChatHub : Hub {
 				}
 			}
 
-			await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageReceived", "Server", $"{Context.ConnectionId} 已离开群组！");
+			await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageReceived", "Server", $"{DisplayName} 已离开群组！");
 			await Groups.RemoveFromGroupAsync(Context.ConnectionId, JointGroup.Name);
 			JointGroup = null;
 		}
@@ -110,4 +117,20 @@ public class ChatHub : Hub {
 		await base.OnDisconnectedAsync(exception);
 	}
 
+	public override async Task OnConnectedAsync() {
+		var context = Context.GetHttpContext();
+		if (context is null) {
+			await base.OnConnectedAsync();
+			Context.Abort();
+			return;
+		}
+		_httpContext = context;
+		if (!_tools.IsLogin()) {
+			await base.OnConnectedAsync();
+			Context.Abort();
+			return;
+		}
+		await Clients.Caller.SendAsync("groupResult", "Welcome", "success", "连接成功！");
+		await base.OnConnectedAsync();
+	}
 }

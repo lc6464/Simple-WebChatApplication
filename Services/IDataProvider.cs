@@ -21,6 +21,20 @@ public interface IDataProvider {
 	public bool IsCreatedBefore { get; init; }
 
 	/// <summary>
+	/// 检查用户名是否可用。
+	/// </summary>
+	/// <param name="name">用户名</param>
+	/// <returns>若被使用或长度不合适，则为 <see langword="false"/>，若可用则为 <see langword="true"/>。</returns>
+	public bool IsNameAvailable(string name);
+
+	/// <summary>
+	/// 获取用户信息读取器。
+	/// </summary>
+	/// <param name="name">用户名</param>
+	/// <returns>对应的 <see cref="SqliteDataReader"/>。</returns>
+	public SqliteDataReader GetUserReader(string name);
+
+	/// <summary>
 	/// 在指定的事务中执行指定的命令。
 	/// </summary>
 	/// <param name="transaction">事物</param>
@@ -40,8 +54,9 @@ public interface IDataProvider {
 	/// </summary>
 	/// <param name="transaction">事物</param>
 	/// <param name="commandText">命令</param>
+	/// <param name="command">创建的 <see cref="SqliteCommand"/> 实例</param>
 	/// <returns>数据读取器。</returns>
-	public SqliteDataReader CmdExeReader(SqliteTransaction transaction, string commandText);
+	public SqliteDataReader CmdExeReader(SqliteTransaction transaction, string commandText, out SqliteCommand command);
 
 	/// <summary>
 	/// 在指定的事务中执行指定的命令。
