@@ -120,17 +120,17 @@ public class ChatHub : Hub {
 	public override async Task OnConnectedAsync() {
 		var context = Context.GetHttpContext();
 		if (context is null) {
-			await Clients.Caller.SendAsync("groupResult", "connectFailed", "error", "无法获取 HttpContext！");
+			await base.OnConnectedAsync();
 			Context.Abort();
 			return;
 		}
 		_httpContext = context;
-		/*if (!_tools.IsLogin()) {
-			await Clients.Caller.SendAsync("groupResult", "connectFailed", "error", "你尚未登录！");
+		if (!_tools.IsLogin()) {
+			await base.OnConnectedAsync();
 			Context.Abort();
 			return;
-		}*/
-		await Clients.Caller.SendAsync("groupResult", "Welcome", "success", $"连接成功！{_httpContext is null}");
+		}
+		await Clients.Caller.SendAsync("groupResult", "Welcome", "success", "连接成功！");
 		await base.OnConnectedAsync();
 	}
 }

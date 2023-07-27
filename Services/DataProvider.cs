@@ -27,7 +27,7 @@ public partial class DataProvider : IDataProvider {
 		using var transaction = Connection.BeginTransaction();
 		CmdExeNonQuery(transaction, "Create Table if not exists Users (ID integer primary key autoincrement, Name varchar(32) unique not null, Nick varchar(32), Hash blob not null, Salt blob not null)");
 		CmdExeNonQuery(transaction, "Create Table if not exists AppInfo (ID integer primary key autoincrement, Key varchar(128) unique not null, Value blob, Length integer not null)");
-		using var reader = CmdExeReader(transaction, "Select Value from AppInfo where Key = 'Version'", out var readerCmd);
+		using var reader = CmdExeReader(transaction, "Select Value, Length from AppInfo where Key = 'Version'", out var readerCmd);
 		// 处理版本
 		if (reader.Read()) {
 			var dataLength = reader.GetInt32(1);
