@@ -21,7 +21,7 @@ public class CheckingTools : ICheckingTools {
 		_provider = provider;
 	}
 
-	
+
 
 	/// <summary>
 	/// 检查是否登录。
