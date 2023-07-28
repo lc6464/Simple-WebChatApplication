@@ -1,7 +1,6 @@
 @import '@sweetalert2/theme-dark/dark.css';
 
 body {
-	margin: 0;
 	padding: 0;
 	text-align: center;
 	height: 100vh;
@@ -9,8 +8,9 @@ body {
 
 
 main {
-	min-width: 38vw;
-	min-height: 55vh;
+	max-width: 23em;
+	max-height: 28em;
+	height: 28em;
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -21,13 +21,23 @@ main {
 	padding: 1em 2em;
 }
 
-
 form {
 	display: grid;
 	align-items: center;
 	grid-template-columns: 1fr 3fr;
-	grid-template-rows: 1fr 1fr 1.5fr 1.5fr;
+	grid-template-rows: 1fr 1fr 1.5fr 1fr;
 	font-size: 1.2em;
+}
+
+#register-main {
+	max-height: 32em;
+	height: 32em;
+	max-width: 26em;
+	width: 26em;
+}
+
+#register-form {
+	grid-template-rows: 1fr 1fr 1fr 1.5fr 1fr;
 }
 
 label {
@@ -94,3 +104,58 @@ main a {
 		color: black;
 		background: lightblue;
 	}
+
+
+@media (max-width: 850px) {
+	#register-main {
+		height: 32em;
+		max-width: 26em;
+		width: 26em;
+	}
+
+	main {
+		width: 23em;
+		height: 28em;
+	}
+}
+
+
+@media (max-width: 500px) {
+	form {
+		grid-template-columns: 1fr;
+		grid-template-rows: .6fr 1fr .6fr 1fr 1.5fr 1fr;
+	}
+
+	#register-main {
+		height: 35em;
+		max-height: 35em;
+		max-width: 26em;
+		width: 95vw;
+	}
+
+	#register-form {
+		grid-template-rows: .6fr 1fr .6fr 1fr .6fr 1fr 1.5fr 1fr;
+	}
+
+	label {
+		text-align: left;
+	}
+
+	main {
+		height: 30em;
+		max-height: 30em;
+		width: 95vw;
+		max-width: 23em;
+		padding-bottom: 1em;
+		box-sizing: border-box;
+	}
+
+	#login, #register {
+		margin: .6em auto 0;
+	}
+
+	#login, #more-operation, #register {
+		grid-column-start: 1;
+		grid-column-end: 2;
+	}
+}

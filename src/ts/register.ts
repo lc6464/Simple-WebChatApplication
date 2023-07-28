@@ -3,16 +3,20 @@ import Swal from 'sweetalert2/dist/sweetalert2.min.js';
 import '../css/login.css';
 
 document.querySelector('html').addEventListener('click', e => {
-	const target = e.target as HTMLElement;
-	if (!(target instanceof HTMLAnchorElement && target.href?.endsWith("execute233"))) {
-		e.preventDefault();
-		Swal.fire({
-			title: '这里啥也没有',
-			text: '请联系 GitHub @execute233 早日完成！',
-			icon: 'question',
-			footer: '<a href="https://github.com/execute233" target="_blank">GitHub @execute233</a>'
-		});
+	const target = e.target as HTMLElement,
+		isLinks = target instanceof HTMLAnchorElement,
+		isNavLogo = ((target instanceof HTMLSpanElement) || (target instanceof HTMLImageElement)) && target.id.startsWith('navLogo');
+	console.log(target);
+	if (isLinks || isNavLogo) {
+		return;
 	}
+	e.preventDefault();
+	Swal.fire({
+		title: '这里啥也没有',
+		text: '请联系 GitHub @execute233 早日完成！',
+		icon: 'question',
+		footer: '<a href="https://github.com/execute233" target="_blank">GitHub @execute233</a>'
+	});
 });
 
 
