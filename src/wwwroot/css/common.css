@@ -12,15 +12,18 @@ header {
 	text-align: center;
 }
 
-body::before {
-	content: "-";
-	display: block;
-	height: 2.5em;
-	opacity: 0;
-}
-
 img, audio, video, object, iframe, button, embed, input, textarea, svg {
 	vertical-align: middle;
+}
+
+button {
+	border-radius: 1em;
+	padding: .2em .6em;
+	cursor: pointer;
+	background: rgba(255, 255, 255, 0.3);
+	border: solid rgba(255, 255, 255, 0.6) .1em;
+	transition: all ease-in-out .5s;
+	color: white;
 }
 
 a:link, a:visited {
@@ -46,6 +49,7 @@ body::before {
 	height: 2.5rem;
 	opacity: 0;
 	padding-bottom: .8em;
+	transition: height ease-in-out .3s;
 }
 
 nav {
@@ -62,6 +66,7 @@ nav {
 	display: grid;
 	grid-template-columns: 1fr 20em;
 	align-items: center;
+	transition: all ease-in-out .3s;
 }
 
 #navLogoLink {
@@ -83,6 +88,7 @@ nav {
 
 #navLinks {
 	justify-self: right;
+	transition: all ease-in-out .3s;
 }
 
 	#navLinks a {
@@ -90,6 +96,7 @@ nav {
 		padding: .1em .4em;
 		text-decoration: underline;
 		border-radius: .4em;
+		transition: all ease-in-out .3s;
 	}
 
 @media ( max-width: 580px ) {

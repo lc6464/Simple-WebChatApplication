@@ -61,14 +61,10 @@ input {
 #login, #register {
 	width: 6em;
 	height: 3em;
-	border-radius: 1.2em;
 	font-size: 1.2em;
 	margin: 1em auto;
-	cursor: pointer;
 	background: rgba(0, 0, 0, 0.3);
 	border: solid rgba(0, 0, 0, 0.5) .1em;
-	transition: all ease-in-out .5s;
-	color: white;
 }
 
 
@@ -78,7 +74,7 @@ input:focus, input:hover {
 }
 
 
-a {
+main a {
 	display: inline-block;
 	margin: 0 .3em;
 	padding: .2em .5em;
@@ -86,16 +82,16 @@ a {
 	transition: all ease-in-out .5s;
 }
 
-	a:link, a:visited {
+	main a:link, main a:visited {
 		color: lightblue;
 		background: rgba(0, 0, 0, .5);
 	}
 
-	a:hover {
+	main a:hover {
 		color: cornflowerblue;
 	}
 
-	a:active {
+	main a:active {
 		color: black;
 		background: lightblue;
 	}

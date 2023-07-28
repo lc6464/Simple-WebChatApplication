@@ -13,6 +13,7 @@ header {
 	background: rgba(255, 255, 255, .28);
 	padding: 0;
 	margin: 0;
+	transition: all ease-in-out .3s;
 }
 
 h1 {
@@ -21,6 +22,7 @@ h1 {
 	padding: .35em 0;
 	font-size: 2.2em;
 	text-align: center;
+	transition: all ease-in-out .3s;
 }
 
 #chat {
@@ -32,5 +34,13 @@ h1 {
 @media ( max-width: 580px ) {
 	header {
 		top: 6.5em;
+		width: 6em;
+		height: 3.5em;
+		border-radius: 1.5em;
+	}
+
+	h1 {
+		padding: .5em 0;
+		font-size: 1.5em;
 	}
 }
