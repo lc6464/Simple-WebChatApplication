@@ -14,6 +14,7 @@ header {
 	padding: 0;
 	margin: 0;
 	transition: all ease-in-out .3s;
+	opacity: 0;
 }
 
 h1 {
@@ -29,7 +30,68 @@ h1 {
 	display: none;
 }
 
+#group {
+	max-width: 18em;
+	max-height: 14em;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: rgba(255, 255, 255, .3);
+	overflow: hidden;
+	border-radius: 3em;
+	padding: 1em 2em;
+	display: grid;
+	align-items: center;
+	grid-template-columns: 1fr 3fr;
+	grid-template-rows: 1fr 1fr 1.5fr;
+	font-size: 1.2em;
+}
 
+label {
+	margin: .5em .2em;
+	text-align: right;
+	cursor: pointer;
+}
+
+input {
+	height: 2.5em;
+	width: 85%;
+	border-radius: 1em;
+	padding: 0 1em;
+	display: inline-block;
+	transition: all ease-in-out .5s;
+	border: solid rgba(0, 0, 0, 0.8) .1em;
+	background: rgba(0, 0, 0, .4);
+	color: white;
+	font-size: 1em;
+}
+
+#buttons {
+	grid-column-start: 1;
+	grid-column-end: 3;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+
+	#buttons button {
+		display: inline-block;
+		width: 6em;
+		height: 3em;
+		font-size: 1.2em;
+		margin: 1em auto;
+		background: rgba(0, 0, 0, 0.3);
+		border: solid rgba(0, 0, 0, 0.5) .1em;
+	}
+
+
+
+@media (max-width: 850px) {
+	#group {
+		width: 18em;
+		height: 14em;
+	}
+}
 
 @media ( max-width: 580px ) {
 	header {
@@ -42,5 +104,37 @@ h1 {
 	h1 {
 		padding: .5em 0;
 		font-size: 1.5em;
+	}
+}
+
+@media (max-width: 500px) {
+	#group {
+		grid-template-columns: 1fr;
+		grid-template-rows: .6fr 1fr .6fr 1fr 2.5fr;
+	}
+
+	#buttons {
+		grid-column-start: 1;
+		grid-column-end: 2;
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: 1fr 1fr;
+	}
+
+	label {
+		text-align: left;
+	}
+
+	#group {
+		height: 22em;
+		max-height: 22em;
+		width: 95vw;
+		box-sizing: border-box;
+		max-width: 20em;
+		padding-bottom: 1em;
+	}
+
+	#buttons button {
+		margin: .4em auto 0;
 	}
 }

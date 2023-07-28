@@ -68,7 +68,6 @@ input {
 }
 
 
-/* 表单得到焦点，鼠标悬浮 */
 input:focus, input:hover {
 	background: rgba(0, 0, 0, 0.3);
 }
