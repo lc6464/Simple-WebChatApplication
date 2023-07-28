@@ -1,20 +1,36 @@
 @import '@sweetalert2/theme-dark/dark.css';
 
-#leaveGroup, #jointGroupName {
+header {
+	display: inline-block;
+	position: fixed;
+	top: 4em;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 100;
+	width: 9em;
+	height: 4.5em;
+	border-radius: 2em;
+	background: rgba(255, 255, 255, .28);
+	padding: 0;
+	margin: 0;
+}
+
+h1 {
+	display: inline-block;
+	margin: 0;
+	padding: .35em 0;
+	font-size: 2.2em;
+	text-align: center;
+}
+
+#chat {
 	display: none;
 }
 
-#messages {
-	width: 95vw;
-	min-height: 10em;
-	max-height: 30em;
-	border: .1em solid #999;
-	border-radius: 1em;
-	padding: .5em .8em;
-	overflow-y: auto;
-}
 
-.messageUserName {
-	font-weight: bold;
-	font-size: 1.1em;
+
+@media ( max-width: 580px ) {
+	header {
+		top: 6.5em;
+	}
 }

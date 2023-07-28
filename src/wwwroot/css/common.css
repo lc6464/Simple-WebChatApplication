@@ -45,6 +45,7 @@ body::before {
 	display: block;
 	height: 2.5rem;
 	opacity: 0;
+	padding-bottom: .8em;
 }
 
 nav {
@@ -53,7 +54,7 @@ nav {
 	left: 0;
 	top: 0;
 	width: 100%;
-	z-index: 500;
+	z-index: 100000;
 	user-select: none;
 	background: rgba(30, 30, 30, .8);
 	border-radius: 0 0 .7em .7em;
