@@ -9,13 +9,18 @@ const form: HTMLFormElement = document.querySelector('form'),
 form.addEventListener('submit', e => e.preventDefault());
 resetPasswordAnchor.addEventListener('click', e => {
 	e.preventDefault();
-	Swal.fire('重置密码', '请联系管理员重置密码。', 'info');
+	Swal.fire({
+		title: '重置密码',
+		text: '请联系管理员重置密码。',
+		icon: 'info',
+		footer: '<a href="contact" title="联系站长">点此联系站长</a>'
+	});
 });
 
 async function fetchData() {
 	let message = '';
 	try {
-		const response = await fetch('api/user/login', {
+		const response = await fetch('api/login', {
 			body: new FormData(form),
 			method: 'post'
 		});
@@ -41,9 +46,14 @@ loginButton.addEventListener('click', async () => {
 	const { success, result, message } = await fetchData();
 	if (success) {
 		if (result.success) {
-			Swal.fire('登录成功', '即将跳转到聊天页面。', 'success').then(() => { location.href = 'chat.html'; });
+			Swal.fire('登录成功', '即将跳转到聊天页面。', 'success').then(() => location.href = 'chat.html');
 		} else {
-			Swal.fire('登录失败', result.message, 'error');
+			Swal.fire({
+				title: '登录失败',
+				text: result.message,
+				icon: 'error',
+				footer: '<a href="contact" title="联系站长">点此联系站长</a>'
+			});
 		}
 	} else {
 		Swal.fire('登录失败', message, 'warning');
