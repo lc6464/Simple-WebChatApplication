@@ -109,8 +109,6 @@ nav {
 	border-radius: .2em;
 }
 
-
-
 @media ( max-width: 580px ) {
 	nav {
 		grid-template-columns: 1fr;

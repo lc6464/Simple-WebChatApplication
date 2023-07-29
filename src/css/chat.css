@@ -87,7 +87,6 @@ input {
 		border: solid rgba(0, 0, 0, 0.5) .1em;
 	}
 
-
 #message-sender {
 	display: grid;
 	grid-template-columns: 1fr 4em;
@@ -125,11 +124,15 @@ input {
 	margin: .6em 0;
 	padding: .5em;
 	background: rgba(255, 255, 255, .2);
-	border-radius: 1.3em;
+	border-radius: 1.1em;
 }
 
+	.message span {
+		color: #DDD;
+	}
+
 .sender {
-	margin-right: 1em;
+	margin-right: .6em;
 }
 
 .server span {
@@ -138,13 +141,35 @@ input {
 
 #chat.ready {
 	display: grid;
-
 }
 
 #group.ready {
 	display: none;
 }
 
+.self span {
+	color: #9CF;
+}
+
+.sending span:last-of-type::after {
+	content: "发送中";
+	display: inline-block;
+	margin-left: .6em;
+	opacity: .6;
+	font-size: .9em;
+}
+
+.send-failed span:last-of-type::after {
+	content: "发送失败";
+	display: inline-block;
+	margin-left: .6em;
+	color: #F66;
+	font-size: .9em;
+}
+
+.send-failed {
+	background: rgba(255, 0, 0, .2);
+}
 
 @media (max-width: 850px) {
 	#group {
