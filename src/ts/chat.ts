@@ -3,6 +3,8 @@ import * as signalRProtocols from "@microsoft/signalr-protocol-msgpack";
 
 import Swal, { SweetAlertIcon } from 'sweetalert2/dist/sweetalert2.min.js';
 import "../css/chat.css";
+
+
 /*
 const messagesDiv: HTMLDivElement = document.querySelector("#messages"),
 	messageInput: HTMLInputElement = document.querySelector("#message"),
@@ -136,4 +138,5 @@ groupPasswordInput.addEventListener("keydown", (e: KeyboardEvent) => {
 	if (e.key === "Enter") {
 		joinGroupButton.click();
 	}
-});*/
+});
+*/
