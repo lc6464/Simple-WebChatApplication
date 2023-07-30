@@ -22,13 +22,13 @@ public class ChatHub : Hub {
 		}
 	}
 
-	public async Task SendMessageAsync(string message) =>
+	public async Task MessageAsync(string message) =>
 		await (JointGroup is null ?
 			Clients.Caller.SendAsync("groupResult", "sendFailed", "warning", "您尚未加入任何群组。") :
-			Clients.Group(JointGroup.Name).SendAsync("messageReceived", DisplayName, message, DateTime.Now.ToString("yyyy-M-d H:mm:ss")));
+			Clients.Group(JointGroup.Name).SendAsync("message", DisplayName, message, DateTime.Now.ToString("yyyy-M-d H:mm:ss")));
 
 
-	public async Task JoinGroupAsync(string name, string password) {
+	public async Task GroupAsync(string name, string password) {
 		if (!Cache.MemoryCache.TryGetValue<List<Group>>("ChatHub Groups", out var groups) || !groups!.Exists(group => group.Name == name)) {
 			await Clients.Caller.SendAsync("groupResult", "joinFailed", "warning", "此群组不存在！");
 			return;

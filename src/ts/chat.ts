@@ -147,7 +147,7 @@ function connectSignalR() {
 				messageTimeSpan = document.createElement('span'),
 				messageDiv = document.createElement('div');
 
-			container.className = 'message'
+			container.className = 'message';
 
 			userNameDiv.innerText = username;
 			messageDiv.innerText = `${time} ${message}`;
