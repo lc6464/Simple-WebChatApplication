@@ -3,6 +3,7 @@ import * as signalRProtocols from "@microsoft/signalr-protocol-msgpack";
 
 import Swal, { SweetAlertIcon } from 'sweetalert2/dist/sweetalert2.min.js';
 import "../css/chat.css";
+import {fetchData} from "./common";
 import { group } from "console";
 
 /*
@@ -23,31 +24,11 @@ const chatSection: HTMLElement = document.querySelector("#chat"),
 	groupSection: HTMLElement = document.querySelector("#group");
 
 
-
 async function checkLogin() {
-	let message = '';
-	try {
-		const response = await fetch('api/login', {
-			method: 'get'
-		});
-		if (response.ok) {
-			try {
-				return { success: true, result: await response.json(), message };
-			} catch (e) {
-				message = '在解析 JSON 过程中发生异常，详细信息请见控制台！';
-				console.error('在解析 JSON 过程中发生异常：', e);
-			}
-		} else {
-			message = '在 Fetch 过程中接收到了不成功的状态码，详细信息请见控制台！';
-			console.error('在 Fetch 过程中接收到了不成功的状态码，响应对象：', response);
-		}
-	} catch (e) {
-		message = '在 Fetch 过程中发生异常，详细信息请见控制台！';
-		console.error('在 Fetch 过程中发生异常：', e);
-	}
-	return { success: false, result: null, message };
+	return fetchData('api/login', {
+		method: 'get'
+	});
 }
-
 
 async function main() {
 	Swal.fire({
@@ -144,12 +125,13 @@ function connectSignalR() {
 		if (echo === '') {
 			const container = document.createElement('div'),
 				userNameSpan = document.createElement('span'),
+				userNameDiv = document.createElement('div'),
 				messageTimeSpan = document.createElement('span'),
 				messageDiv = document.createElement('div');
 
 			container.className = 'message';
-
-			userNameDiv.innerText = username;
+			
+			userNameDiv.innerText = 'username';
 			messageDiv.innerText = `${time} ${message}`;
 
 			container.appendChild(userNameDiv);

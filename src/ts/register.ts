@@ -1,6 +1,10 @@
 import Swal from 'sweetalert2/dist/sweetalert2.min.js';
 
 import '../css/login.css';
+import {fetchData, copy} from './common.js';
+
+const form: HTMLFormElement = document.querySelector('form'),
+	registerButton: HTMLButtonElement = document.querySelector('#register');
 
 document.querySelector('html').addEventListener('click', e => {
 	const target = e.target as HTMLElement,
@@ -11,13 +15,31 @@ document.querySelector('html').addEventListener('click', e => {
 		return;
 	}
 	e.preventDefault();
-	Swal.fire({
-		title: '这里啥也没有',
-		text: '请联系 GitHub @execute233 早日完成！',
-		icon: 'question',
-		footer: '<a href="https://github.com/execute233" target="_blank">GitHub @execute233</a>'
-	});
 });
+document.querySelector('form').addEventListener('click', async () => {
+	const {success, result, message} = await fetchData("api/register", {
+		body: new FormData(form),
+		method: 'post'
+	});
+	if (success && result.success && result.data != undefined) {
+		if (await copy(result.data)) {
+			Swal.fire({
+				title: '复制成功',
+				text: `已将密钥到剪贴板，请发送给管理员`,
+				icon: 'success'
+			});
+		} else {
+			Swal.fire({
+				title: '复制失败',
+				text: `请手动复制密钥后发送给管理员：\n${result.data}`,
+				icon: 'error'
+			});
+		}
+	} else {
+		Swal.fire('注册失败', message, 'warning');
+	}
+});
+
 
 
 /*
@@ -28,3 +50,7 @@ To @execute233:
 快写吧😊
 
 */
+/*
+* 6.
+* by execute233.
+* */
