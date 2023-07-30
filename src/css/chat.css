@@ -44,7 +44,7 @@ h1 {
 	overflow: hidden;
 	border-radius: 3em;
 	padding: 1em 2em;
-	display: grid;
+	display: none;
 	align-items: center;
 	grid-template-columns: 1fr 3fr;
 	grid-template-rows: 1fr 1fr 1.5fr;
@@ -139,12 +139,8 @@ input {
 	color: #F99;
 }
 
-#chat.ready {
+#chat.ready, #group.ready {
 	display: grid;
-}
-
-#group.ready {
-	display: none;
 }
 
 .self span {

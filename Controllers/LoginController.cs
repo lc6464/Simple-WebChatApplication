@@ -16,6 +16,14 @@ public class LoginController : ControllerBase {
 		Session = HttpContext.Session;
 	}
 
+
+	[HttpGet]
+	[ResponseCache(CacheProfileName = "NoStore")]
+	public Models.Login Get() => _tools.IsLogin()
+			? new() { Success = true, Code = 0, Message = "已登录" }
+			: new() { Success = false, Code = 3, Message = "未登录" };
+
+
 	[HttpPost]
 	[ResponseCache(CacheProfileName = "NoStore")]
 	public Models.Login Post(string? account, string? password) {

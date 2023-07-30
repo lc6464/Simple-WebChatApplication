@@ -17,7 +17,7 @@ public class ChatHub : Hub {
 			if (value is null) {
 				Cache.MemoryCache.Remove($"ChatHub JointGroup of {Context.ConnectionId}");
 			} else {
-				_ = Cache.Set($"ChatHub JointGroup of {Context.ConnectionId}", value, TimeSpan.FromHours(1));
+				Cache.Set($"ChatHub JointGroup of {Context.ConnectionId}", value, TimeSpan.FromHours(1));
 			}
 		}
 	}
@@ -63,7 +63,7 @@ public class ChatHub : Hub {
 			if (JointGroup.MemberCount == 0) {
 				var groups = Cache.MemoryCache.Get<List<Group>>("ChatHub Groups")!;
 				lock (groups) {
-					_ = groups.Remove(JointGroup);
+					groups.Remove(JointGroup);
 				}
 			}
 		}
@@ -103,7 +103,7 @@ public class ChatHub : Hub {
 				if (JointGroup.MemberCount == 0) {
 					var groups = Cache.MemoryCache.Get<List<Group>>("ChatHub Groups")!;
 					lock (groups) {
-						_ = groups.Remove(JointGroup);
+						groups.Remove(JointGroup);
 					}
 				}
 			}

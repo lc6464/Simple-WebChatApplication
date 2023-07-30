@@ -3,6 +3,7 @@ import * as signalRProtocols from "@microsoft/signalr-protocol-msgpack";
 
 import Swal, { SweetAlertIcon } from 'sweetalert2/dist/sweetalert2.min.js';
 import "../css/chat.css";
+import { group } from "console";
 
 /*
 
@@ -16,6 +17,11 @@ SignalR 连接
 
 
 */
+
+
+const chatSection: HTMLElement = document.querySelector("#chat"),
+	groupSection: HTMLElement = document.querySelector("#group");
+
 
 
 async function checkLogin() {
@@ -44,6 +50,13 @@ async function checkLogin() {
 
 
 async function main() {
+	Swal.fire({
+		title: '正在连接',
+		html: '正在连接，请稍候。',
+		didOpen: () => {
+			Swal.showLoading()
+		}
+	});
 	const login = await checkLogin();
 	if (!login.success) {
 		Swal.fire({
@@ -55,6 +68,8 @@ async function main() {
 	} else if (!login.result.success) {
 		Swal.fire('未登录', '您尚未登录！即将进入登录页面。', 'warning').then(() => location.href = 'login.html');
 	} else {
+		console.log('已登录。');
+		groupSection.classList.add('ready');
 		connectSignalR();
 	}
 }
@@ -62,18 +77,20 @@ async function main() {
 
 function connectSignalR() {
 	const messagesDiv: HTMLDivElement = document.querySelector("#messages"),
-		messageInput: HTMLInputElement = document.querySelector("#message"),
-		sendMessageButton: HTMLButtonElement = document.querySelector("#sendMessage"),
-		groupNameInput: HTMLInputElement = document.querySelector("#groupName"),
-		jointGroupNameSpan: HTMLSpanElement = document.querySelector("#jointGroupName"),
-		groupPasswordInput: HTMLInputElement = document.querySelector("#groupPassword"),
-		groupPasswordLabel: HTMLLabelElement = document.querySelector("#groupPasswordLabel"),
-		joinGroupButton: HTMLButtonElement = document.querySelector("#joinGroup"),
-		createGroupButton: HTMLButtonElement = document.querySelector("#createGroup"),
-		leaveGroupButton: HTMLButtonElement = document.querySelector("#leaveGroup");
+		messageInput: HTMLInputElement = document.querySelector("#message-input"),
+		sendMessageButton: HTMLButtonElement = document.querySelector("#send-message"),
+		groupNameInput: HTMLInputElement = document.querySelector("#group-name"),
+		groupPasswordInput: HTMLInputElement = document.querySelector("#group-password"),
+		joinGroupButton: HTMLButtonElement = document.querySelector("#join-group"),
+		createGroupButton: HTMLButtonElement = document.querySelector("#create-group"),
+		leaveGroupButton: HTMLButtonElement = document.querySelector("#leave-group"),
+		jointGroupNameSpan: HTMLSpanElement = document.querySelector("#joint-group-name");
+		
+
 
 	let jointGroupName: string = null,
-		joiningGroupName: string = null;
+		joiningGroupName: string = null,
+		isConnected: boolean = false;
 
 
 	const connection = new signalR.HubConnectionBuilder()
@@ -81,52 +98,29 @@ function connectSignalR() {
 		.withHubProtocol(new signalRProtocols.MessagePackHubProtocol())
 		.build();
 
-	connection.on("messageReceived", (username: string, message: string, time: string) => {
-		const container = document.createElement("div"),
-			userNameDiv = document.createElement("div"),
-			messageDiv = document.createElement("div");
-
-		userNameDiv.className = "messageUserName";
-		messageDiv.className = "messageText";
-
-		userNameDiv.innerText = username;
-		messageDiv.innerText = `${time} ${message}`;
-
-		container.appendChild(userNameDiv);
-		container.appendChild(messageDiv);
-
-		messagesDiv.appendChild(container);
-		messagesDiv.scrollTop = messagesDiv.scrollHeight;
-	});
-
-	connection.on("groupResult", (result: string, icon: SweetAlertIcon, message: string) => {
+	connection.on("group", (result: string, type: string, message: string, echo: string) => {
+		if (result === 'success') {
+			if (type === 'leave') {
+				jointGroupName = null;
+				jointGroupNameSpan.innerText = '';
+				chatSection.classList.remove('ready');
+				groupSection.classList.add('ready');
+				Swal.fire('离开成功', message, 'success');
+				return;
+			}
+			jointGroupName = joiningGroupName;
+			joiningGroupName = null;
+			jointGroupNameSpan.innerText = jointGroupName;
+			groupSection.classList.remove('ready');
+			chatSection.classList.add('ready');
+			Swal.fire('操作成功', message, 'success');
+			return;
+		}
+		/* 过时代码，但是可以作为参考
 		switch (result) {
-			case 'joinSuccess':
-				jointGroupName = joiningGroupName;
-				joiningGroupName = null;
-				jointGroupNameSpan.innerText = jointGroupName;
-				jointGroupNameSpan.style.display = 'inline';
-				joinGroupButton.style.display = 'none';
-				createGroupButton.style.display = 'none';
-				leaveGroupButton.style.display = 'inline';
-				groupNameInput.style.display = 'none';
-				groupPasswordLabel.style.display = 'none';
-				Swal.fire('加入成功', message, icon);
-				break;
 			case 'joinFailed':
 				joiningGroupName = null;
 				Swal.fire('加入失败', message, icon);
-				break;
-			case 'leaveSuccess':
-				jointGroupName = null;
-				jointGroupNameSpan.innerText = '';
-				jointGroupNameSpan.style.display = 'none';
-				joinGroupButton.style.display = 'inline';
-				createGroupButton.style.display = 'inline';
-				leaveGroupButton.style.display = 'none';
-				groupNameInput.style.display = 'inline';
-				groupPasswordLabel.style.display = 'inline';
-				Swal.fire('离开成功', message, icon);
 				break;
 			case 'leaveFailed':
 				Swal.fire('离开失败', message, icon);
@@ -134,17 +128,6 @@ function connectSignalR() {
 			case 'sendFailed':
 				Swal.fire('发送失败', message, icon);
 				break;
-			case 'createSuccess':
-				jointGroupName = joiningGroupName;
-				joiningGroupName = null;
-				jointGroupNameSpan.innerText = jointGroupName;
-				jointGroupNameSpan.style.display = 'inline';
-				joinGroupButton.style.display = 'none';
-				createGroupButton.style.display = 'none';
-				leaveGroupButton.style.display = 'inline';
-				groupNameInput.style.display = 'none';
-				groupPasswordLabel.style.display = 'none';
-				Swal.fire('创建成功', message, icon);
 				break;
 			case 'createFailed':
 				joiningGroupName = null;
@@ -153,9 +136,49 @@ function connectSignalR() {
 			default:
 				Swal.fire(result, message, icon);
 		}
+		*/
 	});
 
-	connection.start().catch((err) => document.write(err));
+
+	connection.on("message", (sender: string, message: string, time: string, echo: string) => {
+		if (echo === '') {
+			const container = document.createElement('div'),
+				userNameSpan = document.createElement('span'),
+				messageTimeSpan = document.createElement('span'),
+				messageDiv = document.createElement('div');
+
+			container.className = 'message'
+
+			userNameDiv.innerText = username;
+			messageDiv.innerText = `${time} ${message}`;
+
+			container.appendChild(userNameDiv);
+			container.appendChild(messageDiv);
+
+			messagesDiv.appendChild(container);
+			//messagesDiv.scrollTop = messagesDiv.scrollHeight;
+		}
+	});
+
+
+
+	connection.start().catch(e => {
+		console.error(e);
+		if (isConnected) {
+			Swal.fire({
+				title: '连接断开',
+				text: '与服务器的连接已断开！请刷新页面重试。详细信息请见控制台。',
+				icon: 'error'
+			});
+		} else {
+			Swal.fire({
+				title: '连接失败',
+				text: '连接到服务器时发生错误！详细信息请见控制台。',
+				icon: 'error',
+				footer: '<a href="contact" title="联系站长">点此联系站长</a>'
+			});
+		}
+	});
 
 	messageInput.addEventListener("keydown", (e: KeyboardEvent) => {
 		if (e.key === "Enter") {
@@ -206,6 +229,6 @@ main();
 <div class="message"><span class="sender">ABCD (aaa1564613)</span><span class="time">2023-7-18 5:55:05</span><div class="message-content"></div></div>
 <div class="message server"><span class="sender">Server</span><span class="time">2023-7-18 5:55:05</span><div class="message-content"></div></div>
 <div class="message self"><span class="sender">测试人员 (Tester)</span><span class="time">2023-7-18 5:55:05</span><div class="message-content"></div></div>
-<div class="message self sending"><span class="sender">测试人员 (Tester)</span><span class="time">2023-7-18 5:55:05</span><div class="message-content"></div></div>
+<div class="message self sending" data-echo="xxx"><span class="sender">测试人员 (Tester)</span><span class="time">2023-7-18 5:55:05</span><div class="message-content"></div></div>
 <div class="message self send-failed"><span class="sender">测试人员 (Tester)</span><span class="time">2023-7-18 5:55:05</span><div class="message-content"></div></div>
 */
