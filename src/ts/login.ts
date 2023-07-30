@@ -1,6 +1,7 @@
 import Swal from 'sweetalert2/dist/sweetalert2.min.js';
 
 import '../css/login.css';
+import './common.js';
 import {fetchData} from "./common";
 
 const form: HTMLFormElement = document.querySelector('form'),
