@@ -1,7 +1,8 @@
+import '../css/login.css';
+
 import Swal from 'sweetalert2/dist/sweetalert2.min.js';
 
-import '../css/login.css';
-import {fetchData} from "./common";
+import { fetchText } from "./common";
 
 const form: HTMLFormElement = document.querySelector('form'),
 	loginButton: HTMLButtonElement = document.querySelector('#login'),
@@ -19,8 +20,17 @@ resetPasswordAnchor.addEventListener('click', e => {
 });
 
 loginButton.addEventListener('click', async () => {
-	const { success, result, message } = await fetchData('api/login', {
+	const { success, result, message } = await fetchText('api/login', {
 		body: new FormData(form),
 		method: 'post'
 	});
+	if (success) {
+		if (result.success) {
+			Swal.fire('登录成功', '即将跳转到主页。', 'success').then(() => location.href = 'index.html');
+		} else {
+			Swal.fire('登录失败', result.message, 'error');
+		}
+	} else {
+		Swal.fire('登录失败', message, 'warning');
+	}
 });

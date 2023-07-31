@@ -67,11 +67,11 @@ var app = builder.Build();
 var usingUnsafeEval = "; script-src 'self' 'unsafe-eval'"; // 用于开发环境
 
 if (!app.Environment.IsDevelopment()) {
-	app.UseExceptionHandler("/Error")
+	_ = app.UseExceptionHandler("/Error")
 		.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
 
 	if (builder.Configuration.GetValue<bool>("Https:Use")) {
-		app.UseHttpsRedirection()
+		_ = app.UseHttpsRedirection()
 			.UseHsts();
 	}
 

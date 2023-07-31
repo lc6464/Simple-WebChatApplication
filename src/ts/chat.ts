@@ -1,10 +1,10 @@
+import "../css/chat.css";
+
 import * as signalR from "@microsoft/signalr";
 import * as signalRProtocols from "@microsoft/signalr-protocol-msgpack";
+import Swal from 'sweetalert2/dist/sweetalert2.min.js';
 
-import Swal, { SweetAlertIcon } from 'sweetalert2/dist/sweetalert2.min.js';
-import "../css/chat.css";
-import {fetchData} from "./common";
-import { group } from "console";
+import { fetchText } from "./common";
 
 /*
 
@@ -24,12 +24,6 @@ const chatSection: HTMLElement = document.querySelector("#chat"),
 	groupSection: HTMLElement = document.querySelector("#group");
 
 
-async function checkLogin() {
-	return fetchData('api/login', {
-		method: 'get'
-	});
-}
-
 async function main() {
 	Swal.fire({
 		title: '正在连接',
@@ -38,7 +32,7 @@ async function main() {
 			Swal.showLoading()
 		}
 	});
-	const login = await checkLogin();
+	const login = await fetchText('api/login');
 	if (!login.success) {
 		Swal.fire({
 			title: '检查登录状态失败',
@@ -66,7 +60,7 @@ function connectSignalR() {
 		createGroupButton: HTMLButtonElement = document.querySelector("#create-group"),
 		leaveGroupButton: HTMLButtonElement = document.querySelector("#leave-group"),
 		jointGroupNameSpan: HTMLSpanElement = document.querySelector("#joint-group-name");
-		
+
 
 
 	let jointGroupName: string = null,
@@ -130,7 +124,7 @@ function connectSignalR() {
 				messageDiv = document.createElement('div');
 
 			container.className = 'message';
-			
+
 			userNameDiv.innerText = 'username';
 			messageDiv.innerText = `${time} ${message}`;
 
