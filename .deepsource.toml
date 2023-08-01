@@ -13,7 +13,7 @@ name = "javascript"
 name = "csharp"
 
 [[transformers]]
-name = "standardjs"
+name = "dotnet-format"
 
 [[transformers]]
-name = "dotnet-format"
+name = "prettier"
