@@ -1,25 +1,25 @@
 export async function fetchText(
 	input: URL | string,
 	initOrAsJson?: RequestInit,
-): Promise<{ success: boolean; result: any; message: string | null }>;
+): Promise<{ success: boolean; result: { success: boolean; code: number; message?: string; data?: unknown; displayName?: string }; message?: string }>;
 export async function fetchText(
 	input: URL | string,
 	initOrAsJson?: boolean,
-): Promise<{ success: boolean; result: any; message: string | null }>;
+): Promise<{ success: boolean; result: { success: boolean; code: number; message?: string; data?: unknown; displayName?: string }; message: string | null }>;
 export async function fetchText(
 	input: URL | string,
 	initOrAsJson?: RequestInit,
 	asJson?: boolean,
-): Promise<{ success: boolean; result: any; message: string | null }>;
+): Promise<{ success: boolean; result: { success: boolean; code: number; message?: string; data?: unknown; displayName?: string }; message: string | null }>;
 export async function fetchText(
 	input: RequestInfo,
 	initOrAsJson?: boolean,
-): Promise<{ success: boolean; result: any; message: string | null }>;
+): Promise<{ success: boolean; result: { success: boolean; code: number; message?: string; data?: unknown; displayName?: string }; message: string | null }>;
 export async function fetchText(
 	input: URL | string | RequestInfo,
 	initOrAsJson?: RequestInit | boolean,
 	asJson?: boolean,
-): Promise<{ success: boolean; result: any; message: string | null }> {
+): Promise<{ success: boolean; result: { success: boolean; code: number; message?: string; data?: unknown; displayName?: string }; message: string | null }> {
 	let message = "";
 	try {
 		let response: Response;
