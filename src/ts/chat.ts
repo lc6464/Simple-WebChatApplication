@@ -52,7 +52,7 @@ const chatSection: HTMLElement = document.querySelector("#chat"),
 let displayName: string = null,
 	jointGroupName: string = null,
 	joiningGroupName: string = null,
-	isConnected: boolean = false;
+	isConnected = false;
 
 async function main() {
 	Swal.fire({
