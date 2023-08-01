@@ -1,7 +1,8 @@
+import '../css/login.css';
+
 import Swal from 'sweetalert2/dist/sweetalert2.min.js';
 
-import '../css/login.css';
-import {fetchData, copy} from './common.js';
+import { fetchText, copyText } from './common';
 
 const form: HTMLFormElement = document.querySelector('form'),
 	registerButton: HTMLButtonElement = document.querySelector('#register');
@@ -17,12 +18,12 @@ document.querySelector('html').addEventListener('click', e => {
 	e.preventDefault();
 });
 document.querySelector('form').addEventListener('click', async () => {
-	const {success, result, message} = await fetchData("api/register", {
+	const {success, result, message} = await fetchText("api/register", {
 		body: new FormData(form),
 		method: 'post'
 	});
-	if (success && result.success && result.data != undefined) {
-		if (await copy(result.data)) {
+	if (success && result.success && result.data !== null) {
+		if (await copyText(result.data)) {
 			Swal.fire({
 				title: '复制成功',
 				text: `已将密钥到剪贴板，请发送给管理员`,

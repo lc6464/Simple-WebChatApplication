@@ -25,14 +25,14 @@ public partial class DataProvider : IDataProvider {
 		Connection = new(ConnectionString);
 		Connection.Open();
 		using var transaction = Connection.BeginTransaction();
-		CmdExeNonQuery(transaction, "Create Table if not exists Users (ID integer primary key autoincrement, Name varchar(32) unique not null, Nick varchar(32), Hash blob not null, Salt blob not null)");
-		CmdExeNonQuery(transaction, "Create Table if not exists AppInfo (ID integer primary key autoincrement, Key varchar(128) unique not null, Value blob, Length integer not null)");
+		_ = CmdExeNonQuery(transaction, "Create Table if not exists Users (ID integer primary key autoincrement, Name varchar(32) unique not null, Nick varchar(32), Hash blob not null, Salt blob not null)");
+		_ = CmdExeNonQuery(transaction, "Create Table if not exists AppInfo (ID integer primary key autoincrement, Key varchar(128) unique not null, Value blob, Length integer not null)");
 		using var reader = CmdExeReader(transaction, "Select Value, Length from AppInfo where Key = 'Version'", out var readerCmd);
 		// 处理版本
 		if (reader.Read()) {
 			var dataLength = reader.GetInt32(1);
 			var data = new byte[dataLength];
-			reader.GetBytes(0, 0, data, 0, dataLength);
+			_ = reader.GetBytes(0, 0, data, 0, dataLength);
 			Version version = new(Encoding.UTF8.GetString(data));
 			var result = AppVersion.CompareTo(version);
 			if (result < 0) {
@@ -48,9 +48,9 @@ public partial class DataProvider : IDataProvider {
 			cmd.Transaction = transaction;
 			cmd.CommandText = "Insert into AppInfo (Key, Value, Length) values ('Version', @Version, @Length)";
 			var data = Encoding.UTF8.GetBytes(AppVersion.ToString());
-			cmd.Parameters.AddWithValue("Version", data);
-			cmd.Parameters.AddWithValue("Length", data.Length);
-			cmd.ExecuteNonQuery();
+			_ = cmd.Parameters.AddWithValue("Version", data);
+			_ = cmd.Parameters.AddWithValue("Length", data.Length);
+			_ = cmd.ExecuteNonQuery();
 			logger.LogInformation("数据库初始化成功！");
 		}
 		readerCmd.Dispose();
@@ -67,7 +67,7 @@ public partial class DataProvider : IDataProvider {
 		using var cmd = Connection.CreateCommand();
 		cmd.Transaction = transaction;
 		cmd.CommandText = "SELECT * FROM Users WHERE Name = '@Name'";
-		cmd.Parameters.AddWithValue("@Name", name);
+		_ = cmd.Parameters.AddWithValue("@Name", name);
 		var reader = cmd.ExecuteReader();
 		transaction.Commit();
 		return reader;

@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 
 namespace SimpleWebChatApplication.Services;
 /// <summary>
@@ -39,9 +38,9 @@ public class CheckingTools : ICheckingTools {
 			return false;
 		}
 		var hash = new byte[64];
-		reader.GetBytes(3, 0, hash, 0, 64);
+		_ = reader.GetBytes(3, 0, hash, 0, 64);
 		var salt = new byte[16];
-		reader.GetBytes(4, 0, salt, 0, 16);
+		_ = reader.GetBytes(4, 0, salt, 0, 16);
 		var sessionHash = Session.Get("Hash");
 		var sessionSalt = Session.Get("Salt");
 		if (sessionHash is null || sessionSalt is null) {

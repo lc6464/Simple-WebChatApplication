@@ -1,6 +1,5 @@
 ﻿using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using Microsoft.Data.Sqlite;
 
 namespace SimpleWebChatApplication.Services;
 /// <summary>
@@ -27,10 +26,10 @@ public partial interface ICheckingTools {
 			return false;
 		}
 		var kind = 0;
-		KindComfirm(SymbleRegex(), ref kind, password); // 特殊字符
-		KindComfirm(UpperLetterRegex(), ref kind, password); // 大写字母
-		KindComfirm(LowerLetterRegex(), ref kind, password); // 小写字母
-		KindComfirm(NumberRegex(), ref kind, password); // 数字
+		KindConfirm(SymbolRegex(), ref kind, password); // 特殊字符
+		KindConfirm(UpperLetterRegex(), ref kind, password); // 大写字母
+		KindConfirm(LowerLetterRegex(), ref kind, password); // 小写字母
+		KindConfirm(NumberRegex(), ref kind, password); // 数字
 		return kind > 2; // 至少三种类型
 	}
 
@@ -69,7 +68,7 @@ public partial interface ICheckingTools {
 
 
 
-	private static void KindComfirm(Regex regex, ref int kind, string password) {
+	private static void KindConfirm(Regex regex, ref int kind, string password) {
 		var matches = regex.Matches(password);
 		if (matches.Count > 1) { // 两个及以上视为有效种类
 			kind++;
@@ -79,7 +78,7 @@ public partial interface ICheckingTools {
 
 
 	[GeneratedRegex(@"[`~!@#$%^&*()_+=\[{\]};:'""<>|./\\?,\-]")]
-	private static partial Regex SymbleRegex();
+	private static partial Regex SymbolRegex();
 
 	[GeneratedRegex(@"[a-z]")]
 	private static partial Regex LowerLetterRegex();

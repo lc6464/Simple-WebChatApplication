@@ -1,10 +1,10 @@
+import "../css/chat.css";
+
 import * as signalR from "@microsoft/signalr";
 import * as signalRProtocols from "@microsoft/signalr-protocol-msgpack";
+import Swal from 'sweetalert2/dist/sweetalert2.min.js';
 
-import Swal, { SweetAlertIcon } from 'sweetalert2/dist/sweetalert2.min.js';
-import "../css/chat.css";
-import {fetchData} from "./common";
-import { group } from "console";
+import { fetchText } from "./common";
 
 /*
 
@@ -24,12 +24,6 @@ const chatSection: HTMLElement = document.querySelector("#chat"),
 	groupSection: HTMLElement = document.querySelector("#group");
 
 
-async function checkLogin() {
-	return fetchData('api/login', {
-		method: 'get'
-	});
-}
-
 async function main() {
 	Swal.fire({
 		title: '正在连接',
@@ -38,7 +32,7 @@ async function main() {
 			Swal.showLoading()
 		}
 	});
-	const login = await checkLogin();
+	const login = await fetchText('api/login');
 	if (!login.success) {
 		Swal.fire({
 			title: '检查登录状态失败',
@@ -58,15 +52,15 @@ async function main() {
 
 function connectSignalR() {
 	const messagesDiv: HTMLDivElement = document.querySelector("#messages"),
-		messageInput: HTMLInputElement = document.querySelector("#message-input"),
-		sendMessageButton: HTMLButtonElement = document.querySelector("#send-message"),
+		messageInput: HTMLInputElement = document.querySelector("#content-input"),
+		sendMessageButton: HTMLButtonElement = document.querySelector("#send-content"),
 		groupNameInput: HTMLInputElement = document.querySelector("#group-name"),
 		groupPasswordInput: HTMLInputElement = document.querySelector("#group-password"),
 		joinGroupButton: HTMLButtonElement = document.querySelector("#join-group"),
 		createGroupButton: HTMLButtonElement = document.querySelector("#create-group"),
 		leaveGroupButton: HTMLButtonElement = document.querySelector("#leave-group"),
 		jointGroupNameSpan: HTMLSpanElement = document.querySelector("#joint-group-name");
-		
+
 
 
 	let jointGroupName: string = null,
@@ -101,45 +95,59 @@ function connectSignalR() {
 		switch (result) {
 			case 'joinFailed':
 				joiningGroupName = null;
-				Swal.fire('加入失败', message, icon);
+				Swal.fire('加入失败', content, icon);
 				break;
 			case 'leaveFailed':
-				Swal.fire('离开失败', message, icon);
+				Swal.fire('离开失败', content, icon);
 				break;
 			case 'sendFailed':
-				Swal.fire('发送失败', message, icon);
+				Swal.fire('发送失败', content, icon);
 				break;
 				break;
 			case 'createFailed':
 				joiningGroupName = null;
-				Swal.fire('创建失败', message, icon);
+				Swal.fire('创建失败', content, icon);
 				break;
 			default:
-				Swal.fire(result, message, icon);
+				Swal.fire(result, content, icon);
 		}
 		*/
 	});
 
+	function messageAddToScreen(sender: string, content: string, time: string) {
+		const container = document.createElement('div'),
+			senderSpan = document.createElement('span'),
+			messageTimeSpan = document.createElement('span'),
+			contentDiv = document.createElement('div');
 
-	connection.on("message", (sender: string, message: string, time: string, echo: string) => {
-		if (echo === '') {
-			const container = document.createElement('div'),
-				userNameSpan = document.createElement('span'),
-				userNameDiv = document.createElement('div'),
-				messageTimeSpan = document.createElement('span'),
-				messageDiv = document.createElement('div');
+		container.className = 'content';
 
-			container.className = 'message';
-			
-			userNameDiv.innerText = 'username';
-			messageDiv.innerText = `${time} ${message}`;
+		senderSpan.className = 'sender';
+		messageTimeSpan.className = 'time';
+		contentDiv.className = 'content-content';
 
-			container.appendChild(userNameDiv);
-			container.appendChild(messageDiv);
+		senderSpan.innerText = sender;
+		messageTimeSpan.innerText = time;
+		contentDiv.innerText = content;
 
-			messagesDiv.appendChild(container);
-			//messagesDiv.scrollTop = messagesDiv.scrollHeight;
-		}
+		container.appendChild(senderSpan);
+		container.appendChild(messageTimeSpan);
+		container.appendChild(contentDiv);
+
+		messagesDiv.appendChild(container);
+
+		//messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+		return container;
+	}
+
+	connection.on("messageOthers", (sender: string, content: string, time: string) => {
+		messageAddToScreen(sender, content, time);
+
+	});
+
+	connection.on("messageServer", (sender: string, content: string, time: string) => {
+		messageAddToScreen(sender, content, time).classList.add('server');
 	});
 
 
