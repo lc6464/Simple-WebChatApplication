@@ -36,7 +36,7 @@ registerButton.addEventListener("click", () => {
 		} else {
 			Swal.fire("注册失败", message, "warning");
 		}
-	})().then(() => {
-		console.log("function register has been executed.");
+	})().catch((e) => {
+		console.log("注册函数发生异常：", e);
 	});
 });

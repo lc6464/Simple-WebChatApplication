@@ -330,6 +330,6 @@ function connectSignalR() {
 		groupSection.classList.add("ready");
 		connectSignalR();
 	}
-})().then(() => {
-	console.log("function main has been executed.");
+})().catch((e) => {
+	console.error("入口点函数发生异常：", e);
 });
