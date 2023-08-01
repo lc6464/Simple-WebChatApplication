@@ -332,4 +332,4 @@ function connectSignalR() {
 		groupSection.classList.add("ready");
 		connectSignalR();
 	}
-})();
+})().then(() => { console.log('function main has been executed.'); });

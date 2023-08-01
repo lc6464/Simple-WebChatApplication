@@ -21,7 +21,7 @@ resetPasswordAnchor.addEventListener("click", (e) => {
 });
 
 loginButton.addEventListener("click", () => {
-	void (async () => {
+	(async () => {
 		const { success, result, message } = await fetchText("api/login", {
 			body: new FormData(form),
 			method: "post",
@@ -39,5 +39,5 @@ loginButton.addEventListener("click", () => {
 		} else {
 			Swal.fire("登录失败", message, "warning");
 		}
-	})();
+	})().then(() => { console.log('function login has been executed.'); });
 });

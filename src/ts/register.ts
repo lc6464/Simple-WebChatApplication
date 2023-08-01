@@ -10,7 +10,7 @@ const form: HTMLFormElement = document.querySelector("form"),
 form.addEventListener('submit', e => e.preventDefault());
 
 registerButton.addEventListener("click", () => {
-	void (async () => {
+	(async () => {
 		const { success, result, message } = await fetchText("api/register", {
 			body: new FormData(form),
 			method: "post",
@@ -22,18 +22,19 @@ registerButton.addEventListener("click", () => {
 				Swal.fire({
 					title: "复制成功",
 					text: "已将密钥到剪贴板，请发送给管理员。",
-					icon: "success",
+					icon: "success"
 				});
 			} else {
 				Swal.fire({
 					title: "复制失败",
 					// @ts-expect-error result is parsed data
-					text: `请手动复制密钥后发送给管理员：\n${result.data}`,
+					text: `${result.data}`,
 					icon: "error",
+					footer: '请手动复制密钥后发送给管理员。'
 				});
 			}
 		} else {
 			Swal.fire("注册失败", message, "warning");
 		}
-	})();
+	})().then(() => { console.log('function register has been executed.'); });
 });
