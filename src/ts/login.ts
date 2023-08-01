@@ -31,9 +31,9 @@ loginButton.addEventListener("click", async () => {
 				() => (location.href = "index.html"),
 			);
 		} else {
-			Swal.fire("登录失败", result.message, "error");
+			void Swal.fire("登录失败", result.message, "error");
 		}
 	} else {
-		Swal.fire("登录失败", message, "warning");
+		void Swal.fire("登录失败", message, "warning");
 	}
 });

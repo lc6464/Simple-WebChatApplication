@@ -1,19 +1,19 @@
 export async function fetchText(
 	input: URL | string,
 	initOrAsJson?: RequestInit,
-);
-export async function fetchText(input: URL | string, initOrAsJson?: boolean);
+): Promise<{ success: boolean, result: any, message: string | null }>;
+export async function fetchText(input: URL | string, initOrAsJson?: boolean): Promise<{ success: boolean, result: any, message: string | null }>;
 export async function fetchText(
 	input: URL | string,
 	initOrAsJson?: RequestInit,
 	asJson?: boolean,
-);
-export async function fetchText(input: RequestInfo, initOrAsJson?: boolean);
+): Promise<{ success: boolean, result: any, message: string | null }>;
+export async function fetchText(input: RequestInfo, initOrAsJson?: boolean): Promise<{ success: boolean, result: any, message: string | null }>;
 export async function fetchText(
 	input: URL | string | RequestInfo,
 	initOrAsJson?: RequestInit | boolean,
 	asJson?: boolean,
-) {
+): Promise<{ success: boolean, result: any, message: string | null }> {
 	let message = "";
 	try {
 		let response: Response;
@@ -61,6 +61,7 @@ export async function copyText(text: string) {
 		await navigator.clipboard.writeText(text); // 尝试使用 Clipboard API，若不存在或复制失败则抛出异常
 		result = true;
 	} catch (err) {
+		// Non-Local HTTP Fallback
 		console.error("尝试使用 navigator.clipboard.writeText 复制失败：", err);
 		const input = document.createElement("input");
 		input.readOnly = true;
@@ -71,7 +72,6 @@ export async function copyText(text: string) {
 		document.body.appendChild(input);
 		input.select();
 		input.setSelectionRange(0, 99999);
-		// @ts-ignore
 		if (document.execCommand !== null && document.execCommand("copy")) {
 			result = true;
 			console.log("使用 document.execCommand 复制成功。");
