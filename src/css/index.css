@@ -1,18 +1,18 @@
 html {
-    margin: 0;
-    padding: 0;
+	margin: 0;
+	padding: 0;
 }
 body {
-    margin: 0;
-    padding: 0;
-    text-align: center;
+	margin: 0;
+	padding: 0;
+	text-align: center;
 }
 
 footer {
-    position: absolute;
-    bottom: 0;
-    height: 40px;
-    width: 100%;
-    text-align: center;
-    line-height: 40px;
+	position: absolute;
+	bottom: 0;
+	height: 40px;
+	width: 100%;
+	text-align: center;
+	line-height: 40px;
 }

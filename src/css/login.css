@@ -1,11 +1,10 @@
-@import '@sweetalert2/theme-dark/dark.css';
+@import "@sweetalert2/theme-dark/dark.css";
 
 body {
 	padding: 0;
 	text-align: center;
 	height: 100vh;
 }
-
 
 main {
 	max-width: 23em;
@@ -15,7 +14,7 @@ main {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	background: rgba(255, 255, 255, .3);
+	background: rgba(255, 255, 255, 0.3);
 	overflow: hidden;
 	border-radius: 3em;
 	padding: 1em 2em;
@@ -41,7 +40,7 @@ form {
 }
 
 label {
-	margin: .5em .2em;
+	margin: 0.5em 0.2em;
 	text-align: right;
 	cursor: pointer;
 }
@@ -52,14 +51,16 @@ input {
 	border-radius: 1em;
 	padding: 0 1em;
 	display: inline-block;
-	transition: all ease-in-out .5s;
-	border: solid rgba(0, 0, 0, 0.8) .1em;
-	background: rgba(0, 0, 0, .4);
+	transition: all ease-in-out 0.5s;
+	border: solid rgba(0, 0, 0, 0.8) 0.1em;
+	background: rgba(0, 0, 0, 0.4);
 	color: white;
 	font-size: 1em;
 }
 
-#login, #more-operation, #register {
+#login,
+#more-operation,
+#register {
 	grid-column-start: 1;
 	grid-column-end: 3;
 }
@@ -68,43 +69,43 @@ input {
 	text-align: right;
 }
 
-#login, #register {
+#login,
+#register {
 	width: 6em;
 	height: 3em;
 	font-size: 1.2em;
 	margin: 1em auto;
 	background: rgba(0, 0, 0, 0.3);
-	border: solid rgba(0, 0, 0, 0.5) .1em;
+	border: solid rgba(0, 0, 0, 0.5) 0.1em;
 }
 
-
-input:focus, input:hover {
+input:focus,
+input:hover {
 	background: rgba(0, 0, 0, 0.3);
 }
 
-
 main a {
 	display: inline-block;
-	margin: 0 .3em;
-	padding: .2em .5em;
-	border-radius: .5em;
-	transition: all ease-in-out .5s;
+	margin: 0 0.3em;
+	padding: 0.2em 0.5em;
+	border-radius: 0.5em;
+	transition: all ease-in-out 0.5s;
 }
 
-	main a:link, main a:visited {
-		color: lightblue;
-		background: rgba(0, 0, 0, .5);
-	}
+main a:link,
+main a:visited {
+	color: lightblue;
+	background: rgba(0, 0, 0, 0.5);
+}
 
-	main a:hover {
-		color: cornflowerblue;
-	}
+main a:hover {
+	color: cornflowerblue;
+}
 
-	main a:active {
-		color: black;
-		background: lightblue;
-	}
-
+main a:active {
+	color: black;
+	background: lightblue;
+}
 
 @media (max-width: 850px) {
 	#register-main {
@@ -119,11 +120,10 @@ main a {
 	}
 }
 
-
 @media (max-width: 500px) {
 	form {
 		grid-template-columns: 1fr;
-		grid-template-rows: .6fr 1fr .6fr 1fr 1.5fr 1fr;
+		grid-template-rows: 0.6fr 1fr 0.6fr 1fr 1.5fr 1fr;
 	}
 
 	#register-main {
@@ -134,7 +134,7 @@ main a {
 	}
 
 	#register-form {
-		grid-template-rows: .6fr 1fr .6fr 1fr .6fr 1fr 1.5fr 1fr;
+		grid-template-rows: 0.6fr 1fr 0.6fr 1fr 0.6fr 1fr 1.5fr 1fr;
 	}
 
 	label {
@@ -150,11 +150,14 @@ main a {
 		box-sizing: border-box;
 	}
 
-	#login, #register {
-		margin: .6em auto 0;
+	#login,
+	#register {
+		margin: 0.6em auto 0;
 	}
 
-	#login, #more-operation, #register {
+	#login,
+	#more-operation,
+	#register {
 		grid-column-start: 1;
 		grid-column-end: 2;
 	}
