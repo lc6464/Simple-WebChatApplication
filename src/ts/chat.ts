@@ -328,4 +328,4 @@ function addEventListeners(connection: signalR.HubConnection) {
 	);
 }
 
-main();
+void main();
