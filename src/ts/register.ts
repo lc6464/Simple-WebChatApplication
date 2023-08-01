@@ -43,16 +43,3 @@ document.querySelector("form").addEventListener("click", async () => {
 		Swal.fire("注册失败", message, "warning");
 	}
 });
-
-/* 
-To @execute233: 
- 
-用户直接注册，然后服务器生成一段文本，复制后丢给管理员，管理员后台审核。 
-实现方法可以参照原 CZCA 曾经的网站的代码。 
-快写吧😊 
- 
-*/
-/*
- * 6.
- * by execute233.
- * */
