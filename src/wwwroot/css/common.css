@@ -5,28 +5,38 @@ html {
 
 body {
 	margin: 0;
-	padding: 0 .5em;
+	padding: 0 0.5em;
 }
 
 header {
 	text-align: center;
 }
 
-img, audio, video, object, iframe, button, embed, input, textarea, svg {
+img,
+audio,
+video,
+object,
+iframe,
+button,
+embed,
+input,
+textarea,
+svg {
 	vertical-align: middle;
 }
 
 button {
 	border-radius: 1em;
-	padding: .2em .6em;
+	padding: 0.2em 0.6em;
 	cursor: pointer;
 	background: rgba(255, 255, 255, 0.3);
-	border: solid rgba(255, 255, 255, 0.6) .1em;
-	transition: all ease-in-out .5s;
+	border: solid rgba(255, 255, 255, 0.6) 0.1em;
+	transition: all ease-in-out 0.5s;
 	color: white;
 }
 
-a:link, a:visited {
+a:link,
+a:visited {
 	color: white;
 }
 
@@ -36,11 +46,13 @@ a:hover {
 
 a:active {
 	color: black;
-	background: #8CF;
+	background: #8cf;
 }
 
 a {
-	transition: background 0.3s linear, color 0.3s linear;
+	transition:
+		background 0.3s linear,
+		color 0.3s linear;
 }
 
 body::before {
@@ -48,8 +60,8 @@ body::before {
 	display: block;
 	height: 2.5em;
 	opacity: 0;
-	padding-bottom: .8em;
-	transition: height ease-in-out .3s;
+	padding-bottom: 0.8em;
+	transition: height ease-in-out 0.3s;
 }
 
 nav {
@@ -60,13 +72,13 @@ nav {
 	width: 100%;
 	z-index: 100000;
 	user-select: none;
-	background: rgba(30, 30, 30, .8);
-	border-radius: 0 0 .7em .7em;
-	border: .05em solid #999;
+	background: rgba(30, 30, 30, 0.8);
+	border-radius: 0 0 0.7em 0.7em;
+	border: 0.05em solid #999;
 	display: grid;
 	grid-template-columns: 1fr 20em;
 	align-items: center;
-	transition: all ease-in-out .3s;
+	transition: all ease-in-out 0.3s;
 }
 
 #navLogoLink {
@@ -83,33 +95,33 @@ nav {
 #navLogoImage {
 	vertical-align: top;
 	height: 2.5em;
-	margin: 0 .6em;
+	margin: 0 0.6em;
 }
 
 #navLinks {
 	justify-self: right;
-	transition: all ease-in-out .3s;
+	transition: all ease-in-out 0.3s;
 }
 
-	#navLinks a {
-		font-size: 1.6em;
-		padding: .1em .4em;
-		text-decoration: underline;
-		border-radius: .4em;
-		transition: all ease-in-out .3s;
-	}
+#navLinks a {
+	font-size: 1.6em;
+	padding: 0.1em 0.4em;
+	text-decoration: underline;
+	border-radius: 0.4em;
+	transition: all ease-in-out 0.3s;
+}
 
 ::-webkit-scrollbar {
-	width: .4em;
-	height: .4em;
+	width: 0.4em;
+	height: 0.4em;
 }
 
 ::-webkit-scrollbar-thumb {
-	background: rgba(255, 255, 255, .5);
-	border-radius: .2em;
+	background: rgba(255, 255, 255, 0.5);
+	border-radius: 0.2em;
 }
 
-@media ( max-width: 580px ) {
+@media (max-width: 580px) {
 	nav {
 		grid-template-columns: 1fr;
 	}
@@ -119,11 +131,11 @@ nav {
 	}
 
 	#navLinks {
-		padding: .2em .1em;
+		padding: 0.2em 0.1em;
 	}
 
-		#navLinks a {
-			font-size: 1.5em;
-			padding: .1em .2em;
-		}
+	#navLinks a {
+		font-size: 1.5em;
+		padding: 0.1em 0.2em;
+	}
 }

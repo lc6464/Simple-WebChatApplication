@@ -1,41 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<meta name="author" content="LC" />
-	<meta name="author" content="execute233" />
-	<meta name="renderer" content="webkit" />
-	<link rel="icon" href="favicon.svg" />
-	<link rel="stylesheet" href="css/common.css" />
-	<title>聊天 | Web 实时聊天</title>
-</head>
-<body>
-	<nav>
-		<div id="navLogo"><a id="navLogoLink" target="_self" href="./"><img id="navLogoImage" src="favicon.svg" alt="Logo" /><span id="navLogoText">Web 实时聊天</span></a></div>
-		<div id="navLinks"><a href="chat.html" target="_self">聊天</a><a href="contact" target="_self">联系站长</a><a href="https://github.com/lc6464/Simple-WebChatApplication">开源地址</a></div>
-	</nav>
-	<header><h1>聊天</h1></header>
-	<main>
-		<section id="chat">
-			<div id="messages"></div>
-			<div>
-				<div id="group-show">当前群组：<span id="joint-group-name"></span><button id="leave-group" type="button">离开</button></div>
-				<div id="message-sender">
-					<input id="message-input" type="text" placeholder="请输入消息" /><button id="send-message" type="button">发送</button>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="author" content="LC" />
+		<meta name="author" content="execute233" />
+		<meta name="renderer" content="webkit" />
+		<link rel="icon" href="favicon.svg" />
+		<link rel="stylesheet" href="css/common.css" />
+		<title>聊天 | Web 实时聊天</title>
+	</head>
+	<body>
+		<nav>
+			<div id="navLogo">
+				<a id="navLogoLink" target="_self" href="./"
+					><img id="navLogoImage" src="favicon.svg" alt="Logo" /><span
+						id="navLogoText"
+						>Web 实时聊天</span
+					></a
+				>
+			</div>
+			<div id="navLinks">
+				<a href="chat.html" target="_self">聊天</a
+				><a href="contact" target="_self">联系站长</a
+				><a href="https://github.com/lc6464/Simple-WebChatApplication"
+					>开源地址</a
+				>
+			</div>
+		</nav>
+		<header><h1>聊天</h1></header>
+		<main>
+			<section id="chat">
+				<div id="messages"></div>
+				<div>
+					<div id="group-show">
+						当前群组：<span id="joint-group-name"></span
+						><button id="leave-group" type="button">离开</button>
+					</div>
+					<div id="message-sender">
+						<input
+							id="message-input"
+							type="text"
+							placeholder="请输入消息"
+						/><button id="send-message" type="button">发送</button>
+					</div>
 				</div>
-			</div>
-		</section>
-		<section id="group">
-			<label for="group-name">群组名：</label>
-			<input id="group-name" name="group-name" type="text" />
-			<label for="group-password">密码：</label>
-			<input id="group-password" name="group-password" type="password" />
-			<div id="buttons">
-				<button id="join-group" type="button">加入</button>
-				<button id="create-group" type="button">创建</button>
-			</div>
-		</section>
-	</main>
-</body>
+			</section>
+			<section id="group">
+				<label for="group-name">群组名：</label>
+				<input id="group-name" name="group-name" type="text" />
+				<label for="group-password">密码：</label>
+				<input
+					id="group-password"
+					name="group-password"
+					type="password"
+				/>
+				<div id="buttons">
+					<button id="join-group" type="button">加入</button>
+					<button id="create-group" type="button">创建</button>
+				</div>
+			</section>
+		</main>
+	</body>
 </html>

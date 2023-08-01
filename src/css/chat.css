@@ -1,4 +1,4 @@
-@import '@sweetalert2/theme-dark/dark.css';
+@import "@sweetalert2/theme-dark/dark.css";
 
 header {
 	display: inline-block;
@@ -10,27 +10,27 @@ header {
 	width: 9em;
 	height: 4.5em;
 	border-radius: 2em;
-	background: rgba(255, 255, 255, .28);
+	background: rgba(255, 255, 255, 0.28);
 	padding: 0;
 	margin: 0;
-	transition: all ease-in-out .3s;
+	transition: all ease-in-out 0.3s;
 	opacity: 0;
 }
 
 h1 {
 	display: inline-block;
 	margin: 0;
-	padding: .35em 0;
+	padding: 0.35em 0;
 	font-size: 2.2em;
 	text-align: center;
-	transition: all ease-in-out .3s;
+	transition: all ease-in-out 0.3s;
 }
 
 #chat {
 	display: none;
 	grid-template-rows: 1fr 6em;
 	height: calc(100vh - 4em);
-	grid-row-gap: .5em;
+	grid-row-gap: 0.5em;
 }
 
 #group {
@@ -40,7 +40,7 @@ h1 {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	background: rgba(255, 255, 255, .3);
+	background: rgba(255, 255, 255, 0.3);
 	overflow: hidden;
 	border-radius: 3em;
 	padding: 1em 2em;
@@ -52,7 +52,7 @@ h1 {
 }
 
 label {
-	margin: .5em .2em;
+	margin: 0.5em 0.2em;
 	text-align: right;
 	cursor: pointer;
 }
@@ -63,9 +63,9 @@ input {
 	border-radius: 1em;
 	padding: 0 1em;
 	display: inline-block;
-	transition: all ease-in-out .5s;
-	border: solid rgba(0, 0, 0, 0.8) .1em;
-	background: rgba(0, 0, 0, .4);
+	transition: all ease-in-out 0.5s;
+	border: solid rgba(0, 0, 0, 0.8) 0.1em;
+	background: rgba(0, 0, 0, 0.4);
 	color: white;
 	font-size: 1em;
 }
@@ -77,23 +77,23 @@ input {
 	grid-template-columns: 1fr 1fr;
 }
 
-	#buttons button {
-		display: inline-block;
-		width: 6em;
-		height: 3em;
-		font-size: 1.2em;
-		margin: 1em auto;
-		background: rgba(0, 0, 0, 0.3);
-		border: solid rgba(0, 0, 0, 0.5) .1em;
-	}
+#buttons button {
+	display: inline-block;
+	width: 6em;
+	height: 3em;
+	font-size: 1.2em;
+	margin: 1em auto;
+	background: rgba(0, 0, 0, 0.3);
+	border: solid rgba(0, 0, 0, 0.5) 0.1em;
+}
 
 #message-sender {
 	display: grid;
 	grid-template-columns: 1fr 4em;
-	grid-column-gap: .5em;
+	grid-column-gap: 0.5em;
 	align-items: center;
 	justify-items: center;
-	margin: .6em;
+	margin: 0.6em;
 }
 
 #send-message {
@@ -108,8 +108,8 @@ input {
 	display: inline-block;
 	height: 100%;
 	width: 95%;
-	background: rgba(255, 255, 255, .2);
-	border: .1em solid rgba(255, 255, 255, .6);
+	background: rgba(255, 255, 255, 0.2);
+	border: 0.1em solid rgba(255, 255, 255, 0.6);
 }
 
 #messages {
@@ -121,50 +121,51 @@ input {
 }
 
 .message {
-	margin: .6em 0;
-	padding: .5em;
-	background: rgba(255, 255, 255, .2);
+	margin: 0.6em 0;
+	padding: 0.5em;
+	background: rgba(255, 255, 255, 0.2);
 	border-radius: 1.1em;
 }
 
-	.message span {
-		color: #DDD;
-	}
+.message span {
+	color: #ddd;
+}
 
 .sender {
-	margin-right: .6em;
+	margin-right: 0.6em;
 }
 
 .server span {
-	color: #F99;
+	color: #f99;
 }
 
-#chat.ready, #group.ready {
+#chat.ready,
+#group.ready {
 	display: grid;
 }
 
 .self span {
-	color: #9CF;
+	color: #9cf;
 }
 
 .sending span:last-of-type::after {
 	content: "发送中";
 	display: inline-block;
-	margin-left: .6em;
-	opacity: .6;
-	font-size: .9em;
+	margin-left: 0.6em;
+	opacity: 0.6;
+	font-size: 0.9em;
 }
 
 .send-failed span:last-of-type::after {
 	content: "发送失败";
 	display: inline-block;
-	margin-left: .6em;
-	color: #F66;
-	font-size: .9em;
+	margin-left: 0.6em;
+	color: #f66;
+	font-size: 0.9em;
 }
 
 .send-failed {
-	background: rgba(255, 0, 0, .2);
+	background: rgba(255, 0, 0, 0.2);
 }
 
 @media (max-width: 850px) {
@@ -174,7 +175,7 @@ input {
 	}
 }
 
-@media ( max-width: 580px ) {
+@media (max-width: 580px) {
 	header {
 		top: 6.5em;
 		width: 6em;
@@ -183,7 +184,7 @@ input {
 	}
 
 	h1 {
-		padding: .5em 0;
+		padding: 0.5em 0;
 		font-size: 1.5em;
 	}
 
@@ -194,20 +195,20 @@ input {
 	#send-message {
 		display: inline-block;
 		height: 3.2em;
-		font-size: .8em;
+		font-size: 0.8em;
 		border-radius: 1.3em;
 	}
 
 	#message-sender {
-		margin-left: .2em;
-		margin-right: .2em;
+		margin-left: 0.2em;
+		margin-right: 0.2em;
 	}
 }
 
 @media (max-width: 500px) {
 	#group {
 		grid-template-columns: 1fr;
-		grid-template-rows: .6fr 1fr .6fr 1fr 2.5fr;
+		grid-template-rows: 0.6fr 1fr 0.6fr 1fr 2.5fr;
 	}
 
 	#buttons {
@@ -232,17 +233,17 @@ input {
 	}
 
 	#buttons button {
-		margin: .4em auto 0;
+		margin: 0.4em auto 0;
 	}
 
 	#message-sender {
 		grid-template-columns: 1fr;
 		grid-column-gap: 0;
 		grid-template-rows: 1.2fr 1fr;
-		grid-row-gap: .2em;
+		grid-row-gap: 0.2em;
 		align-items: center;
 		justify-items: center;
-		margin: .6em .1em;
+		margin: 0.6em 0.1em;
 	}
 
 	#send-message {
@@ -256,7 +257,7 @@ input {
 
 	#chat {
 		grid-template-rows: 1fr 7.2em;
-		grid-row-gap: .2em;
+		grid-row-gap: 0.2em;
 	}
 
 	.sender {
