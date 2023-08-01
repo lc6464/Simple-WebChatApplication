@@ -39,5 +39,7 @@ loginButton.addEventListener("click", () => {
 		} else {
 			Swal.fire("登录失败", message, "warning");
 		}
-	})().then(() => { console.log('function login has been executed.'); });
+	})().then(() => {
+		console.log("function login has been executed.");
+	});
 });

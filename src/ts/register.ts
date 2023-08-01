@@ -22,7 +22,7 @@ registerButton.addEventListener("click", () => {
 				Swal.fire({
 					title: "复制成功",
 					text: "已将密钥到剪贴板，请发送给管理员。",
-					icon: "success"
+					icon: "success",
 				});
 			} else {
 				Swal.fire({
@@ -30,11 +30,13 @@ registerButton.addEventListener("click", () => {
 					// @ts-expect-error result is parsed data
 					text: `${result.data}`,
 					icon: "error",
-					footer: '请手动复制密钥后发送给管理员。'
+					footer: "请手动复制密钥后发送给管理员。",
 				});
 			}
 		} else {
 			Swal.fire("注册失败", message, "warning");
 		}
-	})().then(() => { console.log('function register has been executed.'); });
+	})().then(() => {
+		console.log("function register has been executed.");
+	});
 });
