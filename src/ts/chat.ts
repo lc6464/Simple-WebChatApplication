@@ -5,6 +5,7 @@ import * as signalRProtocols from "@microsoft/signalr-protocol-msgpack";
 import { Swal, SweetAlertIcon } from 'sweetalert2/dist/sweetalert2.min.js';
 
 import { fetchText, formatTime, randomUUID } from "./common";
+import { create } from "domain";
 
 /*
 
@@ -52,7 +53,10 @@ function messageAddToScreen(sender: string, content: string, time: number | Date
 
 const chatSection: HTMLElement = document.querySelector("#chat"),
 	groupSection: HTMLElement = document.querySelector("#group"),
-	messagesDiv: HTMLDivElement = document.querySelector("#messages");
+	messagesDiv: HTMLDivElement = document.querySelector("#messages"),
+	joinGroupButton: HTMLButtonElement = document.querySelector("#join-group"),
+	createGroupButton: HTMLButtonElement = document.querySelector("#create-group"),
+	leaveGroupButton: HTMLButtonElement = document.querySelector("#leave-group");
 
 let displayName: string = null,
 	jointGroupName: string = null,
@@ -95,49 +99,50 @@ function connectSignalR() {
 		.withHubProtocol(new signalRProtocols.MessagePackHubProtocol())
 		.build();
 
-	// 群聊相关 未完成
-	connection.on('group', (result: string, type: string, message: string, echo: string) => {
-		if (result === 'success') {
-			if (type === 'leave') {
-				jointGroupName = null;
-				jointGroupNameSpan.innerText = '';
-				chatSection.classList.remove('ready');
-				groupSection.classList.add('ready');
-				Swal.fire('离开成功', message, 'success');
-				return;
-			}
-			jointGroupName = joiningGroupName;
-			joiningGroupName = null;
-			jointGroupNameSpan.innerText = jointGroupName;
-			groupSection.classList.remove('ready');
-			chatSection.classList.add('ready');
-			Swal.fire('操作成功', message, 'success');
-			return;
-		}
-		/* 过时代码，但是可以作为参考
-		switch (result) {
-			case 'joinFailed':
+	// 群聊相关
+	connection.on('groupEnter', (type: string) => {
+		createGroupButton.disabled = false;
+		joinGroupButton.disabled = false;
+		let title: string = null;
+		switch (type) {
+			case 'cSuccess':
+			case 'jSuccess':
+				jointGroupName = joiningGroupName;
 				joiningGroupName = null;
-				Swal.fire('加入失败', content, icon);
+				jointGroupNameSpan.innerText = jointGroupName;
+				groupSection.classList.remove('ready');
+				chatSection.classList.add('ready');
+				title = type.startsWith('c') ? '创建' : '加入';
+				Swal.fire(`${title}成功`, `您已成功${title}群聊 ${jointGroupName}。`, 'success');
 				break;
-			case 'leaveFailed':
-				Swal.fire('离开失败', content, icon);
-				break;
-			case 'sendFailed':
-				Swal.fire('发送失败', content, icon);
-				break;
-				break;
-			case 'createFailed':
+			case 'pwdError':
 				joiningGroupName = null;
-				Swal.fire('创建失败', content, icon);
+				Swal.fire('密码错误', '您输入的密码错误！', 'error');
+				break;
+			case 'eFailed':
+			case 'nFailed':
+				joiningGroupName = null;
+				title = type.startsWith('e') ? '创建' : '加入';
+				const error = type.startsWith('e') ? '已存在' : '不存在';
+				Swal.fire(`${title}失败`, `群聊 ${joiningGroupName} ${error}！`, 'error');
 				break;
 			default:
-				Swal.fire(result, content, icon);
+				console.warn(`未知的 groupEnter 类型：${type}`);
 		}
-		*/
 	});
 
-
+	connection.on('groupLeave', (type: string, message?: string) => {
+		leaveGroupButton.disabled = false;
+		if (type === 'success') {
+			jointGroupNameSpan.innerText = '';
+			chatSection.classList.remove('ready');
+			groupSection.classList.add('ready');
+			Swal.fire('离开成功', `您已离开群聊 ${jointGroupName}。`, 'success');
+			jointGroupName = null;
+			return;
+		}
+		Swal.fire('离开失败', `离开群聊 ${jointGroupName} 失败！${message}`, 'error');
+	});
 
 	// 接收到其他人的消息
 	connection.on('messageOthers', (sender: string, content: string, time: number) => {
@@ -169,6 +174,7 @@ function connectSignalR() {
 	});
 
 
+	// 断开连接
 	connection.onclose(e => {
 		console.error('与服务器的连接断开：', e);
 		isConnected = false;
@@ -198,24 +204,21 @@ function connectSignalR() {
 		}
 	});
 
-	addEventListener(connection);
+	addEventListeners(connection);
 }
 
 
-function addEventListener(connection: signalR.HubConnection) {
+function addEventListeners(connection: signalR.HubConnection) {
 	const messageInput: HTMLInputElement = document.querySelector("#content-input"),
 		sendMessageButton: HTMLButtonElement = document.querySelector("#send-content"),
 		groupNameInput: HTMLInputElement = document.querySelector("#group-name"),
-		groupPasswordInput: HTMLInputElement = document.querySelector("#group-password"),
-		joinGroupButton: HTMLButtonElement = document.querySelector("#join-group"),
-		createGroupButton: HTMLButtonElement = document.querySelector("#create-group"),
-		leaveGroupButton: HTMLButtonElement = document.querySelector("#leave-group");
+		groupPasswordInput: HTMLInputElement = document.querySelector("#group-password");
 
 
 	// 发消息
 	sendMessageButton.addEventListener('click', () => {
-		const value = messageInput.value.trim();
-		if (value !== '') {
+		const value = messageInput.value;
+		if (value.trim() !== '') {
 			messageInput.value = '';
 			const uuid = `${randomUUID()}-${Date.now()}`,
 				container = messageAddToScreen(displayName, value, new Date());
@@ -240,13 +243,19 @@ function addEventListener(connection: signalR.HubConnection) {
 		}
 	});
 
-	// 加群 似乎未完成
+	// 加群
 	joinGroupButton.addEventListener('click', () => {
-		joiningGroupName = groupNameInput.value;
-		connection.send('joinGroupAsync', joiningGroupName, groupPasswordInput.value).catch((err) => {
-			joiningGroupName = null;
-			Swal.fire('加入失败', err, 'error');
-		});
+		const value = groupNameInput.value;
+		if (value.trim() !== '') {
+			joinGroupButton.disabled = true;
+			createGroupButton.disabled = true;
+			joiningGroupName = value;
+			connection.send('groupEnterAsync', 'join', joiningGroupName, groupPasswordInput.value).catch((err) => {
+				joiningGroupName = null;
+				console.error('加入群聊失败：', err);
+				Swal.fire('加入失败', err, 'error');
+			});
+		}
 	});
 
 	groupPasswordInput.addEventListener('keydown', (e: KeyboardEvent) => {
@@ -255,17 +264,26 @@ function addEventListener(connection: signalR.HubConnection) {
 		}
 	});
 
-	// 建群 似乎未完成
+	// 建群
 	createGroupButton.addEventListener('click', () => {
-		joiningGroupName = groupNameInput.value;
-		connection.send('createGroupAsync', joiningGroupName, groupPasswordInput.value).catch((err) => {
-			joiningGroupName = null;
-			Swal.fire('创建失败', err, 'error');
-		});
+		const value = groupNameInput.value;
+		if (value.trim() !== '') {
+			joinGroupButton.disabled = true;
+			createGroupButton.disabled = true;
+			joiningGroupName = value;
+			connection.send('groupEnterAsync', 'create', joiningGroupName, groupPasswordInput.value).catch((err) => {
+				joiningGroupName = null;
+				console.error('创建群聊失败：', err);
+				Swal.fire('创建失败', err, 'error');
+			});
+		}
 	});
 
-	// 退群 似乎未完成
-	leaveGroupButton.addEventListener('click', () => connection.send('leaveGroupAsync').catch((err) => Swal.fire('离开失败', err, 'error')));
+	// 退群
+	leaveGroupButton.addEventListener('click', () => connection.send('groupLeaveAsync').catch(err => {
+		console.error('离开群聊失败：', err);
+		Swal.fire('离开失败', err, 'error');
+	}));
 }
 
 
