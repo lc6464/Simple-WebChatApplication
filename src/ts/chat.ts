@@ -5,20 +5,6 @@ import * as signalRProtocols from "@microsoft/signalr-protocol-msgpack";
 import { Swal, SweetAlertIcon } from 'sweetalert2/dist/sweetalert2.min.js';
 
 import { fetchText, formatTime, randomUUID } from "./common";
-import { create } from "domain";
-
-/*
-
-REST API 检查是否登录
-SignalR 连接
-加群
-添加两个 .ready
-接收消息
-发送消息，清除 input，立即上屏，接收 echo 更新时间并移除 .sending，视情况添加 .send-failed
-离开群，移除 .ready，清空 .messages
-
-
-*/
 
 
 // 消息上屏
@@ -137,6 +123,7 @@ function connectSignalR() {
 			jointGroupNameSpan.innerText = '';
 			chatSection.classList.remove('ready');
 			groupSection.classList.add('ready');
+			messagesDiv.innerHTML = '';
 			Swal.fire('离开成功', `您已离开群聊 ${jointGroupName}。`, 'success');
 			jointGroupName = null;
 			return;
