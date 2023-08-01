@@ -20,20 +20,24 @@ resetPasswordAnchor.addEventListener("click", (e) => {
 	});
 });
 
-loginButton.addEventListener("click", async () => {
-	const { success, result, message } = await fetchText("api/login", {
-		body: new FormData(form),
-		method: "post",
-	});
-	if (success) {
-		if (result.success) {
-			Swal.fire("登录成功", "即将跳转到主页。", "success").then(
-				() => (location.href = "index.html"),
-			);
+loginButton.addEventListener("click", () => {
+	(async () => {
+		const { success, result, message } = await fetchText("api/login", {
+			body: new FormData(form),
+			method: "post",
+		});
+		if (success) {
+			// @ts-expect-error result is parsed data
+			if (result.success) {
+				Swal.fire("登录成功", "即将跳转到主页。", "success").then(
+					() => (location.href = "index.html"),
+				);
+			} else {
+				// @ts-expect-error result is parsed data
+				Swal.fire("登录失败", result.message, "error");
+			}
 		} else {
-			void Swal.fire("登录失败", result.message, "error");
+			Swal.fire("登录失败", message, "warning");
 		}
-	} else {
-		void Swal.fire("登录失败", message, "warning");
-	}
+	})();
 });

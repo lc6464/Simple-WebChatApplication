@@ -70,12 +70,14 @@ async function main() {
 			icon: "error",
 			footer: '<a href="contact" title="联系站长">点此联系站长</a>',
 		});
+		// @ts-expect-error result is parsed data
 	} else if (!login.result.success) {
 		Swal.fire("未登录", "您尚未登录！即将进入登录页面。", "warning").then(
 			() => (location.href = "login.html"),
 		);
 	} else {
 		console.log("已登录。");
+		// @ts-expect-error result is parsed data
 		displayName = login.result.displayName;
 		groupSection.classList.add("ready");
 		connectSignalR();
@@ -231,7 +233,7 @@ function connectSignalR() {
 
 function addEventListeners(connection: signalR.HubConnection) {
 	const messageInput: HTMLInputElement =
-			document.querySelector("#content-input"),
+		document.querySelector("#content-input"),
 		sendMessageButton: HTMLButtonElement =
 			document.querySelector("#send-content"),
 		groupNameInput: HTMLInputElement =
