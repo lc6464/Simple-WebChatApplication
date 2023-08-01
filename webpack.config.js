@@ -6,35 +6,42 @@ const path = require("path"),
 	fs = require("fs");
 
 const files = fs.readdirSync(path.resolve("./src/"), { withFileTypes: true }),
-	htmlFiles = files.filter((file) => file.isFile() && file.name.endsWith(".html")),
+	htmlFiles = files.filter(
+		(file) => file.isFile() && file.name.endsWith(".html"),
+	),
 	entries = htmlFiles.map((file) => file.name.replace(".html", "")),
 	entry = {},
 	plugins = [];
 
 plugins.push(new CleanWebpackPlugin());
 
-entries.forEach(entryName => {
+entries.forEach((entryName) => {
 	entry[entryName] = `./src/ts/${entryName}.ts`;
-	plugins.push(new HtmlWebpackPlugin({
-		template: `./src/${entryName}.html`,
-		filename: `${entryName}.html`,
-		chunks: [entryName],
-	}));
+	plugins.push(
+		new HtmlWebpackPlugin({
+			template: `./src/${entryName}.html`,
+			filename: `${entryName}.html`,
+			chunks: [entryName],
+		}),
+	);
 });
 
-plugins.push(new MiniCssExtractPlugin({
-	filename: "css/[name].[chunkhash].css",
-}));
+plugins.push(
+	new MiniCssExtractPlugin({
+		filename: "css/[name].[chunkhash].css",
+	}),
+);
 
-plugins.push(new CopyWebpackPlugin({
-	patterns: [
-		{
-			from: "./src/wwwroot",
-			to: "./",
-		},
-	],
-}));
-
+plugins.push(
+	new CopyWebpackPlugin({
+		patterns: [
+			{
+				from: "./src/wwwroot",
+				to: "./",
+			},
+		],
+	}),
+);
 
 module.exports = {
 	entry,
@@ -54,7 +61,8 @@ module.exports = {
 			},
 			{
 				test: /\.css$/,
-				use: [MiniCssExtractPlugin.loader,
+				use: [
+					MiniCssExtractPlugin.loader,
 					{
 						loader: "css-loader",
 						options: {
