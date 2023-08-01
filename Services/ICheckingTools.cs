@@ -13,6 +13,13 @@ public partial interface ICheckingTools {
 	public bool IsLogin();
 
 	/// <summary>
+	/// 检查是否登录。
+	/// </summary>
+	/// <param name="displayName">输出显示的用户名。</param>
+	/// <returns>若已登录，则为 <see langword="true"/>，否则为 <see langword="false"/>。</returns>
+	public bool IsLogin(out string displayName);
+
+	/// <summary>
 	/// 检查密码是否足够复杂。
 	/// </summary>
 	/// <param name="password">密码</param>

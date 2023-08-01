@@ -19,9 +19,9 @@ public class LoginController : ControllerBase {
 
 	[HttpGet]
 	[ResponseCache(CacheProfileName = "NoStore")]
-	public Models.Login Get() => _tools.IsLogin()
-			? new() { Success = true, Code = 0, Message = "已登录" }
-			: new() { Success = false, Code = 3, Message = "未登录" };
+	public Models.Login Get() => _tools.IsLogin(out var displayName)
+			? new() { Success = true, Code = 0, Message = "已登录。", DisplayName = displayName }
+			: new() { Success = false, Code = 3, Message = "未登录。" };
 
 
 	[HttpPost]

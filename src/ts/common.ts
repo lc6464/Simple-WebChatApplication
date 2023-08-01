@@ -39,7 +39,7 @@ export async function fetchText(input: URL | string | RequestInfo, initOrAsJson?
 export async function copyText(text: string) {
 	let result = false;
 	try {
-		await navigator.clipboard.writeText(text); // 尝试使用 Clipboard API
+		await navigator.clipboard.writeText(text); // 尝试使用 Clipboard API，若不存在或复制失败则抛出异常
 		result = true;
 	} catch (err) {
 		console.error('尝试使用 navigator.clipboard.writeText 复制失败：', err);
@@ -62,4 +62,23 @@ export async function copyText(text: string) {
 		document.body.removeChild(input);
 	}
 	return result;
+}
+
+
+
+export function randomUUID() {
+	if (typeof crypto.randomUUID === 'function') {
+		return crypto.randomUUID();
+	}
+	return '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) => {
+		const num = Number(c);
+		return (num ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (num / 4)))).toString(16);
+	});
+}
+
+
+
+export function formatTime(time: Date) {
+	const pL = (n: number) => n.toString().padStart(2, '0');
+	return `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()} ${time.getHours()}:${pL(time.getMinutes())}:${pL(time.getSeconds())}`;
 }

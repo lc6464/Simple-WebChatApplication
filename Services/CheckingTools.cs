@@ -26,7 +26,16 @@ public class CheckingTools : ICheckingTools {
 	/// 检查是否登录。
 	/// </summary>
 	/// <returns>若已登录，则为 <see langword="true"/>，否则为 <see langword="false"/>。</returns>
-	public bool IsLogin() {
+	public bool IsLogin() => IsLogin(out _);
+
+
+	/// <summary>
+	/// 检查是否登录。
+	/// </summary>
+	/// <param name="displayName">输出显示的用户名。</param>
+	/// <returns>若已登录，则为 <see langword="true"/>，否则为 <see langword="false"/>。</returns>
+	public bool IsLogin(out string displayName) {
+		displayName = "";
 		var account = Session.GetString("Name");
 		if (account is null) {
 			Session.Clear();
@@ -51,7 +60,9 @@ public class CheckingTools : ICheckingTools {
 			Session.Clear();
 			return false;
 		}
-		Session.SetString("Nick", reader.GetString(2));
+		var nick = reader.GetString(2);
+		Session.SetString("Nick", nick);
+		displayName = $"{nick} ({account})";
 		return true;
 	}
 }
