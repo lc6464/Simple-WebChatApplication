@@ -233,7 +233,7 @@ function connectSignalR() {
 
 function addEventListeners(connection: signalR.HubConnection) {
 	const messageInput: HTMLInputElement =
-		document.querySelector("#content-input"),
+			document.querySelector("#content-input"),
 		sendMessageButton: HTMLButtonElement =
 			document.querySelector("#send-content"),
 		groupNameInput: HTMLInputElement =
