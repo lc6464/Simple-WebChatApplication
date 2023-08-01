@@ -15,7 +15,7 @@ export async function fetchText(
 	message?: string;
 }>;
 export async function fetchText(
-	input: URL | string,
+	input: URL | string | RequestInfo,
 	initOrAsJson?: boolean,
 ): Promise<{
 	success: boolean;
@@ -34,22 +34,6 @@ export async function fetchText(
 	input: URL | string,
 	initOrAsJson?: RequestInit,
 	asJson?: boolean,
-): Promise<{
-	success: boolean;
-	result:
-		| Response
-		| {
-				success: boolean;
-				code: number;
-				message?: string;
-				data?: string;
-				displayName?: string;
-		  };
-	message: string | null;
-}>;
-export async function fetchText(
-	input: RequestInfo,
-	initOrAsJson?: boolean,
 ): Promise<{
 	success: boolean;
 	result:

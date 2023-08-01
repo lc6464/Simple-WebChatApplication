@@ -1,5 +1,4 @@
-import { fetchText } from "./common";
-
+//import { fetchText } from "./common";
 /*
  * 请注意，这两个方法都可能需要访问外部链接，理论上来说只有正确设置Content-Security-Policy才能用。
  * 当然，这两个方法我也没测试过，也不知道能不能用。
@@ -30,5 +29,4 @@ export async function loadBackgroundImageFromBing() {
 			");background-size: 100% ;background-attachment: fixed";
 	}
 }
-
 */

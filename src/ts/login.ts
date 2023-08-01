@@ -21,7 +21,7 @@ resetPasswordAnchor.addEventListener("click", (e) => {
 });
 
 loginButton.addEventListener("click", () => {
-	(async () => {
+	void (async () => {
 		const { success, result, message } = await fetchText("api/login", {
 			body: new FormData(form),
 			method: "post",
