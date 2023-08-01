@@ -2,7 +2,7 @@ import "../css/chat.css";
 
 import * as signalR from "@microsoft/signalr";
 import * as signalRProtocols from "@microsoft/signalr-protocol-msgpack";
-import Swal from 'sweetalert2/dist/sweetalert2.min.js';
+import { Swal, SweetAlertIcon } from 'sweetalert2/dist/sweetalert2.min.js';
 
 import { fetchText, formatTime, randomUUID } from "./common";
 
@@ -20,10 +20,44 @@ SignalR 连接
 */
 
 
-const chatSection: HTMLElement = document.querySelector("#chat"),
-	groupSection: HTMLElement = document.querySelector("#group");
+// 消息上屏
+function messageAddToScreen(sender: string, content: string, time: number | Date) {
+	const container = document.createElement('div'),
+		senderSpan = document.createElement('span'),
+		messageTimeSpan = document.createElement('span'),
+		contentDiv = document.createElement('div');
 
-let displayName: string = null;
+	container.className = 'content';
+
+	senderSpan.className = 'sender';
+	messageTimeSpan.className = 'time';
+	contentDiv.className = 'content-content';
+
+	senderSpan.innerText = sender;
+	messageTimeSpan.innerText = formatTime(typeof time === 'number' ? new Date(time) : time);
+	contentDiv.innerText = content;
+
+	container.appendChild(senderSpan);
+	container.appendChild(messageTimeSpan);
+	container.appendChild(contentDiv);
+
+	messagesDiv.appendChild(container);
+
+	//messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+	return container;
+}
+
+
+
+const chatSection: HTMLElement = document.querySelector("#chat"),
+	groupSection: HTMLElement = document.querySelector("#group"),
+	messagesDiv: HTMLDivElement = document.querySelector("#messages");
+
+let displayName: string = null,
+	jointGroupName: string = null,
+	joiningGroupName: string = null,
+	isConnected: boolean = false;
 
 
 async function main() {
@@ -54,21 +88,7 @@ async function main() {
 
 
 function connectSignalR() {
-	const messagesDiv: HTMLDivElement = document.querySelector("#messages"),
-		messageInput: HTMLInputElement = document.querySelector("#content-input"),
-		sendMessageButton: HTMLButtonElement = document.querySelector("#send-content"),
-		groupNameInput: HTMLInputElement = document.querySelector("#group-name"),
-		groupPasswordInput: HTMLInputElement = document.querySelector("#group-password"),
-		joinGroupButton: HTMLButtonElement = document.querySelector("#join-group"),
-		createGroupButton: HTMLButtonElement = document.querySelector("#create-group"),
-		leaveGroupButton: HTMLButtonElement = document.querySelector("#leave-group"),
-		jointGroupNameSpan: HTMLSpanElement = document.querySelector("#joint-group-name");
-
-
-	let jointGroupName: string = null,
-		joiningGroupName: string = null,
-		isConnected: boolean = false;
-
+	const jointGroupNameSpan: HTMLSpanElement = document.querySelector("#joint-group-name");
 
 	const connection = new signalR.HubConnectionBuilder()
 		.withUrl("/chathub")
@@ -117,33 +137,7 @@ function connectSignalR() {
 		*/
 	});
 
-	// 消息上屏
-	function messageAddToScreen(sender: string, content: string, time: number | Date) {
-		const container = document.createElement('div'),
-			senderSpan = document.createElement('span'),
-			messageTimeSpan = document.createElement('span'),
-			contentDiv = document.createElement('div');
 
-		container.className = 'content';
-
-		senderSpan.className = 'sender';
-		messageTimeSpan.className = 'time';
-		contentDiv.className = 'content-content';
-
-		senderSpan.innerText = sender;
-		messageTimeSpan.innerText = formatTime(typeof time === 'number' ? new Date(time) : time);
-		contentDiv.innerText = content;
-
-		container.appendChild(senderSpan);
-		container.appendChild(messageTimeSpan);
-		container.appendChild(contentDiv);
-
-		messagesDiv.appendChild(container);
-
-		//messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-		return container;
-	}
 
 	// 接收到其他人的消息
 	connection.on('messageOthers', (sender: string, content: string, time: number) => {
@@ -157,13 +151,21 @@ function connectSignalR() {
 
 	// 接收到自己的消息的回调
 	connection.on('messageSelf', (time: number, echo: string) => {
-		document.querySelectorAll('.sending').forEach(e => {
-			const div = e as HTMLDivElement;
-			if (div.dataset.echo === echo) {
+		document.querySelectorAll<HTMLDivElement>('.sending').forEach(e => {
+			if (e.dataset.echo === echo) {
 				e.classList.remove('sending');
-				(e.querySelector('.time') as HTMLSpanElement).innerText = formatTime(new Date(time));
+				e.querySelector<HTMLSpanElement>('.time').innerText = formatTime(new Date(time));
 			}
 		});
+	});
+
+	// 服务器通知
+	connection.on('notice', (titleOrParams: string | object, message?: string, icon?: SweetAlertIcon) => {
+		if (typeof titleOrParams === 'string') {
+			Swal.fire(titleOrParams, message, icon);
+		} else {
+			Swal.fire(titleOrParams);
+		}
 	});
 
 
@@ -195,6 +197,19 @@ function connectSignalR() {
 			});
 		}
 	});
+
+	addEventListener(connection);
+}
+
+
+function addEventListener(connection: signalR.HubConnection) {
+	const messageInput: HTMLInputElement = document.querySelector("#content-input"),
+		sendMessageButton: HTMLButtonElement = document.querySelector("#send-content"),
+		groupNameInput: HTMLInputElement = document.querySelector("#group-name"),
+		groupPasswordInput: HTMLInputElement = document.querySelector("#group-password"),
+		joinGroupButton: HTMLButtonElement = document.querySelector("#join-group"),
+		createGroupButton: HTMLButtonElement = document.querySelector("#create-group"),
+		leaveGroupButton: HTMLButtonElement = document.querySelector("#leave-group");
 
 
 	// 发消息
