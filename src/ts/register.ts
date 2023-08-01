@@ -7,7 +7,7 @@ import { fetchText, copyText } from "./common";
 const form: HTMLFormElement = document.querySelector("form"),
 	registerButton: HTMLButtonElement = document.querySelector("#register");
 
-form.addEventListener('submit', e => e.preventDefault());
+form.addEventListener("submit", (e) => e.preventDefault());
 
 registerButton.addEventListener("click", () => {
 	void (async () => {

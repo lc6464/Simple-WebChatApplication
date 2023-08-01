@@ -6,7 +6,6 @@ import { Swal, SweetAlertIcon } from "sweetalert2/dist/sweetalert2.min.js";
 
 import { fetchText, formatTime, randomUUID } from "./common";
 
-
 const chatSection: HTMLElement = document.querySelector("#chat"),
 	groupSection: HTMLElement = document.querySelector("#group"),
 	messagesDiv: HTMLDivElement = document.querySelector("#messages"),
@@ -20,7 +19,6 @@ let displayName: string = null,
 	jointGroupName: string = null,
 	joiningGroupName: string = null,
 	isConnected = false;
-
 
 // 消息上屏
 function messageAddToScreen(
@@ -56,10 +54,9 @@ function messageAddToScreen(
 	return container;
 }
 
-
 function addEventListeners(connection: HubConnection) {
 	const messageInput: HTMLInputElement =
-		document.querySelector("#content-input"),
+			document.querySelector("#content-input"),
 		sendMessageButton: HTMLButtonElement =
 			document.querySelector("#send-content"),
 		groupNameInput: HTMLInputElement =
@@ -156,7 +153,6 @@ function addEventListeners(connection: HubConnection) {
 	);
 }
 
-
 function connectSignalR() {
 	const jointGroupNameSpan: HTMLSpanElement =
 		document.querySelector("#joint-group-name");
@@ -170,7 +166,8 @@ function connectSignalR() {
 	connection.on("groupEnter", (type: string) => {
 		createGroupButton.disabled = false;
 		joinGroupButton.disabled = false;
-		let title: string = null, error: string = null;
+		let title: string = null,
+			error: string = null;
 		switch (type) {
 			case "cSuccess":
 			case "jSuccess":
@@ -193,7 +190,9 @@ function connectSignalR() {
 			case "eFailed":
 			case "nFailed":
 				joiningGroupName = null;
-				[title, error] = type.startsWith("e") ? ["创建", "已存在"] : ["加入", "不存在"];
+				[title, error] = type.startsWith("e")
+					? ["创建", "已存在"]
+					: ["加入", "不存在"];
 				Swal.fire(
 					`${title}失败`,
 					`群聊 ${joiningGroupName} ${error}！`,
@@ -302,7 +301,6 @@ function connectSignalR() {
 
 	addEventListeners(connection);
 }
-
 
 (async function () {
 	Swal.fire({
