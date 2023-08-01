@@ -71,7 +71,7 @@ export async function copyText(text: string) {
 		document.body.appendChild(input);
 		input.select();
 		input.setSelectionRange(0, 99999);
-		// @ts-ignore
+		// @ts-expect-error
 		if (document.execCommand !== null && document.execCommand("copy")) {
 			result = true;
 			console.log("使用 document.execCommand 复制成功。");
