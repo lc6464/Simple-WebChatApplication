@@ -59,7 +59,7 @@ builder.Services // 添加 SignalR 服务
 
 builder.Services.AddRazorPages();
 
-builder.Services.AddSevicesInProject();
+builder.Services.AddServicesInProject();
 
 
 var app = builder.Build();
