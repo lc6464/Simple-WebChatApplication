@@ -18,6 +18,7 @@ main {
 	overflow: hidden;
 	border-radius: 3em;
 	padding: 1em 2em;
+	z-index: 999;
 }
 
 form {

@@ -5,7 +5,9 @@ import Swal from "sweetalert2/dist/sweetalert2.min.js";
 import { fetchText, copyText } from "./common";
 
 const form: HTMLFormElement = document.querySelector("form"),
-	registerButton: HTMLButtonElement = document.querySelector("#register");
+	registerButton: HTMLButtonElement = document.querySelector("#register"),
+	dataTextArea: HTMLTextAreaElement = document.querySelector("#data"),
+	dataContainer: HTMLDivElement = document.querySelector("#data-container");
 
 form.addEventListener("submit", (e) => e.preventDefault());
 
@@ -18,25 +20,32 @@ registerButton.addEventListener("click", () => {
 		// @ts-expect-error result is parsed data
 		if (success && result.success && result.data !== null) {
 			// @ts-expect-error result is parsed data
-			if (await copyText(result.data)) {
-				Swal.fire({
-					title: "复制成功",
-					text: "已将密钥到剪贴板，请发送给管理员。",
-					icon: "success",
-				});
-			} else {
-				Swal.fire({
-					title: "复制失败",
-					// @ts-expect-error result is parsed data
-					text: `${result.data}`,
-					icon: "error",
-					footer: "请手动复制密钥后发送给管理员。",
-				});
-			}
+			dataTextArea.value = result.data;
+			dataContainer.classList.add('ready');
 		} else {
 			Swal.fire("注册失败", message, "warning");
 		}
 	})().catch((e) => {
 		console.log("注册函数发生异常：", e);
+	});
+});
+
+document.querySelector("#copy").addEventListener("click", () => {
+	copyText(dataTextArea.value).then(e => {
+		if (e) {
+			Swal.fire({
+				title: "复制成功",
+				text: "已将密钥到剪贴板，请发送给管理员。",
+				icon: "success",
+			});
+		} else {
+			Swal.fire({
+				title: "复制失败",
+				text: "请手动复制密钥后发送给管理员。",
+				icon: "error"
+			});
+		}
+	}).catch((e) => {
+		console.log("复制函数发生异常：", e);
 	});
 });

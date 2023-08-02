@@ -1,0 +1,36 @@
+#data-container {
+	display: none;
+	background: rgba(0, 0, 0, .6);
+	z-index: 1000;
+	position: absolute;
+	width: 100%;
+	padding: .5em 0 5em;
+}
+
+	#data-container.ready {
+		display: block;
+	}
+
+#copy {
+	display: block;
+	margin: 0 auto 1em;
+	width: 6em;
+	height: 2.5em;
+	font-size: 1.2em;
+	text-align: center;
+}
+
+#data {
+	width: 90%;
+	height: 16em;
+	border-radius: 1em;
+	padding: .5em 1em;
+	display: inline-block;
+	transition: all ease-in-out .5s;
+	border: solid rgba(0, 0, 0, .8) .1em;
+	background: rgba(0, 0, 0, .4);
+	color: white;
+	font-size: 1em;
+	font-family: Consolas, 'Microsoft YaHei';
+	resize: none;
+}
