@@ -1,0 +1,29 @@
+name: .NET
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: latest
+    - name: Restore dependencies
+      run: |
+        dotnet restore
+        npm install
+    - name: Build front end (Debug Mode)
+      run: npm run release
+    - name: Build back end (Debug Mode)
+      run: dotnet build --no-restore
