@@ -3,30 +3,35 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Platforms>x64</Platforms>
+		<Platforms>x64;ARM64</Platforms>
 		<Version>0.1.0.0</Version>
 		<Authors>LC</Authors>
 		<Copyright>Copyright © 2023 LC. All rights reserved.</Copyright>
+		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 	</PropertyGroup>
+	<ItemGroup>
+	  <_WebToolingArtifacts Remove="Properties\PublishProfiles\linux-arm64-based.pubxml" />
+	  <_WebToolingArtifacts Remove="Properties\PublishProfiles\win-arm64-based-readytorun.pubxml" />
+	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="LC6464.ASPNET.Http304" Version="1.1.0" />
 		<PackageReference Include="LC6464.ASPNET.AddResponseHeaders" Version="1.3.0" />
-		<PackageReference Include="Microsoft.Data.Sqlite.Core" Version="7.0.9" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.MessagePack" Version="7.0.9" />
+		<PackageReference Include="Microsoft.Data.Sqlite.Core" Version="7.0.9" />
+		<PackageReference Include="SQLitePCLRaw.bundle_e_sqlcipher" Version="2.1.5" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
 		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.1.5">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="SQLitePCLRaw.bundle_e_sqlcipher" Version="2.1.5" />
 	</ItemGroup>
 	<ItemGroup>
-		<Using Include="Microsoft.Extensions.Caching.Memory" />
-		<Using Include="Microsoft.AspNetCore.Mvc" />
 		<Using Include="LC6464.ASPNET.Http304" />
 		<Using Include="LC6464.ASPNET.HttpConnectionInfo" />
-		<Using Include="System.Text" />
+		<Using Include="Microsoft.AspNetCore.Mvc" />
 		<Using Include="Microsoft.AspNetCore.Mvc.RazorPages" />
+		<Using Include="Microsoft.Extensions.Caching.Memory" />
+		<Using Include="System.Text" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Update="src/**" CopyToOutputDirectory="Never" />

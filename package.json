@@ -14,7 +14,7 @@
 	"homepage": "https://github.com/lc6464/Simple-WebChatApplication",
 	"bugs": "https://github.com/lc6464/Simple-WebChatApplication/issues",
 	"author": "LC <lc@lcwebsite.cn> (https://lcwebsite.cn/)",
-	"license": "Apache-2.0",
+	"license": "GPL-3.0-only",
 	"repository": "github:lc6464/Simple-WebChatApplication",
 	"devDependencies": {
 		"clean-webpack-plugin": "4.0.0",
