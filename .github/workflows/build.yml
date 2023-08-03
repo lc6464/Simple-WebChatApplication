@@ -24,6 +24,6 @@ jobs:
         dotnet restore
         npm install
     - name: Build front end (Debug Mode)
-      run: npm run release
+      run: npm run build
     - name: Build back end (Debug Mode)
       run: dotnet build --no-restore
