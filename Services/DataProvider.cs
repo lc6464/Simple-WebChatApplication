@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SimpleWebChatApplication.Services;
 /// <summary>
@@ -13,40 +14,32 @@ public partial class DataProvider : IDataProvider {
 	/// <param name="key">数据键</param>
 	/// <param name="initData">要初始化的数据值</param>
 	/// <param name="existData">已有的数据值</param>
-	/// <returns>若原数据已存在，则 <paramref name="key"/> 无意义，<paramref name="existData"/> 被输出，且返回 true；若元数据不存在，则写入 <paramref name="key"/>，并返回 false。</returns>
+	/// <returns>若原数据已存在，则 <paramref name="initData"/> 无意义，<paramref name="existData"/> 被输出，且返回 true；若元数据不存在，则将 <paramref name="initData"/> 写入 <paramref name="key"/>，并返回 false。</returns>
 	private bool InitAppInfo(SqliteTransaction transaction, string key, ReadOnlySpan<byte> initData, out ReadOnlySpan<byte> existData) {
-		using var cmd = Connection.CreateCommand();
-		cmd.Transaction = transaction;
-		cmd.CommandText = "Select Value, Length from AppInfo where Key = @Key";
-		cmd.Parameters.AddWithValue("@Key", key);
-		using var reader = cmd.ExecuteReader();
+		using var readerCmd = Connection.CreateCommand();
+		readerCmd.Transaction = transaction;
+		readerCmd.CommandText = "Select Value, Length from AppInfo where Key = @Key";
+		readerCmd.Parameters.AddWithValue("@Key", key);
+		using var reader = readerCmd.ExecuteReader();
 		// 处理版本
 		if (reader.Read()) {
 			var dataLength = reader.GetInt32(1);
 			var data = new byte[dataLength];
 			_ = reader.GetBytes(0, 0, data, 0, dataLength);
 			existData = data;
-			Version version = new(Encoding.UTF8.GetString(data));
-			var result = AppVersion.CompareTo(version);
-			if (result < 0) {
-				logger.LogWarning("此应用程序的版本高于数据库中的版本，有可能导致应用程序无法正常运行，请特别留意！");
-			} else if (result > 0) {
-				logger.LogWarning("此应用程序已完成升级，请留意开源项目地址是否有更新数据库相关说明。");
-			} else {
-				logger.LogInformation("数据库已就绪。");
-			}
+			return true;
 		} else {
 			// 写入版本
 			using var cmd = Connection.CreateCommand();
 			cmd.Transaction = transaction;
-			cmd.CommandText = "Insert into AppInfo (Key, Value, Length) values ('Version', @Version, @Length)";
-			var data = Encoding.UTF8.GetBytes(AppVersion.ToString());
-			_ = cmd.Parameters.AddWithValue("Version", data);
-			_ = cmd.Parameters.AddWithValue("Length", data.Length);
+			cmd.CommandText = "Insert into AppInfo (Key, Value, Length) values (@Key, @Value, @Length)";
+			_ = cmd.Parameters.AddWithValue("Key", key);
+			_ = cmd.Parameters.AddWithValue("Value", initData.ToArray());
+			_ = cmd.Parameters.AddWithValue("Length", initData.Length);
 			_ = cmd.ExecuteNonQuery();
-			logger.LogInformation("数据库初始化成功！");
+			existData = initData;
+			return false;
 		}
-		readerCmd.Dispose();
 	}
 
 
@@ -73,7 +66,34 @@ public partial class DataProvider : IDataProvider {
 		using var transaction = Connection.BeginTransaction();
 		_ = CmdExeNonQuery(transaction, "Create Table if not exists Users (ID integer primary key autoincrement, Name varchar(32) unique not null, Nick varchar(32), Hash blob not null, Salt blob not null)");
 		_ = CmdExeNonQuery(transaction, "Create Table if not exists AppInfo (ID integer primary key autoincrement, Key varchar(128) unique not null, Value blob, Length integer not null)");
-		
+		if (InitAppInfo(transaction, "Version", Encoding.UTF8.GetBytes(AppVersion.ToString()), out var existData)) {
+			Version version = new(Encoding.UTF8.GetString(existData));
+			var result = AppVersion.CompareTo(version);
+			if (result < 0) {
+				logger.LogWarning("此应用程序的版本高于数据库中的版本，有可能导致应用程序无法正常运行，请特别留意！");
+			} else if (result > 0) {
+				logger.LogWarning("此应用程序已完成升级，请留意开源项目地址是否有更新数据库相关说明。");
+			} else {
+				logger.LogInformation("数据库已就绪。");
+			}
+		} else {
+			logger.LogInformation("数据库初始化成功！");
+		}
+		/* 这里要初始化一下注册加密密钥
+		if (InitAppInfo(transaction, "RegisterEncryptionKey", "<随机数据>", out existData)) {
+			Version version = new(Encoding.UTF8.GetString(existData));
+			var result = AppVersion.CompareTo(version);
+			if (result < 0) {
+				logger.LogWarning("此应用程序的版本高于数据库中的版本，有可能导致应用程序无法正常运行，请特别留意！");
+			} else if (result > 0) {
+				logger.LogWarning("此应用程序已完成升级，请留意开源项目地址是否有更新数据库相关说明。");
+			} else {
+				logger.LogInformation("数据库已就绪。");
+			}
+		} else {
+			logger.LogInformation("数据库初始化成功！");
+		}
+		*/
 		transaction.Commit();
 	}
 
