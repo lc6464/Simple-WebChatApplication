@@ -2,7 +2,7 @@
 /// <summary>
 /// 为 <see cref="IServiceCollection">builder.Services</see> 添加扩展方法。
 /// </summary>
-public static class ServiceCollectionExtensions {
+public static class IServiceCollectionExtensions {
 	/// <summary>
 	/// 为 <paramref name="services"/> 添加 <see cref="IDataProvider"/> 的扩展方法。
 	/// </summary>
