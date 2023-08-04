@@ -7,6 +7,13 @@ namespace SimpleWebChatApplication.Services;
 /// </summary>
 public partial interface ICheckingTools {
 	/// <summary>
+	/// 检查用户名是否可用。
+	/// </summary>
+	/// <param name="name">用户名</param>
+	/// <returns>若被使用或长度不合适，则为 <see langword="false"/>，若可用则为 <see langword="true"/>。</returns>
+	public bool IsNameAvailable(string name);
+
+	/// <summary>
 	/// 检查是否登录。
 	/// </summary>
 	/// <returns>若已登录，则为 <see langword="true"/>，否则为 <see langword="false"/>。</returns>
@@ -73,15 +80,12 @@ public partial interface ICheckingTools {
 	public static bool VerifyPassword(string password, ReadOnlySpan<byte> hash, ReadOnlySpan<byte> salt) => hash.SequenceEqual(HashPassword(password, salt));
 
 
-
-
 	private static void KindConfirm(Regex regex, ref int kind, string password) {
 		var matches = regex.Matches(password);
 		if (matches.Count > 1) { // 两个及以上视为有效种类
 			kind++;
 		}
 	}
-
 
 
 	[GeneratedRegex(@"[`~!@#$%^&*()_+=\[{\]};:'""<>|./\\?,\-]")]

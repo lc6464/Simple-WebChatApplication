@@ -1,10 +1,11 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Text.RegularExpressions;
+using Microsoft.Data.Sqlite;
 
 namespace SimpleWebChatApplication.Services;
 /// <summary>
 /// 获取数据库的类。
 /// </summary>
-public class CheckingTools : ICheckingTools {
+public partial class CheckingTools : ICheckingTools {
 	private readonly HttpContext HttpContext;
 	private ISession Session => HttpContext.Session;
 	private readonly IDataProvider _provider;
@@ -20,6 +21,13 @@ public class CheckingTools : ICheckingTools {
 		_provider = provider;
 	}
 
+
+	/// <summary>
+	/// 检查用户名是否可用。
+	/// </summary>
+	/// <param name="name">用户名</param>
+	/// <returns>若可用则为 <see langword="false"/>，否则为 <see langword="true"/>。</returns>
+	public bool IsNameAvailable(string name) => !(name.Length is < 4 or > 32 || !NameRegex().IsMatch(name) || GetUserReader(name).HasRows);
 
 
 	/// <summary>
@@ -65,4 +73,9 @@ public class CheckingTools : ICheckingTools {
 		displayName = $"{nick} ({account})";
 		return true;
 	}
+
+
+
+	[GeneratedRegex(@"^[A-Za-z][A-Za-z\d\-_]+$")]
+	private static partial Regex NameRegex();
 }
