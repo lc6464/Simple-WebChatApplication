@@ -162,7 +162,7 @@ function connectSignalR() {
 		.withHubProtocol(new MessagePackHubProtocol())
 		.build();
 
-	// 群聊相关
+	// 通知进入群聊状态相关
 	connection.on("groupEnter", (type: string) => {
 		createGroupButton.disabled = false;
 		joinGroupButton.disabled = false;
@@ -203,7 +203,7 @@ function connectSignalR() {
 				console.warn(`未知的 groupEnter 类型：${type}`);
 		}
 	});
-
+    //通知群组退出状态
 	connection.on("groupLeave", (type: string, message?: string) => {
 		leaveGroupButton.disabled = false;
 		if (type === "success") {
