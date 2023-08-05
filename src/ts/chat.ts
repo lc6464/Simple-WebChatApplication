@@ -163,7 +163,7 @@ function connectSignalR() {
 		.build();
 
 	// 通知进入群聊状态相关
-	connection.on("groupEnter", (type: string) => {
+	connection.on("groupEnter", (type: string, message?: string) => {
 		createGroupButton.disabled = false;
 		joinGroupButton.disabled = false;
 		let title: string = null,
@@ -185,7 +185,7 @@ function connectSignalR() {
 				break;
 			case "pwdError":
 				joiningGroupName = null;
-				Swal.fire("密码错误", "您输入的密码错误！", "error");
+				Swal.fire("加入失败", "您输入的密码错误！", "error");
 				break;
 			case "eFailed":
 			case "nFailed":
@@ -199,11 +199,19 @@ function connectSignalR() {
 					"error",
 				);
 				break;
+			case "failed":
+				joiningGroupName = null;
+				Swal.fire(
+					"加入失败",
+					message,
+					"error"
+				);
+				break;
 			default:
 				console.warn(`未知的 groupEnter 类型：${type}`);
 		}
 	});
-    //通知群组退出状态
+	//通知群组退出状态
 	connection.on("groupLeave", (type: string, message?: string) => {
 		leaveGroupButton.disabled = false;
 		if (type === "success") {

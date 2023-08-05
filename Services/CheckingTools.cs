@@ -15,8 +15,8 @@ public partial class CheckingTools : ICheckingTools {
 	/// <summary>
 	/// 默认构造函数。
 	/// </summary>
-	/// <param name="accessor">HttpContextAccessor</param>
-	/// <param name="provider">IDataProvider</param>
+	/// <param name="accessor">注入的 <see cref="IHttpContextAccessor"/></param>
+	/// <param name="provider">注入的 <see cref="IDataProvider"/></param>
 	public CheckingTools(IHttpContextAccessor accessor, IDataProvider provider) {
 		HttpContext = accessor.HttpContext!;
 		_provider = provider;

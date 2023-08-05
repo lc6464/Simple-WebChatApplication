@@ -5,11 +5,22 @@ namespace SimpleWebChatApplication.Hubs;
 public class ChatHub : Hub {
 	private readonly ICheckingTools _tools;
 	private HttpContext? _httpContext;
+
+	/// <summary>
+	/// 显示的用户名称
+	/// </summary>
 	private string DisplayName => $"{_httpContext?.Session.GetString("Nick")} ({_httpContext?.Session.GetString("Name")})";
+
+	/// <summary>
+	/// 当前时间戳
+	/// </summary>
+	private static long Timestamp => new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
 
 	public ChatHub(ICheckingTools checkingTools) => _tools = checkingTools;
 
-
+	/// <summary>
+	/// 获取或设置当前加入的群组。
+	/// </summary>
 	private Group? JointGroup {
 		get => Cache.MemoryCache.Get<Group>($"ChatHub JointGroup of {Context.ConnectionId}");
 		set {
@@ -20,29 +31,35 @@ public class ChatHub : Hub {
 			}
 		}
 	}
-	
-	//发送信息
-	public async Task MessageAsync(string? message, string uuid) {
+
+
+	// 发送信息
+	public async Task MessageAsync(string? message, string? echo) {
 		if (JointGroup is null) {
-			await Clients.Caller.SendAsync("notice", "string", "您尚未加入任何群组", "error");
-		} else {
-			await Clients.Group(JointGroup.Name).SendAsync("messageServer", DisplayName, message, DateTime.Now.ToString("yyyy-M-d H:mm:ss"));
-			await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageOthers", DisplayName, message, DateTime.Now.ToString("yyyy-M-d H:mm:ss"));
-			await Clients.Caller.SendAsync("messageSelf", DateTime.Now.ToString("yyyy-M-d H:mm:ss"), message);
+			await Clients.Caller.SendAsync("notice", "发送失败", "您尚未加入任何群组！", "error");
+		} else if (!string.IsNullOrEmpty(message)) {
+			await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageOthers", DisplayName, message, Timestamp);
+			await Clients.Caller.SendAsync("messageSelf", Timestamp, echo);
 		}
-	}		
-	// 加入/创建群组
-	public async Task GroupEnterAsync(string type, string name, string password) {
-		if ("create".Equals(type)) {
-			//建群
+	}
+
+	// 加入或创建群组
+	public async Task GroupEnterAsync(string? type, string? name, string? password) {
+		if (string.IsNullOrWhiteSpace(name?.Trim()) || password is null) {
+			// 参数错误
+			await Clients.Caller.SendAsync("groupEnter", "failed", "参数错误！");
+			return;
+		}
+		name = name.Trim();
+		if (type == "create") {
 			if (Cache.MemoryCache.TryGetValue<List<Group>>("ChatHub Groups", out var groups) && groups!.Exists(group => group.Name == name)) {
-				//群已存在
+				// 群已存在
 				await Clients.Caller.SendAsync("groupEnter", "eFailed");
 				return;
 			}
 			var group = new Group(name, password) { MemberCount = 1 };
 			if (groups is null) {
-				_ = Cache.Set("ChatHub Groups", new List<Group> { group }, TimeSpan.FromHours(2));
+				_ = Cache.Set("ChatHub Groups", new List<Group> { group }, TimeSpan.FromHours(12));
 			} else {
 				lock (groups) {
 					groups.Add(group);
@@ -50,18 +67,16 @@ public class ChatHub : Hub {
 			}
 			JointGroup = group;
 			await Groups.AddToGroupAsync(Context.ConnectionId, name);
-			//群组创建成功
-			await Clients.Caller.SendAsync("groupEnter", "jSuccess");
-		} else if ("join".Equals(type)) {
-			//入群
+			await Clients.Caller.SendAsync("groupEnter", "cSuccess");
+		} else if (type == "join") {
 			if (!Cache.MemoryCache.TryGetValue<List<Group>>("ChatHub Groups", out var groups) || !groups!.Exists(group => group.Name == name)) {
-				//群不存在
+				// 群不存在
 				await Clients.Caller.SendAsync("groupEnter", "nFailed");
 				return;
 			}
 			var group = groups!.First(group => group.Name == name);
 			if (!group.VerifyPassword(password)) {
-				//密码错误
+				// 密码错误
 				await Clients.Caller.SendAsync("groupEnter", "pwdError");
 				return;
 			}
@@ -70,44 +85,46 @@ public class ChatHub : Hub {
 				group.MemberCount++;
 			}
 			await Groups.AddToGroupAsync(Context.ConnectionId, name);
-			//入群成功
-			await Clients.Caller.SendAsync("groupEnter", "cSuccess");
-			await Clients.OthersInGroup(name).SendAsync("messageServer", "Server", $"{DisplayName} 已加入群组！", DateTime.Now.ToString("yyyy-M-d H:mm:ss"));
+			await Clients.Caller.SendAsync("groupEnter", "jSuccess");
+			await Clients.OthersInGroup(name).SendAsync("messageServer", "Server", $"{DisplayName} 已加入群组。", Timestamp);
 		} else {
-			//type非指定的参数(create|join)
-			await Clients.Caller.SendAsync("notice", "string", $"未知参数{type}", "error");
+			await Clients.Caller.SendAsync("groupEnter", "failed", $"加入群聊的方式 {type} 未定义！");
 		}
 	}
-	
-	//离开群组
+
+	// 离开群组
 	public async Task GroupLeaveAsync() {
 		if (JointGroup is null) {
-			await Clients.Caller.SendAsync("notice", "string", "您尚未加入任何群组", "error");
+			await Clients.Caller.SendAsync("groupLeave", "failed", "您尚未加入任何群组！");
 			return;
 		}
 
 		lock (JointGroup) {
-			JointGroup.MemberCount--;
-			if (JointGroup.MemberCount == 0) {
-				var groups = Cache.MemoryCache.Get<List<Group>>("ChatHub Groups")!;
+			if (--JointGroup.MemberCount == 0) {
+				var groups = Cache.MemoryCache.Get<List<Group>>("ChatHub Groups");
+				if (groups is null) {
+					Clients.Caller.SendAsync("groupLeave", "failed", "服务端群组数据可能已被清除，请尝试重新进入聊天。");
+					return;
+				}
 				lock (groups) {
 					_ = groups.Remove(JointGroup);
 				}
 			}
 		}
 
-		await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageServer", "Server", $"{DisplayName} 已离开群组。", DateTime.Now.ToString("yyyy-M-d H:mm:ss"));
-		await Groups.RemoveFromGroupAsync(Context.ConnectionId, JointGroup.Name);
-		await Clients.Caller.SendAsync("notice",  "string", "你已经成功离开群组！", "success");
-
+		var groupName = JointGroup.Name;
+		await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
 		JointGroup = null;
+
+		await Clients.Caller.SendAsync("groupLeave", "success");
+		await Clients.Group(groupName).SendAsync("messageServer", "Server", $"{DisplayName} 已离开群组。", Timestamp);
 	}
+
 
 	public override async Task OnDisconnectedAsync(Exception? exception) {
 		if (JointGroup is not null) {
 			lock (JointGroup) {
-				JointGroup.MemberCount--;
-				if (JointGroup.MemberCount == 0) {
+				if (--JointGroup.MemberCount == 0) {
 					var groups = Cache.MemoryCache.Get<List<Group>>("ChatHub Groups")!;
 					lock (groups) {
 						_ = groups.Remove(JointGroup);
@@ -115,12 +132,10 @@ public class ChatHub : Hub {
 				}
 			}
 
-			await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageServer", "Server", $"{DisplayName} 已离开群组。", DateTime.Now.ToString("yyyy-M-d H:mm:ss"));
+			await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageServer", "Server", $"{DisplayName} 已离开群组。", Timestamp);
 			await Groups.RemoveFromGroupAsync(Context.ConnectionId, JointGroup.Name);
 			JointGroup = null;
 		}
-
-
 		await base.OnDisconnectedAsync(exception);
 	}
 
@@ -137,7 +152,7 @@ public class ChatHub : Hub {
 			Context.Abort();
 			return;
 		}
-		await Clients.Caller.SendAsync("groupResult", "Welcome",  "连接成功！", "success");
+		await Clients.Caller.SendAsync("notice", "Welcome", "连接成功！", "success");
 		await base.OnConnectedAsync();
 	}
 }

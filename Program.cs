@@ -62,7 +62,7 @@ builder.Services.AddRazorPages();
 builder.Services
 	.AddDistributedMemoryCache()
 	.AddSession(options => { // 添加 Session 服务
-		options.IdleTimeout = TimeSpan.FromMinutes(30);
+		options.IdleTimeout = TimeSpan.FromHours(1);
 		options.Cookie.IsEssential = true;
 		options.Cookie.Name = "Session";
 	}).AddServicesInProject(); // 添加自定义服务
