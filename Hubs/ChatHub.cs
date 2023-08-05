@@ -22,12 +22,13 @@ public class ChatHub : Hub {
 	}
 	
 	//发送信息
-	public async Task MessageAsync(string? echo) {
+	public async Task MessageAsync(string? message, string uuid) {
 		if (JointGroup is null) {
 			await Clients.Caller.SendAsync("notice", "string", "您尚未加入任何群组", "error");
 		} else {
-			await Clients.Group(JointGroup.Name).SendAsync("messageServer", DisplayName, echo, DateTime.Now.ToString("yyyy-M-d H:mm:ss"));
-			await Clients.Caller.SendAsync("messageSelf", DateTime.Now.ToString("yyyy-M-d H:mm:ss"), echo);
+			await Clients.Group(JointGroup.Name).SendAsync("messageServer", DisplayName, message, DateTime.Now.ToString("yyyy-M-d H:mm:ss"));
+			await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageOthers", DisplayName, message, DateTime.Now.ToString("yyyy-M-d H:mm:ss"));
+			await Clients.Caller.SendAsync("messageSelf", DateTime.Now.ToString("yyyy-M-d H:mm:ss"), message);
 		}
 	}		
 	// 加入/创建群组
