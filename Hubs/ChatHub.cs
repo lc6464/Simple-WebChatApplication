@@ -38,6 +38,10 @@ public class ChatHub : Hub {
 		if (JointGroup is null) {
 			await Clients.Caller.SendAsync("notice", "发送失败", "您尚未加入任何群组！", "error");
 		} else if (!string.IsNullOrEmpty(message)) {
+			if (message.Length > 100_000) { // 字数限制：0.1M
+				await Clients.Caller.SendAsync("notice", "发送失败", "您发送的消息超过了长度限制！", "error");
+				return;
+			}
 			await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageOthers", DisplayName, message, Timestamp);
 			await Clients.Caller.SendAsync("messageSelf", Timestamp, echo);
 		}
