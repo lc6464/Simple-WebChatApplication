@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace SimpleWebChatApplication.Services;
 /// <summary>
-/// 一些常用的检查工具。
+/// 检查工具接口。
 /// </summary>
 public partial interface ICheckingTools {
 	/// <summary>
@@ -25,6 +25,7 @@ public partial interface ICheckingTools {
 	/// <param name="displayName">输出显示的用户名。</param>
 	/// <returns>若已登录，则为 <see langword="true"/>，否则为 <see langword="false"/>。</returns>
 	public bool IsLogin(out string displayName);
+
 
 	/// <summary>
 	/// 检查密码是否足够复杂。
@@ -48,14 +49,30 @@ public partial interface ICheckingTools {
 	}
 
 	/// <summary>
+	/// 生成随机数据。
+	/// </summary>
+	/// <param name="length">数据长度</param>
+	/// <returns>生成的随机数据</returns>
+	public static ReadOnlySpan<byte> GenerateRandomData(int length) {
+		Span<byte> data = new byte[length];
+		RandomNumberGenerator.Fill(data);
+		return data;
+	}
+
+	/// <summary>
+	/// 生成随机的16字节盐值。
+	/// </summary>
+	/// <returns>随机的16字节盐。</returns>
+	public static ReadOnlySpan<byte> GenerateSalt() => GenerateRandomData(16);
+
+	/// <summary>
 	/// 计算给定密码的哈希值，盐随机生成。
 	/// </summary>
 	/// <param name="password">密码</param>
 	/// <param name="salt">生成的盐值</param>
 	/// <returns>密码的哈希</returns>
-	public static ReadOnlySpan<byte> HashPassword(string password, out Span<byte> salt) {
-		salt = new Span<byte>(new byte[16]);
-		RandomNumberGenerator.Fill(salt);
+	public static ReadOnlySpan<byte> HashPassword(string password, out ReadOnlySpan<byte> salt) {
+		salt = GenerateSalt();
 		return HashPassword(password, salt);
 	}
 
@@ -66,6 +83,9 @@ public partial interface ICheckingTools {
 	/// <param name="salt">盐值</param>
 	/// <returns>密码的哈希</returns>
 	public static ReadOnlySpan<byte> HashPassword(string password, ReadOnlySpan<byte> salt) {
+		if (salt.Length != 16) {
+			throw new ArgumentException("The length of salt must be 16 in this project.", nameof(salt));
+		}
 		using HMACSHA512 sha512 = new(salt.ToArray());
 		return sha512.ComputeHash(Encoding.UTF8.GetBytes(password));
 	}
@@ -78,7 +98,6 @@ public partial interface ICheckingTools {
 	/// <param name="salt">对应的盐值</param>
 	/// <returns>若正确，则为 <see langword="true"/>，否则为 <see langword="false"/>。</returns>
 	public static bool VerifyPassword(string password, ReadOnlySpan<byte> hash, ReadOnlySpan<byte> salt) => hash.SequenceEqual(HashPassword(password, salt));
-
 
 	private static void KindConfirm(Regex regex, ref int kind, string password) {
 		var matches = regex.Matches(password);

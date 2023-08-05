@@ -17,11 +17,17 @@ registerButton.addEventListener("click", () => {
 			body: new FormData(form),
 			method: "post",
 		});
-		// @ts-expect-error result is parsed data
-		if (success && result.success && result.data !== null) {
+		
+		if (success) {
 			// @ts-expect-error result is parsed data
-			dataTextArea.value = result.data;
-			dataContainer.classList.add("ready");
+			const { success, data, message } = result;
+			if (success) {
+				dataTextArea.value = data;
+				dataContainer.classList.add("ready");
+				Swal.fire("注册成功", message, "success");
+			} else {
+				Swal.fire("注册失败", message, "error");
+			}
 		} else {
 			Swal.fire("注册失败", message, "warning");
 		}

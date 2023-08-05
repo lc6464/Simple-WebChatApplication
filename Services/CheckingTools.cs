@@ -3,7 +3,7 @@ using Microsoft.Data.Sqlite;
 
 namespace SimpleWebChatApplication.Services;
 /// <summary>
-/// 获取数据库的类。
+/// 检查工具类。
 /// </summary>
 public partial class CheckingTools : ICheckingTools {
 	private readonly HttpContext HttpContext;

@@ -59,7 +59,13 @@ builder.Services // 添加 SignalR 服务
 
 builder.Services.AddRazorPages();
 
-builder.Services.AddServicesInProject();
+builder.Services
+	.AddDistributedMemoryCache()
+	.AddSession(options => { // 添加 Session 服务
+		options.IdleTimeout = TimeSpan.FromMinutes(30);
+		options.Cookie.IsEssential = true;
+		options.Cookie.Name = "Session";
+	}).AddServicesInProject(); // 添加自定义服务
 
 
 var app = builder.Build();
@@ -95,6 +101,9 @@ app.UseResponseCompression()
 	.UseStaticFiles(new StaticFileOptions {
 		OnPrepareResponse = context => context.Context.Response.Headers.CacheControl = app.Environment.IsDevelopment() ? "no-cache" : "public,max-age=1209600" // 14天
 	});
+
+
+app.UseSession();
 
 
 app.MapRazorPages();

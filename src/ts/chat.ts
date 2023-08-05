@@ -2,7 +2,7 @@ import "../css/chat.css";
 
 import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { MessagePackHubProtocol } from "@microsoft/signalr-protocol-msgpack";
-import { Swal, SweetAlertIcon } from "sweetalert2/dist/sweetalert2.min.js";
+import Swal, { SweetAlertIcon } from "sweetalert2/dist/sweetalert2.min.js";
 
 import { fetchText, formatTime, randomUUID } from "./common";
 
@@ -56,7 +56,7 @@ function messageAddToScreen(
 
 function addEventListeners(connection: HubConnection) {
 	const messageInput: HTMLInputElement =
-			document.querySelector("#content-input"),
+		document.querySelector("#content-input"),
 		sendMessageButton: HTMLButtonElement =
 			document.querySelector("#send-content"),
 		groupNameInput: HTMLInputElement =

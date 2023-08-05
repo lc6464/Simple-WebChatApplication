@@ -1,12 +1,12 @@
 ﻿using Microsoft.Data.Sqlite;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using SimpleWebChatApplication.Controllers.Models;
 
 namespace SimpleWebChatApplication.Services;
 /// <summary>
-/// 获取数据库的类。
+/// 数据提供类。
 /// </summary>
 public partial class DataProvider : IDataProvider {
-	private readonly ILogger<DataProvider> _logger;
+	//private readonly ILogger<DataProvider> _logger;
 
 	/// <summary>
 	/// 初始化应用程序信息。
@@ -21,7 +21,7 @@ public partial class DataProvider : IDataProvider {
 		readerCmd.CommandText = "Select Value, Length from AppInfo where Key = @Key";
 		readerCmd.Parameters.AddWithValue("@Key", key);
 		using var reader = readerCmd.ExecuteReader();
-		// 处理版本
+		// 处理已有数据
 		if (reader.Read()) {
 			var dataLength = reader.GetInt32(1);
 			var data = new byte[dataLength];
@@ -29,7 +29,7 @@ public partial class DataProvider : IDataProvider {
 			existData = data;
 			return true;
 		} else {
-			// 写入版本
+			// 写入数据
 			using var cmd = Connection.CreateCommand();
 			cmd.Transaction = transaction;
 			cmd.CommandText = "Insert into AppInfo (Key, Value, Length) values (@Key, @Value, @Length)";
@@ -47,7 +47,7 @@ public partial class DataProvider : IDataProvider {
 	/// 默认构造函数。
 	/// </summary>
 	public DataProvider(IHostEnvironment hostEnvironment, IConfiguration configuration, ILogger<DataProvider> logger) {
-		_logger = logger;
+		//_logger = logger;
 		// 构建连接字符串
 		SqliteConnectionStringBuilder builder = new() {
 			DataSource = Path.Combine(hostEnvironment.ContentRootPath, "data.db"),
@@ -66,6 +66,7 @@ public partial class DataProvider : IDataProvider {
 		using var transaction = Connection.BeginTransaction();
 		_ = CmdExeNonQuery(transaction, "Create Table if not exists Users (ID integer primary key autoincrement, Name varchar(32) unique not null, Nick varchar(32), Hash blob not null, Salt blob not null)");
 		_ = CmdExeNonQuery(transaction, "Create Table if not exists AppInfo (ID integer primary key autoincrement, Key varchar(128) unique not null, Value blob, Length integer not null)");
+		// 版本相关
 		if (InitAppInfo(transaction, "Version", Encoding.UTF8.GetBytes(AppVersion.ToString()), out var existData)) {
 			Version version = new(Encoding.UTF8.GetString(existData));
 			var result = AppVersion.CompareTo(version);
@@ -79,21 +80,11 @@ public partial class DataProvider : IDataProvider {
 		} else {
 			logger.LogInformation("数据库初始化成功！");
 		}
-		/* 这里要初始化一下注册加密密钥
-		if (InitAppInfo(transaction, "RegisterEncryptionKey", "<随机数据>", out existData)) {
-			Version version = new(Encoding.UTF8.GetString(existData));
-			var result = AppVersion.CompareTo(version);
-			if (result < 0) {
-				logger.LogWarning("此应用程序的版本高于数据库中的版本，有可能导致应用程序无法正常运行，请特别留意！");
-			} else if (result > 0) {
-				logger.LogWarning("此应用程序已完成升级，请留意开源项目地址是否有更新数据库相关说明。");
-			} else {
-				logger.LogInformation("数据库已就绪。");
-			}
-		} else {
-			logger.LogInformation("数据库初始化成功！");
-		}
-		*/
+		// 初始化注册加密密钥及初始化向量
+		_ = InitAppInfo(transaction, "RegisterEncryptionKey", ICheckingTools.GenerateRandomData(32), out existData);
+		RegisterEncryptionKey = existData.ToArray();
+		_ = InitAppInfo(transaction, "RegisterEncryptionIV", ICheckingTools.GenerateRandomData(16), out existData);
+		RegisterEncryptionIV = existData.ToArray();
 		transaction.Commit();
 	}
 
@@ -189,5 +180,16 @@ public partial class DataProvider : IDataProvider {
 	/// <summary>
 	/// 当前应用程序版本。
 	/// </summary>
-	public Version AppVersion => Controllers.Models.Hello.Version;
+	public Version AppVersion => Hello.Version;
+
+
+	/// <summary>
+	/// 注册时使用的加密密钥。
+	/// </summary>
+	public byte[] RegisterEncryptionKey { get; init; }
+
+	/// <summary>
+	/// 注册时使用的加密初始化向量。
+	/// </summary>
+	public byte[] RegisterEncryptionIV { get; init; }
 }

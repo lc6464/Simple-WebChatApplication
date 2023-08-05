@@ -2,7 +2,7 @@
 
 namespace SimpleWebChatApplication.Services;
 /// <summary>
-/// 获取数据库。
+/// 数据提供接口。
 /// </summary>
 public interface IDataProvider {
 	/// <summary>
@@ -62,4 +62,14 @@ public interface IDataProvider {
 	/// 当前应用程序版本。
 	/// </summary>
 	public Version AppVersion => typeof(DataProvider).Assembly.GetName().Version!;
+
+	/// <summary>
+	/// 注册时使用的加密密钥。
+	/// </summary>
+	public byte[] RegisterEncryptionKey { get; init; }
+
+	/// <summary>
+	/// 注册时使用的加密初始化向量。
+	/// </summary>
+	public byte[] RegisterEncryptionIV { get; init; }
 }
