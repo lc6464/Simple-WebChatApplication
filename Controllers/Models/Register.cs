@@ -11,7 +11,7 @@ public readonly struct Register {
 }
 
 public readonly struct RegisterUserData {
-	public RegisterUserData() { }
+	public RegisterUserData() => HMACKey = ICheckingTools.GenerateRandomData(16).ToArray();
 
 	[JsonPropertyName("a")]
 	public string? Account { get; init; }
@@ -23,7 +23,7 @@ public readonly struct RegisterUserData {
 	public byte[]? PasswordSalt { get; init; }
 
 	[JsonPropertyName("k")]
-	public byte[] HMACKey => ICheckingTools.GenerateRandomData(16).ToArray();
+	public byte[] HMACKey { get; init; }
 }
 
 

@@ -1,7 +1,4 @@
-﻿using System.Text.Json;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.WebUtilities;
-using SimpleWebChatApplication.Controllers.Models;
+﻿using SimpleWebChatApplication.Controllers.Models;
 using SimpleWebChatApplication.Services;
 
 namespace SimpleWebChatApplication.Controllers;
@@ -10,21 +7,19 @@ namespace SimpleWebChatApplication.Controllers;
 public class RegisterController : ControllerBase {
 	private readonly ICheckingTools _tools;
 	private readonly IEncryptionTools _encryptionTools;
-	private readonly IDataProvider _provider;
 
-	public RegisterController(ICheckingTools tools, IEncryptionTools encryptionTools, IDataProvider provider) {
+	public RegisterController(ICheckingTools tools, IEncryptionTools encryptionTools) {
 		_tools = tools;
 		_encryptionTools = encryptionTools;
-		_provider = provider;
 	}
 
 
 	[HttpGet]
 	[ResponseCache(CacheProfileName = "NoStore")]
 	public RegisterGet Get([FromForm(Name = "register-data")] string? registerData) {
-		/*if (HttpContext.Session.TryGetValue("IsLoginManage", out _)) {
+		if (HttpContext.Session.TryGetValue("IsLoginManage", out _)) {
 			return new() { Code = 6, Success = false, Message = "未登录管理后台。" };
-		}*/
+		}
 		if (string.IsNullOrWhiteSpace(registerData)) {
 			return new() { Code = 5, Success = false, Message = "未提供注册数据。" };
 		}
