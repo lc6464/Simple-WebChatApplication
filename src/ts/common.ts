@@ -148,7 +148,6 @@ export function randomUUID() {
 		).toString(16);
 	});
 }
-
 export function formatTime(time: Date) {
 	const pL = (n: number) => n.toString().padStart(2, "0");
 	return `${time.getFullYear()}-${
@@ -157,3 +156,45 @@ export function formatTime(time: Date) {
 		time.getSeconds(),
 	)}`;
 }
+//验证密码是否足够复杂
+export function isPasswordComplicated(password: string) {
+	if (password.length < 10 || password.length > 64) {
+		return {result: false, message: "密码长度必须大于或等于10个字符且小于或等于64个字符"};
+	}
+	if (repeatRegex.test(password)) {
+		return {result: false, message: "不允许重复出现3个及以上的字符"};
+	}
+	let kind: number = 0;
+	//特殊字符
+	if (kindConfirm(symbolRegex, password)) {
+		kind++;
+	}
+	//小写
+	if (kindConfirm(lowerLetterRegex, password)) {
+		kind++;
+	}
+	//大写
+	if (kindConfirm(upperLetterRegex, password)) {
+		kind++;
+	}
+	//数字
+	if (kindConfirm(numberRegex, password)) {
+		kind++;
+	}
+	
+	return {
+		result: kind > 2, 
+		message: kind > 2 ? 
+			"success" : 
+			"密码必须包含大写字母，小写字母，特殊字符和数字任意3种及以上，且每种包含的字符必须超过2个及以上"
+	};
+}
+//验证密码是否符合匹配两次及以上
+export function kindConfirm(regex: RegExp, password: string) {
+	return password.match(regex).length > 1;
+}
+const repeatRegex: RegExp = new RegExp("(?<a>.)\\k<a>{3}");
+const symbolRegex: RegExp = new RegExp("[`~!@#$%^&*()_+=\[{\]};:'\"\"<>|./\\?,\-]");
+const lowerLetterRegex: RegExp = new RegExp("[a-z]");
+const upperLetterRegex: RegExp = new RegExp("[A-Z]");
+const numberRegex: RegExp = new RegExp("\d");
