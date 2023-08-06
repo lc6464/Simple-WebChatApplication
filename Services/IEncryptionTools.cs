@@ -116,4 +116,11 @@ public interface IEncryptionTools {
 	/// <param name="userData">待加密的 <see cref="RegisterUserData"/></param>
 	/// <returns>加密后的结果</returns>
 	public string EncryptUserData(RegisterUserData userData);
+
+	/// <summary>
+	/// 解密注册数据。
+	/// </summary>
+	/// <param name="input">待解密的字符串</param>
+	/// <returns>解密后的数据</returns>
+	public bool TryDecryptUserData(string[] input, out RegisterUserDataOutput? output);
 }

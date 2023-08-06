@@ -1,4 +1,7 @@
-﻿using SimpleWebChatApplication.Controllers.Models;
+﻿using System.Text.Json;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.WebUtilities;
+using SimpleWebChatApplication.Controllers.Models;
 using SimpleWebChatApplication.Services;
 
 namespace SimpleWebChatApplication.Controllers;
@@ -7,18 +10,37 @@ namespace SimpleWebChatApplication.Controllers;
 public class RegisterController : ControllerBase {
 	private readonly ICheckingTools _tools;
 	private readonly IEncryptionTools _encryptionTools;
+	private readonly IDataProvider _provider;
 
-	public RegisterController(ICheckingTools tools, IEncryptionTools encryptionTools) {
+	public RegisterController(ICheckingTools tools, IEncryptionTools encryptionTools, IDataProvider provider) {
 		_tools = tools;
 		_encryptionTools = encryptionTools;
+		_provider = provider;
 	}
 
 
-	/*
 	[HttpGet]
 	[ResponseCache(CacheProfileName = "NoStore")]
-	public Models.RegisterGet Get() { }
-	*/
+	public RegisterGet Get([FromForm(Name = "register-data")] string? registerData) {
+		/*if (HttpContext.Session.TryGetValue("IsLoginManage", out _)) {
+			return new() { Code = 6, Success = false, Message = "未登录管理后台。" };
+		}*/
+		if (string.IsNullOrWhiteSpace(registerData)) {
+			return new() { Code = 5, Success = false, Message = "未提供注册数据。" };
+		}
+		var registerParts = registerData.Split('/');
+		if (registerParts.Length != 2) {
+			return new() { Code = 4, Success = false, Message = "无法解析注册数据。" };
+		}
+		try {
+			return _encryptionTools.TryDecryptUserData(registerParts, out var output)
+				? new() { Code = 0, Success = true, Data = output }
+				: new() { Code = 4, Success = false, Message = "已解析数据，但签名验证失败！" };
+		} catch (Exception e) {
+			return new() { Code = 4, Success = false, Message = $"无法解析注册数据：{e}" };
+		}
+	}
+
 
 	[HttpPost]
 	[ResponseCache(CacheProfileName = "NoStore")]
