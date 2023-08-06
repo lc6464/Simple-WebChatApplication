@@ -185,7 +185,7 @@ export function isPasswordComplicated(password: string) {
 	return {
 		result: kind > 2, 
 		message: kind > 2 ? 
-			"success" : 
+			"true" : 
 			"密码必须包含大写字母，小写字母，特殊字符和数字任意3种及以上，且每种包含的字符必须超过2个及以上"
 	};
 }
