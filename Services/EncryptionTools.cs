@@ -9,19 +9,8 @@ namespace SimpleWebChatApplication.Services;
 /// </summary>
 public class EncryptionTools : IEncryptionTools {
 	private readonly IDataProvider _provider;
-	private readonly ILogger<EncryptionTools> _logger;
-	//private readonly ICheckingTools _tools;
 
-	public EncryptionTools(IDataProvider provider, ILogger<EncryptionTools> logger) {
-		_provider = provider;
-		_logger = logger;
-	}
-
-	/*
-	public EncryptionTools(IDataProvider provider, ICheckingTools tools) {
-		_provider = provider;
-		_tools = tools;
-	}*/
+	public EncryptionTools(IDataProvider provider) => _provider = provider;
 
 
 	/// <summary>

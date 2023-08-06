@@ -148,6 +148,7 @@ export function randomUUID() {
 		).toString(16);
 	});
 }
+
 export function formatTime(time: Date) {
 	const pL = (n: number) => n.toString().padStart(2, "0");
 	return `${time.getFullYear()}-${
@@ -156,51 +157,60 @@ export function formatTime(time: Date) {
 		time.getSeconds(),
 	)}`;
 }
-//验证密码是否足够复杂
-export function isPasswordComplicated(password: string) {
-	if (password.length < 10 || password.length > 64) {
-		return {result: false, message: "密码长度必须大于或等于10个字符且小于或等于64个字符"};
-	}
-	if (repeatRegex.test(password)) {
-		return {result: false, message: "不允许重复出现4个及以上的字符"};
-	}
-	let kind: number = 0;
-	//特殊字符
-	if (kindConfirm(symbolRegex, password)) {
-		kind++;
-	}
-	//小写
-	if (kindConfirm(lowerLetterRegex, password)) {
-		kind++;
-	}
-	//大写
-	if (kindConfirm(upperLetterRegex, password)) {
-		kind++;
-	}
-	//数字
-	if (kindConfirm(numberRegex, password)) {
-		kind++;
-	}
-	
-	return {
-		result: kind > 2, 
-		message: kind > 2 ? 
-			"true" : 
-			"密码必须包含大写字母，小写字母，特殊字符和数字任意3种及以上，且每种包含的字符必须超过2个及以上"
-	};
-}
-//验证密码是否符合匹配两次及以上
-export function kindConfirm(regex: RegExp, password: string) {
-	return password.match(regex).length > 1;
-}
-const repeatRegex: RegExp = /(?<a>.)\k<a>{3}/g;
-const symbolRegex: RegExp = /[`~!@#$%^&*()_+=\[{\]};:'"<>|./\\?,\-]/g;
-const lowerLetterRegex: RegExp = /[a-z]/g;
-const upperLetterRegex: RegExp = /[A-Z]/g;
-const numberRegex: RegExp = /\d/g;
 
-//验证用户名是否符合规范
-export function isNameAvailable(name: string) {
-	return name.length >= 4 && name.length <= 32 && nameRegex.test(name);
+
+export class AccountCheckingTools {
+	// 验证密码是否符合匹配两次及以上
+	private static kindConfirm(regex: RegExp, password: string) {
+		return password.match(regex).length > 1;
+	}
+
+	private static readonly repeatRegex: RegExp = /(?<a>.)\k<a>{3}/g;
+	private static readonly symbolRegex: RegExp = /[`~!@#$%^&*()_+=\[{\]};:'"<>|./\\?,\-]/g;
+	private static readonly lowerLetterRegex: RegExp = /[a-z]/g;
+	private static readonly upperLetterRegex: RegExp = /[A-Z]/g;
+	private static readonly numberRegex: RegExp = /\d/g;
+	private static readonly nameRegex: RegExp = /^[A-Za-z][A-Za-z\d\-_]+$/g;
+
+	// 验证密码是否足够复杂
+	public static isPasswordComplicated(password: string) {
+		if (password.length < 10 || password.length > 64) {
+			return { result: false, message: "密码长度必须大于等于10个字符且小于等于64个字符！" };
+		}
+		if (AccountCheckingTools.repeatRegex.test(password)) {
+			return { result: false, message: "单个字符不允许重复出现4次或以上！" };
+		}
+
+		let kind: number = 0;
+		// 特殊字符
+		if (AccountCheckingTools.kindConfirm(AccountCheckingTools.symbolRegex, password)) {
+			kind++;
+		}
+		// 小写字母
+		if (AccountCheckingTools.kindConfirm(AccountCheckingTools.lowerLetterRegex, password)) {
+			kind++;
+		}
+		// 大写字母
+		if (AccountCheckingTools.kindConfirm(AccountCheckingTools.upperLetterRegex, password)) {
+			kind++;
+		}
+		// 数字
+		if (AccountCheckingTools.kindConfirm(AccountCheckingTools.numberRegex, password)) {
+			kind++;
+		}
+
+		const result = kind > 2;
+		return {
+			result,
+			message: result ?
+				"" :
+				"密码必须包含大写字母、小写字母、特殊符号和数字中任意3种或以上，且包含的每种字符必须超过2个。"
+		};
+	}
+
+
+	// 验证用户名是否不符合规范
+	public static isNameUnable(name: string) {
+		return name.length < 4 || name.length > 32 || !AccountCheckingTools.nameRegex.test(name);
+	}
 }
-const nameRegex: RegExp = /^[A-Za-z][A-Za-z\d\-_]+$/g;

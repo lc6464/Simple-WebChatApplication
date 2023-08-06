@@ -16,8 +16,8 @@ public class RegisterController : ControllerBase {
 
 	[HttpGet]
 	[ResponseCache(CacheProfileName = "NoStore")]
-	public RegisterGet Get([FromForm(Name = "register-data")] string? registerData) {
-		if (HttpContext.Session.TryGetValue("IsLoginManage", out _)) {
+	public RegisterGet Get([FromForm(Name = "access-token")] string? accessToken, [FromForm(Name = "register-data")] string? registerData) {
+		if (!string.IsNullOrWhiteSpace(accessToken) && HttpContext.Session.GetString("ManageAccessToken") == accessToken) {
 			return new() { Code = 6, Success = false, Message = "未登录管理后台。" };
 		}
 		if (string.IsNullOrWhiteSpace(registerData)) {
@@ -64,8 +64,31 @@ public class RegisterController : ControllerBase {
 		return new() {
 			Success = true,
 			Code = 0,
-			Message = "已成功注册！请将展示的数据复制后发送给网站管理员，待管理员审核通过后即可登录。",
 			Data = _encryptionTools.EncryptUserData(userData)
 		};
+	}
+
+
+	[HttpGet(Name = "import")]
+	[ResponseCache(CacheProfileName = "NoStore")]
+	public dynamic? Import([FromForm(Name = "access-token")] string? accessToken, [FromForm(Name = "register-data")] string? registerData) {
+		/*if (!string.IsNullOrWhiteSpace(accessToken) && HttpContext.Session.GetString("ManageAccessToken") == accessToken) {
+			return new() { Code = 6, Success = false, Message = "未登录管理后台。" };
+		}
+		if (string.IsNullOrWhiteSpace(registerData)) {
+			return new() { Code = 5, Success = false, Message = "未提供注册数据。" };
+		}
+		var registerParts = registerData.Split('/');
+		if (registerParts.Length != 2) {
+			return new() { Code = 4, Success = false, Message = "无法解析注册数据。" };
+		}
+		try {
+			return _encryptionTools.TryDecryptUserData(registerParts, out var output)
+				? new() { Code = 0, Success = true, Data = output }
+				: new() { Code = 4, Success = false, Message = "已解析数据，但签名验证失败！" };
+		} catch (Exception e) {
+			return new() { Code = 4, Success = false, Message = $"无法解析注册数据：{e}" };
+		}*/
+		return null;
 	}
 }

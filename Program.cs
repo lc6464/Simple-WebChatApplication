@@ -85,7 +85,6 @@ if (!app.Environment.IsDevelopment()) {
 }
 
 app.UseResponseCompression()
-	.UseCors()
 	.UseResponseCaching()
 	.UseAddResponseHeaders(new HeaderDictionary {
 		{ "X-Content-Type-Options", "nosniff" },

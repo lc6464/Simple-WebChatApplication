@@ -2,7 +2,7 @@ import "../css/login.css";
 
 import Swal from "sweetalert2/dist/sweetalert2.min.js";
 
-import { fetchText, copyText } from "./common";
+import { fetchText, copyText, AccountCheckingTools } from "./common";
 
 const form: HTMLFormElement = document.querySelector("form"),
 	registerButton: HTMLButtonElement = document.querySelector("#register"),
@@ -20,11 +20,11 @@ registerButton.addEventListener("click", () => {
 		
 		if (success) {
 			// @ts-expect-error result is parsed data
-			const { success, data, message } = result;
+			const { success, data, message }: { success: boolean; data: string; message: string } = result;
 			if (success) {
 				dataTextArea.value = data;
 				dataContainer.classList.add("ready");
-				Swal.fire("注册成功", message, "success");
+				Swal.fire("注册成功", "已成功注册！请将展示的数据复制后发送给网站管理员，待管理员审核通过后即可登录。", "success");
 			} else {
 				Swal.fire("注册失败", message, "error");
 			}
