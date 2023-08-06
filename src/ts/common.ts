@@ -162,7 +162,7 @@ export function isPasswordComplicated(password: string) {
 		return {result: false, message: "密码长度必须大于或等于10个字符且小于或等于64个字符"};
 	}
 	if (repeatRegex.test(password)) {
-		return {result: false, message: "不允许重复出现3个及以上的字符"};
+		return {result: false, message: "不允许重复出现4个及以上的字符"};
 	}
 	let kind: number = 0;
 	//特殊字符
@@ -193,8 +193,14 @@ export function isPasswordComplicated(password: string) {
 export function kindConfirm(regex: RegExp, password: string) {
 	return password.match(regex).length > 1;
 }
-const repeatRegex: RegExp = new RegExp("(?<a>.)\\k<a>{3}");
-const symbolRegex: RegExp = new RegExp("[`~!@#$%^&*()_+=\[{\]};:'\"\"<>|./\\?,\-]");
-const lowerLetterRegex: RegExp = new RegExp("[a-z]");
-const upperLetterRegex: RegExp = new RegExp("[A-Z]");
-const numberRegex: RegExp = new RegExp("\d");
+const repeatRegex: RegExp = /(?<a>.)\k<a>{3}/g;
+const symbolRegex: RegExp = /[`~!@#$%^&*()_+=\[{\]};:'"<>|./\\?,\-]/g;
+const lowerLetterRegex: RegExp = /[a-z]/g;
+const upperLetterRegex: RegExp = /[A-Z]/g;
+const numberRegex: RegExp = /\d/g;
+
+//验证用户名是否符合规范
+export function isNameAvailable(name: string) {
+	return name.length >= 4 && name.length <= 32 && nameRegex.test(name);
+}
+const nameRegex: RegExp = /^[A-Za-z][A-Za-z\d\-_]+$/g;
