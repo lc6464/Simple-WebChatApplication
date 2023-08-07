@@ -39,7 +39,7 @@ function messageAddToScreen(
 
 	senderSpan.innerText = sender;
 	messageTimeSpan.innerText = formatTime(
-		typeof time === "number" ? new Date(time) : time,
+		typeof time === "number" ? new Date(time * 1000) : time,
 	);
 	contentDiv.innerText = content;
 
@@ -211,7 +211,8 @@ function connectSignalR() {
 				console.warn(`未知的 groupEnter 类型：${type}`);
 		}
 	});
-	//通知群组退出状态
+
+	// 通知群组退出状态
 	connection.on("groupLeave", (type: string, message?: string) => {
 		leaveGroupButton.disabled = false;
 		if (type === "success") {
@@ -256,7 +257,7 @@ function connectSignalR() {
 			if (e.dataset.echo === echo) {
 				e.classList.remove("sending");
 				e.querySelector<HTMLSpanElement>(".time").innerText =
-					formatTime(new Date(time));
+					formatTime(new Date(time * 1000));
 			}
 		});
 	});
