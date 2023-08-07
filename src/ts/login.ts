@@ -61,13 +61,11 @@ function formCheck() {
 			message: "用户名或密码为空！",
 		};
 	}
-	const {result, message} = AccountCheckingTools.isPasswordComplicated(passwordInput.value);
-	if (AccountCheckingTools.isNameUnable(accountInput.value) || !result) {
+	if (AccountCheckingTools.isNameUnable(accountInput.value) || !AccountCheckingTools.isPasswordComplicated(passwordInput.value).result) {
 		return {
 			result: false,
-			message:
-				"用户名或密码错误！",
+			message: "用户名或密码错误！",
 		};
 	}
-	return {result: true, message: ''};
+	return { result: true, message: "" };
 }
