@@ -92,7 +92,7 @@ function formCheck() {
 			message: "密码不能为空或纯空格！",
 		};
 	}
-	if (passwordInput.value === repeatPasswordInput.value) {
+	if (passwordInput.value !== repeatPasswordInput.value) {
 		return {
 			result: false,
 			message: "两次输入的密码不一致！",

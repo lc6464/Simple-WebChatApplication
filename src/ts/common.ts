@@ -161,7 +161,8 @@ export function formatTime(time: Date) {
 export const AccountCheckingTools = {
 	// 验证密码是否符合匹配两次及以上
 	kindConfirm(regex: RegExp, password: string) {
-		return password.match(regex).length > 1;
+		const result = password.match(regex);
+		return result !== null && result.length > 1;
 	},
 
 	repeatRegex: /(?<a>.)\k<a>{3}/g,
