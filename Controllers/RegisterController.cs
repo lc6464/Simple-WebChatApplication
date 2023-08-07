@@ -21,7 +21,7 @@ public class RegisterController : ControllerBase {
 	public RegisterGetResponse Get([FromForm(Name = "access-token")] string? accessToken,
 		[FromForm(Name = "register-data")] string? registerData) {
 
-		if (!string.IsNullOrWhiteSpace(accessToken) && HttpContext.Session.GetString("ManageAccessToken") == accessToken) {
+		if (string.IsNullOrWhiteSpace(accessToken) || HttpContext.Session.GetString("ManageAccessToken") != accessToken) {
 			return new() { Code = 6, Success = false, Message = "未登录管理后台。" };
 		}
 		if (string.IsNullOrWhiteSpace(registerData)) {
@@ -84,7 +84,7 @@ public class RegisterController : ControllerBase {
 	public RegisterImportResponse Import([FromForm(Name = "access-token")] string? accessToken,
 		[FromForm(Name = "register-data")] string? registerData) {
 
-		if (!string.IsNullOrWhiteSpace(accessToken) && HttpContext.Session.GetString("ManageAccessToken") == accessToken) {
+		if (string.IsNullOrWhiteSpace(accessToken) || HttpContext.Session.GetString("ManageAccessToken") != accessToken) {
 			return new() { Code = 6, Success = false, Message = "未登录管理后台。" };
 		}
 		if (string.IsNullOrWhiteSpace(registerData)) {
@@ -106,8 +106,9 @@ public class RegisterController : ControllerBase {
 				using var transaction = _provider.Connection.BeginTransaction();
 				using var command = _provider.Connection.CreateCommand();
 				command.Transaction = transaction;
-				command.CommandText = "INSERT INTO Users (Name, Hash, Salt, RegisterTime, ImportTime) VALUES (@account, @hash, @salt, @rT, @iT);";
+				command.CommandText = "INSERT INTO Users (Name, Nick, Hash, Salt, RegisterTime, ImportTime) VALUES (@account, @nick, @hash, @salt, @rT, @iT);";
 				command.Parameters.AddWithValue("@account", output.Account);
+				command.Parameters.AddWithValue("@nick", "");
 				command.Parameters.AddWithValue("@hash", output.PasswordHash);
 				command.Parameters.AddWithValue("@salt", output.PasswordSalt);
 				command.Parameters.AddWithValue("@rT", output.Timestamp);

@@ -66,7 +66,7 @@ public partial class DataProvider : IDataProvider {
 		Connection = new(ConnectionString);
 		Connection.Open();
 		using var transaction = Connection.BeginTransaction();
-		_ = CmdExeNonQuery(transaction, "Create Table if not exists Users (ID integer primary key autoincrement, Name varchar(32) unique not null, Nick varchar(32), Hash blob not null, Salt blob not null, RegisterTime integer not null, ImportTime integer not null)");
+		_ = CmdExeNonQuery(transaction, "Create Table if not exists Users (ID integer primary key autoincrement, Name varchar(32) unique not null, Nick varchar(32) not null, Hash blob not null, Salt blob not null, RegisterTime integer not null, ImportTime integer not null)");
 		_ = CmdExeNonQuery(transaction, "Create Table if not exists AppInfo (ID integer primary key autoincrement, Key varchar(128) unique not null, Value blob, Length integer not null)");
 		// 版本相关
 		if (InitAppInfo(transaction, "Version", Encoding.UTF8.GetBytes(AppVersion.ToString()), out var existData)) {
@@ -96,11 +96,11 @@ public partial class DataProvider : IDataProvider {
 	/// </summary>
 	/// <param name="name">用户名</param>
 	/// <returns>对应的 <see cref="SqliteDataReader"/>。</returns>
-	public SqliteDataReader GetUserReader(string name) {
+	public SqliteDataReader GetUserReader(string? name, out SqliteCommand cmd) {
 		using var transaction = Connection.BeginTransaction();
-		using var cmd = Connection.CreateCommand();
+		cmd = Connection.CreateCommand();
 		cmd.Transaction = transaction;
-		cmd.CommandText = "SELECT * FROM Users WHERE Name = '@Name'";
+		cmd.CommandText = "SELECT * FROM Users WHERE Name = @Name";
 		_ = cmd.Parameters.AddWithValue("@Name", name);
 		var reader = cmd.ExecuteReader();
 		transaction.Commit();

@@ -31,11 +31,11 @@ function messageAddToScreen(
 		messageTimeSpan = document.createElement("span"),
 		contentDiv = document.createElement("div");
 
-	container.className = "content";
+	container.className = "message";
 
 	senderSpan.className = "sender";
 	messageTimeSpan.className = "time";
-	contentDiv.className = "content-content";
+	contentDiv.className = "message-content";
 
 	senderSpan.innerText = sender;
 	messageTimeSpan.innerText = formatTime(
@@ -56,9 +56,9 @@ function messageAddToScreen(
 
 function addEventListeners(connection: HubConnection) {
 	const messageInput: HTMLInputElement =
-			document.querySelector("#content-input"),
+			document.querySelector("#message-input"),
 		sendMessageButton: HTMLButtonElement =
-			document.querySelector("#send-content"),
+			document.querySelector("#send-message"),
 		groupNameInput: HTMLInputElement =
 			document.querySelector("#group-name"),
 		groupPasswordInput: HTMLInputElement =

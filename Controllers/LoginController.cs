@@ -40,7 +40,7 @@ public class LoginController : ControllerBase {
 			_ = Hubs.Cache.Set($"TryLoginCount of {account}", ++count, TimeSpan.FromMinutes(30), TimeSpan.FromHours(2));
 			return new() { Success = false, Code = 6, Message = "用户名或密码错误。" };
 		}
-		using var reader = _provider.GetUserReader(account);
+		using var reader = _provider.GetUserReader(account, out var cmd);
 		if (!reader.Read()) {
 			_ = Hubs.Cache.Set($"TryLoginCount of {account}", ++count, TimeSpan.FromMinutes(30), TimeSpan.FromHours(2));
 			return new() { Success = false, Code = 6, Message = "用户名或密码错误。" };
@@ -58,6 +58,7 @@ public class LoginController : ControllerBase {
 		HttpContext.Session.SetString("Nick", reader.GetString(2));
 		HttpContext.Session.Set("Hash", hash);
 		HttpContext.Session.Set("Salt", salt);
+		cmd.Dispose();
 		return new() { Success = true, Code = 0, Message = "" };
 	}
 }

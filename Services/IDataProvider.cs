@@ -25,7 +25,7 @@ public interface IDataProvider {
 	/// </summary>
 	/// <param name="name">用户名</param>
 	/// <returns>对应的 <see cref="SqliteDataReader"/>。</returns>
-	public SqliteDataReader GetUserReader(string name);
+	public SqliteDataReader GetUserReader(string? name, out SqliteCommand cmd);
 
 	/// <summary>
 	/// 在指定的事务中执行指定的命令。

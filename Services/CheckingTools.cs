@@ -9,7 +9,7 @@ public partial class CheckingTools : ICheckingTools {
 	private readonly HttpContext HttpContext;
 	private ISession Session => HttpContext.Session;
 	private readonly IDataProvider _provider;
-	private SqliteDataReader GetUserReader(string name) => _provider.GetUserReader(name);
+	private SqliteDataReader GetUserReader(string? name, out SqliteCommand cmd) => _provider.GetUserReader(name, out cmd);
 
 
 	/// <summary>
@@ -28,7 +28,15 @@ public partial class CheckingTools : ICheckingTools {
 	/// </summary>
 	/// <param name="name">用户名</param>
 	/// <returns>若可用则为 <see langword="false"/>，否则为 <see langword="true"/>。</returns>
-	public bool IsNameAvailable(string? name) => !(string.IsNullOrWhiteSpace(name) || name.Length is < 4 or > 32 || !NameRegex().IsMatch(name) || GetUserReader(name).HasRows);
+	public bool IsNameAvailable(string? name) {
+		if (string.IsNullOrWhiteSpace(name) || name.Length is < 4 or > 32 || !NameRegex().IsMatch(name)) {
+			return false;
+		}
+
+		var result = !GetUserReader(name, out var cmd).HasRows;
+		cmd.Dispose();
+		return result;
+	}
 
 
 	/// <summary>
@@ -50,8 +58,8 @@ public partial class CheckingTools : ICheckingTools {
 			Session.Clear();
 			return false;
 		}
-		using var reader = GetUserReader(account);
-		if (!reader.HasRows) {
+		using var reader = GetUserReader(account, out var cmd);
+		if (!reader.Read()) {
 			Session.Clear();
 			return false;
 		}
@@ -72,6 +80,7 @@ public partial class CheckingTools : ICheckingTools {
 		var nick = reader.GetString(2);
 		Session.SetString("Nick", nick);
 		displayName = $"{nick} ({account})";
+		cmd.Dispose();
 		return true;
 	}
 
