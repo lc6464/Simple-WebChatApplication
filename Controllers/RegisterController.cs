@@ -1,4 +1,4 @@
-using SimpleWebChatApplication.Controllers.Models;
+﻿using SimpleWebChatApplication.Controllers.Models;
 using SimpleWebChatApplication.Services;
 
 namespace SimpleWebChatApplication.Controllers;
