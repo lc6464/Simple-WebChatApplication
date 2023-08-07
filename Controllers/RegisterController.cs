@@ -79,7 +79,7 @@ public class RegisterController : ControllerBase {
 	}
 
 
-	[HttpPost(Name = "import")]
+	[HttpPost("import")]
 	[ResponseCache(CacheProfileName = "NoStore")]
 	public RegisterImportResponse Import([FromForm(Name = "access-token")] string? accessToken,
 		[FromForm(Name = "register-data")] string? registerData) {
