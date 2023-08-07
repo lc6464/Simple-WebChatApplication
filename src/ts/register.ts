@@ -27,14 +27,22 @@ registerButton.addEventListener("click", () => {
 			body: new FormData(form),
 			method: "post",
 		});
-		
+
 		if (success) {
 			// @ts-expect-error result is parsed data
-			const { success, data, message }: { success: boolean; data: string; message: string } = result;
+			const {
+				success,
+				data,
+				message,
+			}: { success: boolean; data: string; message: string } = result;
 			if (success) {
 				dataTextArea.value = data;
 				dataContainer.classList.add("ready");
-				Swal.fire("注册成功", "已成功注册！请将展示的数据复制后发送给网站管理员，待管理员审核通过后即可登录。", "success");
+				Swal.fire(
+					"注册成功",
+					"已成功注册！请将展示的数据复制后发送给网站管理员，待管理员审核通过后即可登录。",
+					"success",
+				);
 			} else {
 				Swal.fire("注册失败", message, "error");
 			}
