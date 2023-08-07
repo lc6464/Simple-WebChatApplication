@@ -158,22 +158,21 @@ export function formatTime(time: Date) {
 	)}`;
 }
 
-export class AccountCheckingTools {
+export const AccountCheckingTools = {
 	// 验证密码是否符合匹配两次及以上
-	private static kindConfirm(regex: RegExp, password: string) {
+	kindConfirm(regex: RegExp, password: string) {
 		return password.match(regex).length > 1;
-	}
+	},
 
-	private static readonly repeatRegex = /(?<a>.)\k<a>{3}/g;
-	private static readonly symbolRegex =
-		/[ `~!@#$%^&*()_+=\[{\]};:'"<>|./\\?,\-]/g;
-	private static readonly lowerLetterRegex = /[a-z]/g;
-	private static readonly upperLetterRegex = /[A-Z]/g;
-	private static readonly numberRegex = /\d/g;
-	private static readonly nameRegex = /^[A-Za-z][A-Za-z\d\-_]+$/g;
+	repeatRegex: /(?<a>.)\k<a>{3}/g,
+	symbolRegex: /[ `~!@#$%^&*()_+=[{\]};:'"<>|./\\?,-]/g,
+	lowerLetterRegex: /[a-z]/g,
+	upperLetterRegex: /[A-Z]/g,
+	numberRegex: /\d/g,
+	nameRegex: /^[A-Za-z][A-Za-z\d\-_]+$/g,
 
 	// 验证密码是否足够复杂
-	public static isPasswordComplicated(password: string) {
+	isPasswordComplicated(password: string) {
 		if (password.length < 10 || password.length > 64) {
 			return {
 				result: false,
@@ -214,14 +213,14 @@ export class AccountCheckingTools {
 				? ""
 				: "密码必须包含大写字母、小写字母、特殊符号和数字中任意3种或以上，且包含的每种字符必须超过2个。",
 		};
-	}
+	},
 
 	// 验证用户名是否不符合规范
-	public static isNameUnable(name: string) {
+	isNameUnable(name: string) {
 		return (
 			name.length < 4 ||
 			name.length > 32 ||
 			!AccountCheckingTools.nameRegex.test(name)
 		);
-	}
-}
+	},
+};

@@ -21,6 +21,7 @@ public partial class DataProvider : IDataProvider {
 		readerCmd.CommandText = "Select Value, Length from AppInfo where Key = @Key";
 		readerCmd.Parameters.AddWithValue("@Key", key);
 		using var reader = readerCmd.ExecuteReader();
+
 		// 处理已有数据
 		if (reader.Read()) {
 			var dataLength = reader.GetInt32(1);
@@ -28,18 +29,19 @@ public partial class DataProvider : IDataProvider {
 			_ = reader.GetBytes(0, 0, data, 0, dataLength);
 			existData = data;
 			return true;
-		} else {
-			// 写入数据
-			using var cmd = Connection.CreateCommand();
-			cmd.Transaction = transaction;
-			cmd.CommandText = "Insert into AppInfo (Key, Value, Length) values (@Key, @Value, @Length)";
-			_ = cmd.Parameters.AddWithValue("Key", key);
-			_ = cmd.Parameters.AddWithValue("Value", initData.ToArray());
-			_ = cmd.Parameters.AddWithValue("Length", initData.Length);
-			_ = cmd.ExecuteNonQuery();
-			existData = initData;
-			return false;
 		}
+
+		// 写入数据
+		using var cmd = Connection.CreateCommand();
+		cmd.Transaction = transaction;
+		cmd.CommandText = "Insert into AppInfo (Key, Value, Length) values (@Key, @Value, @Length)";
+		_ = cmd.Parameters.AddWithValue("Key", key);
+		_ = cmd.Parameters.AddWithValue("Value", initData.ToArray());
+		_ = cmd.Parameters.AddWithValue("Length", initData.Length);
+		_ = cmd.ExecuteNonQuery();
+		existData = initData;
+		return false;
+
 	}
 
 
