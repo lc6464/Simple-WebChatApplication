@@ -18,8 +18,8 @@ public class LoginController : ControllerBase {
 	[HttpGet]
 	[ResponseCache(CacheProfileName = "NoStore")]
 	public Models.Login Get() => _tools.IsLogin(out var displayName)
-			? new() { Success = true, Code = 0, Message = "已登录。", DisplayName = displayName }
-			: new() { Success = false, Code = 3, Message = "未登录。" };
+			? new() { Success = true, Code = 0, Message = "", DisplayName = displayName }
+			: new() { Success = false, Code = 3, Message = "" };
 
 
 	[HttpPost]
@@ -58,6 +58,6 @@ public class LoginController : ControllerBase {
 		HttpContext.Session.SetString("Nick", reader.GetString(2));
 		HttpContext.Session.Set("Hash", hash);
 		HttpContext.Session.Set("Salt", salt);
-		return new() { Success = true, Code = 0, Message = "登录成功！" };
+		return new() { Success = true, Code = 0, Message = "" };
 	}
 }

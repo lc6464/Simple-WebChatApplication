@@ -7,10 +7,12 @@ namespace SimpleWebChatApplication.Controllers;
 public class RegisterController : ControllerBase {
 	private readonly ICheckingTools _tools;
 	private readonly IEncryptionTools _encryptionTools;
+	private readonly IDataProvider _provider;
 
-	public RegisterController(ICheckingTools tools, IEncryptionTools encryptionTools) {
+	public RegisterController(ICheckingTools tools, IEncryptionTools encryptionTools, IDataProvider provider) {
 		_tools = tools;
 		_encryptionTools = encryptionTools;
+		_provider = provider;
 	}
 
 
@@ -93,14 +95,39 @@ public class RegisterController : ControllerBase {
 			return new() { Code = 4, Success = false, Message = "无法解析注册数据。" };
 		}
 		try {
-			if (!_encryptionTools.TryDecryptUserData(registerParts, out var output)) {
+			if (!_encryptionTools.TryDecryptUserData(registerParts, out var nullableOutput)) {
 				return new() { Code = 4, Success = false, Message = "已解析数据，但签名验证失败！" };
 			}
-			if (!_tools.IsNameAvailable(output?.Account!)) {
-				return new() { Code = 9, Success = false, Message = "用户名不符合要求或已被占用（4~32位，字母开头，允许数字、字母、下划线、减号）。" };
+			var output = (RegisterGetResponseUserData)nullableOutput!;
+			if (!_tools.IsNameAvailable(output.Account)) {
+				return new() { Code = 9, Success = false, Message = $"用户名 {output.Account} 不符合要求或已被占用（4~32位，字母开头，允许数字、字母、下划线、减号）。" };
 			}
-
-			return new() { Code = 0, Success = true, /*Data = output*/ };
+			try {
+				using var transaction = _provider.Connection.BeginTransaction();
+				using var command = _provider.Connection.CreateCommand();
+				command.Transaction = transaction;
+				command.CommandText = "INSERT INTO Users (Name, Hash, Salt, RegisterTime, ImportTime) VALUES (@account, @hash, @salt, @rT, @iT);";
+				command.Parameters.AddWithValue("@account", output.Account);
+				command.Parameters.AddWithValue("@hash", output.PasswordHash);
+				command.Parameters.AddWithValue("@salt", output.PasswordSalt);
+				command.Parameters.AddWithValue("@rT", output.Timestamp);
+				command.Parameters.AddWithValue("@iT", new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds());
+				command.ExecuteNonQuery();
+				using var cmdQuery = _provider.Connection.CreateCommand();
+				cmdQuery.Transaction = transaction;
+				cmdQuery.CommandText = "SELECT ID, ImportTime FROM Users WHERE Name = @account;";
+				cmdQuery.Parameters.AddWithValue("@account", output.Account);
+				using var reader = cmdQuery.ExecuteReader();
+				if (!reader.Read()) {
+					return new() { Code = 10, Success = false, Message = "数据库异常！似乎已导入却无法查询到相关数据！" };
+				}
+				var id = reader.GetInt64(0);
+				var importTime = reader.GetInt64(1);
+				transaction.Commit();
+				return new() { Code = 0, Success = true, Data = new(output, id, importTime) };
+			} catch (Exception e) {
+				return new() { Code = 4, Success = false, Message = $"无法解析注册数据：{e}" };
+			}
 		} catch (Exception e) {
 			return new() { Code = 4, Success = false, Message = $"无法解析注册数据：{e}" };
 		}

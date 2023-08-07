@@ -25,7 +25,7 @@ resetPasswordAnchor.addEventListener("click", (e) => {
 loginButton.addEventListener("click", () => {
 	const { result, message } = formCheck();
 	if (!result) {
-		Swal.fire("登陆失败", message, "warning");
+		Swal.fire("登录失败", message, "warning");
 		return;
 	}
 

@@ -28,7 +28,7 @@ public partial class CheckingTools : ICheckingTools {
 	/// </summary>
 	/// <param name="name">用户名</param>
 	/// <returns>若可用则为 <see langword="false"/>，否则为 <see langword="true"/>。</returns>
-	public bool IsNameAvailable(string name) => !(name.Length is < 4 or > 32 || !NameRegex().IsMatch(name) || GetUserReader(name).HasRows);
+	public bool IsNameAvailable(string? name) => !(string.IsNullOrWhiteSpace(name) || name.Length is < 4 or > 32 || !NameRegex().IsMatch(name) || GetUserReader(name).HasRows);
 
 
 	/// <summary>

@@ -66,7 +66,7 @@ public partial class DataProvider : IDataProvider {
 		Connection = new(ConnectionString);
 		Connection.Open();
 		using var transaction = Connection.BeginTransaction();
-		_ = CmdExeNonQuery(transaction, "Create Table if not exists Users (ID integer primary key autoincrement, Name varchar(32) unique not null, Nick varchar(32), Hash blob not null, Salt blob not null)");
+		_ = CmdExeNonQuery(transaction, "Create Table if not exists Users (ID integer primary key autoincrement, Name varchar(32) unique not null, Nick varchar(32), Hash blob not null, Salt blob not null, RegisterTime integer not null, ImportTime integer not null)");
 		_ = CmdExeNonQuery(transaction, "Create Table if not exists AppInfo (ID integer primary key autoincrement, Key varchar(128) unique not null, Value blob, Length integer not null)");
 		// 版本相关
 		if (InitAppInfo(transaction, "Version", Encoding.UTF8.GetBytes(AppVersion.ToString()), out var existData)) {

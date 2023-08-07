@@ -75,7 +75,7 @@ public readonly struct RegisterGetResponseUserData {
 	}
 
 	public string? Account { get; init; }
-
+	
 	public byte[]? PasswordHash { get; init; }
 
 	public byte[]? PasswordSalt { get; init; }
@@ -85,11 +85,31 @@ public readonly struct RegisterGetResponseUserData {
 
 
 /// <summary>
-/// RegisterController Import 方法的响应。
+/// RegisterController Import 方法的响应中的数据。
 /// </summary>
 public readonly struct RegisterImportResponse {
 	public bool Success { get; init; }
 	public int Code { get; init; }
 	public string? Message { get; init; }
-	public string? Data { get; init; }
+	public RegisterImportResponseData? Data { get; init; }
+}
+
+/// <summary>
+/// RegisterController Import 方法的响应。
+/// </summary>
+public readonly struct RegisterImportResponseData {
+	public RegisterImportResponseData(RegisterGetResponseUserData userData, long id, long importTime) {
+		UserID = id;
+		UserName = userData.Account!;
+		RegisterTime = (long)userData.Timestamp!;
+		ImportTime = importTime;
+	}
+
+	public long UserID { get; init; }
+
+	public string UserName { get; init; }
+
+	public long RegisterTime { get; init; }
+
+	public long ImportTime { get; init; }
 }

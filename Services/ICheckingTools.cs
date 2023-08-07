@@ -11,7 +11,7 @@ public partial interface ICheckingTools {
 	/// </summary>
 	/// <param name="name">用户名</param>
 	/// <returns>若被使用或长度不合适，则为 <see langword="false"/>，若可用则为 <see langword="true"/>。</returns>
-	public bool IsNameAvailable(string name);
+	public bool IsNameAvailable(string? name);
 
 	/// <summary>
 	/// 检查是否登录。
