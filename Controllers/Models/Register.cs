@@ -75,7 +75,7 @@ public readonly struct RegisterGetResponseUserData {
 	}
 
 	public string? Account { get; init; }
-	
+
 	public byte[]? PasswordHash { get; init; }
 
 	public byte[]? PasswordSalt { get; init; }
