@@ -223,4 +223,7 @@ export const AccountCheckingTools = {
 			!AccountCheckingTools.nameRegex.test(name)
 		);
 	},
+	isEmptyOrWhiteSpace(value: string) {
+		return value.trim() === '';
+	}
 };

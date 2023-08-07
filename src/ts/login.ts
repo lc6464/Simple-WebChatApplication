@@ -6,8 +6,7 @@ import { fetchText } from "./common";
 
 const form: HTMLFormElement = document.querySelector("form"),
 	loginButton: HTMLButtonElement = document.querySelector("#login"),
-	resetPasswordAnchor: HTMLAnchorElement =
-		document.querySelector("#reset-password");
+	resetPasswordAnchor: HTMLAnchorElement = document.querySelector("#reset-password");
 
 form.addEventListener("submit", (e) => e.preventDefault());
 resetPasswordAnchor.addEventListener("click", (e) => {
