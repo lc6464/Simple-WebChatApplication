@@ -4,17 +4,19 @@ using SimpleWebChatApplication.Services;
 namespace SimpleWebChatApplication.Hubs;
 public class ChatHub : Hub {
 	private readonly ICheckingTools _tools;
-	private HttpContext? _httpContext;
+	private HttpContext? HttpContext => Context.GetHttpContext();
+	private ISession? Session => HttpContext?.Session;
 
 	/// <summary>
 	/// 显示的用户名称
 	/// </summary>
-	private string DisplayName => $"{_httpContext?.Session.GetString("Nick")} ({_httpContext?.Session.GetString("Name")})";
+	private string? DisplayName => $"{Session?.GetString("Nick")} ({Session?.GetString("Name")})";
 
 	/// <summary>
 	/// 当前时间戳
 	/// </summary>
 	private static long Timestamp => new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
+
 
 	public ChatHub(ICheckingTools checkingTools) => _tools = checkingTools;
 
@@ -150,7 +152,6 @@ public class ChatHub : Hub {
 			Context.Abort();
 			return;
 		}
-		_httpContext = context;
 		if (!_tools.IsLogin()) {
 			await base.OnConnectedAsync();
 			Context.Abort();

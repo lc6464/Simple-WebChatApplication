@@ -1,6 +1,6 @@
 import "../css/chat.css";
 
-import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
+import { HubConnection, HubConnectionBuilder, HttpTransportType } from "@microsoft/signalr";
 import { MessagePackHubProtocol } from "@microsoft/signalr-protocol-msgpack";
 import Swal, { SweetAlertIcon } from "sweetalert2/dist/sweetalert2.min.js";
 
@@ -47,17 +47,18 @@ function messageAddToScreen(
 	container.appendChild(messageTimeSpan);
 	container.appendChild(contentDiv);
 
-	if (
-		Math.abs(
-			messagesDiv.scrollTop +
-				messagesDiv.clientHeight -
-				messagesDiv.scrollHeight,
-		) < 5
-	) {
-		messagesDiv.scrollTop = messagesDiv.scrollHeight;
-	}
+
+	const isButtom = Math.abs(
+		messagesDiv.scrollTop +
+		messagesDiv.clientHeight -
+		messagesDiv.scrollHeight,
+	) < 5;
 
 	messagesDiv.appendChild(container);
+
+	if (isButtom) {
+		messagesDiv.scrollTop = messagesDiv.scrollHeight;
+	}
 
 	return container;
 }
@@ -166,7 +167,10 @@ function connectSignalR() {
 		document.querySelector("#joint-group-name");
 
 	const connection = new HubConnectionBuilder()
-		.withUrl("/chathub")
+		.withUrl("/chathub", {
+			skipNegotiation: true,
+			transport: HttpTransportType.WebSockets,
+		})
 		.withHubProtocol(new MessagePackHubProtocol())
 		.build();
 
@@ -197,7 +201,6 @@ function connectSignalR() {
 				break;
 			case "eFailed":
 			case "nFailed":
-				joiningGroupName = null;
 				[title, error] = type.startsWith("e")
 					? ["创建", "已存在"]
 					: ["加入", "不存在"];
@@ -206,6 +209,7 @@ function connectSignalR() {
 					`群聊 ${joiningGroupName} ${error}！`,
 					"error",
 				);
+				joiningGroupName = null;
 				break;
 			case "failed":
 				joiningGroupName = null;

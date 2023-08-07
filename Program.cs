@@ -1,5 +1,6 @@
 ﻿using LC6464.ASPNET.AddResponseHeaders;
 using MessagePack;
+using Microsoft.AspNetCore.Http.Connections;
 using SimpleWebChatApplication.Hubs;
 using SimpleWebChatApplication.Services;
 
@@ -53,7 +54,7 @@ builder.Services
 
 
 builder.Services // 添加 SignalR 服务
-	.AddSignalR()
+	.AddSignalR(options => options.SupportedProtocols = new[] { "messagepack" })
 	.AddMessagePackProtocol(options =>
 		options.SerializerOptions = MessagePackSerializerOptions.Standard.WithSecurity(MessagePackSecurity.UntrustedData));
 
@@ -109,6 +110,6 @@ app.MapRazorPages();
 
 app.MapControllers();
 
-app.MapHub<ChatHub>("/chathub");
+app.MapHub<ChatHub>("/chathub", options => options.Transports = HttpTransportType.WebSockets);
 
 app.Run();
