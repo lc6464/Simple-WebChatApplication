@@ -165,12 +165,12 @@ export const AccountCheckingTools = {
 		return result !== null && result.length > 1;
 	},
 
-	repeatRegex: /(?<a>.)\k<a>{3}/g,
+	repeatRegex: /(?<a>.)\k<a>{3}/,
 	symbolRegex: /[ `~!@#$%^&*()_+=[{\]};:'"<>|./\\?,-]/g,
 	lowerLetterRegex: /[a-z]/g,
 	upperLetterRegex: /[A-Z]/g,
 	numberRegex: /\d/g,
-	nameRegex: /^[A-Za-z][A-Za-z\d\-_]+$/g,
+	nameRegex: /^[A-Za-z][A-Za-z\d\-_]+$/,
 
 	// 验证密码是否足够复杂
 	isPasswordComplicated(password: string) {
