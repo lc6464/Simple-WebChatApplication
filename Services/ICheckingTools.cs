@@ -107,7 +107,7 @@ public partial interface ICheckingTools {
 	}
 
 
-	[GeneratedRegex(@"[`~!@#$%^&*()_+=\[{\]};:'""<>|./\\?,\-]")]
+	[GeneratedRegex(@"[ `~!@#$%^&*()_+=\[{\]};:'""<>|./\\?,\-]")]
 	private static partial Regex SymbolRegex();
 
 	[GeneratedRegex(@"[a-z]")]

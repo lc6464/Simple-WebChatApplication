@@ -16,9 +16,9 @@ public class EncryptionTools : IEncryptionTools {
 	/// <summary>
 	/// 加密 UserData。
 	/// </summary>
-	/// <param name="userData">待加密的 <see cref="RegisterUserData"/></param>
+	/// <param name="userData">待加密的 <see cref="RegisterUserPostJsonSerializeTemplate"/></param>
 	/// <returns>加密后的结果</returns>
-	public string EncryptUserData(RegisterUserData userData) {
+	public string EncryptUserData(RegisterUserPostJsonSerializeTemplate userData) {
 		var utf8UserData = JsonSerializer.SerializeToUtf8Bytes(userData); // 序列化 UserData
 		var timestamp = BitConverter.GetBytes(new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds()); // 获取当前时间戳数据
 
@@ -38,12 +38,14 @@ public class EncryptionTools : IEncryptionTools {
 		return $"{encryptedDataString}/{signature}"; // 返回加密后的数据
 	}
 
+
 	/// <summary>
 	/// 解密注册数据。
 	/// </summary>
 	/// <param name="input">待解密的字符串</param>
+	/// <param name="output">输出的 <see cref="RegisterGetResponseUserData"/></param>
 	/// <returns>解密后的数据</returns>
-	public bool TryDecryptUserData(string[] input, out RegisterUserDataOutput? output) {
+	public bool TryDecryptUserData(string[] input, out RegisterGetResponseUserData? output) {
 		var signaturePart = Base64UrlTextEncoder.Decode(input[1]); // 签名部分
 		var signature = signaturePart[..^8]; // 签名
 		var timestamp = signaturePart[^8..]; // 时间戳
@@ -51,7 +53,7 @@ public class EncryptionTools : IEncryptionTools {
 		var utf8UserData = IEncryptionTools.Decrypt256(Base64UrlTextEncoder.Decode(input[0]),
 			_provider.RegisterEncryptionKey, _provider.RegisterEncryptionIV); // 解密后的 UserData
 
-		var userData = JsonSerializer.Deserialize<RegisterUserDataGet>(utf8UserData); // 反序列化 UserData
+		var userData = JsonSerializer.Deserialize<RegisterGetJsonDeserializeTemplate>(utf8UserData); // 反序列化 UserData
 
 		var signRawData = new byte[timestamp.Length + utf8UserData.Length]; // 创建签名前的原始数据
 		Buffer.BlockCopy(timestamp, 0, signRawData, 0, timestamp.Length); // 将时间戳数据复制到原始数据中
@@ -60,7 +62,7 @@ public class EncryptionTools : IEncryptionTools {
 		var signData = sha256.ComputeHash(signRawData); // 计算签名数据
 
 		if (signData.SequenceEqual(signature)) { // 比较签名数据
-			output = new RegisterUserDataOutput(userData, BitConverter.ToInt64(timestamp)); // 返回解密后的数据
+			output = new(userData, BitConverter.ToInt64(timestamp)); // 返回解密后的数据
 			return true;
 		}
 		output = null;

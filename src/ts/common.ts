@@ -165,12 +165,12 @@ export class AccountCheckingTools {
 		return password.match(regex).length > 1;
 	}
 
-	private static readonly repeatRegex: RegExp = /(?<a>.)\k<a>{3}/g;
-	private static readonly symbolRegex: RegExp = /[`~!@#$%^&*()_+=\[{\]};:'"<>|./\\?,\-]/g;
-	private static readonly lowerLetterRegex: RegExp = /[a-z]/g;
-	private static readonly upperLetterRegex: RegExp = /[A-Z]/g;
-	private static readonly numberRegex: RegExp = /\d/g;
-	private static readonly nameRegex: RegExp = /^[A-Za-z][A-Za-z\d\-_]+$/g;
+	private static readonly repeatRegex = /(?<a>.)\k<a>{3}/g;
+	private static readonly symbolRegex = /[ `~!@#$%^&*()_+=\[{\]};:'"<>|./\\?,\-]/g;
+	private static readonly lowerLetterRegex = /[a-z]/g;
+	private static readonly upperLetterRegex = /[A-Z]/g;
+	private static readonly numberRegex = /\d/g;
+	private static readonly nameRegex = /^[A-Za-z][A-Za-z\d\-_]+$/g;
 
 	// 验证密码是否足够复杂
 	public static isPasswordComplicated(password: string) {
@@ -181,25 +181,12 @@ export class AccountCheckingTools {
 			return { result: false, message: "单个字符不允许重复出现4次或以上！" };
 		}
 
-		let kind: number = 0;
-		// 特殊字符
-		if (AccountCheckingTools.kindConfirm(AccountCheckingTools.symbolRegex, password)) {
-			kind++;
-		}
-		// 小写字母
-		if (AccountCheckingTools.kindConfirm(AccountCheckingTools.lowerLetterRegex, password)) {
-			kind++;
-		}
-		// 大写字母
-		if (AccountCheckingTools.kindConfirm(AccountCheckingTools.upperLetterRegex, password)) {
-			kind++;
-		}
-		// 数字
-		if (AccountCheckingTools.kindConfirm(AccountCheckingTools.numberRegex, password)) {
-			kind++;
-		}
+		let kind = 0;
+		AccountCheckingTools.kindConfirm(AccountCheckingTools.symbolRegex, password) && ++kind; // 特殊字符
+		AccountCheckingTools.kindConfirm(AccountCheckingTools.lowerLetterRegex, password) && ++kind; // 小写字母
+		AccountCheckingTools.kindConfirm(AccountCheckingTools.upperLetterRegex, password) && ++kind; // 大写字母
+		const result = ((AccountCheckingTools.kindConfirm(AccountCheckingTools.numberRegex, password) && ++kind) || kind) > 2; // 数字
 
-		const result = kind > 2;
 		return {
 			result,
 			message: result ?

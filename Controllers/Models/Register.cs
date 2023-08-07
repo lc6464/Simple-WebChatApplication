@@ -3,15 +3,22 @@ using SimpleWebChatApplication.Services;
 
 namespace SimpleWebChatApplication.Controllers.Models;
 
-public readonly struct Register {
+/// <summary>
+/// RegisterController 用户 Post 方法的响应。
+/// </summary>
+public readonly struct RegisterUserPostResponse {
 	public bool Success { get; init; }
 	public int Code { get; init; }
 	public string? Message { get; init; }
 	public string? Data { get; init; }
 }
 
-public readonly struct RegisterUserData {
-	public RegisterUserData() => HMACKey = ICheckingTools.GenerateRandomData(16).ToArray();
+
+/// <summary>
+/// RegisterController 用户 Post 方法用户数据序列化模板。
+/// </summary>
+public readonly struct RegisterUserPostJsonSerializeTemplate {
+	public RegisterUserPostJsonSerializeTemplate() => HMACKey = ICheckingTools.GenerateRandomData(16).ToArray();
 
 	[JsonPropertyName("a")]
 	public string? Account { get; init; }
@@ -27,15 +34,21 @@ public readonly struct RegisterUserData {
 }
 
 
-
-public readonly struct RegisterGet {
+/// <summary>
+/// RegisterController 管理员 Get 方法的响应。
+/// </summary>
+public readonly struct RegisterGetResponse {
 	public bool Success { get; init; }
 	public int Code { get; init; }
 	public string? Message { get; init; }
-	public RegisterUserDataOutput? Data { get; init; }
+	public RegisterGetResponseUserData? Data { get; init; }
 }
 
-public readonly struct RegisterUserDataGet {
+
+/// <summary>
+/// RegisterController 管理员 Get 方法用户数据反序列化模板。
+/// </summary>
+public readonly struct RegisterGetJsonDeserializeTemplate {
 	[JsonPropertyName("a")]
 	public string? Account { get; init; }
 
@@ -49,8 +62,12 @@ public readonly struct RegisterUserDataGet {
 	public byte[]? HMACKey { get; init; }
 }
 
-public readonly struct RegisterUserDataOutput {
-	public RegisterUserDataOutput(RegisterUserDataGet userData, long timestamp) {
+
+/// <summary>
+/// RegisterController 管理员 Get 方法的响应中的用户数据。
+/// </summary>
+public readonly struct RegisterGetResponseUserData {
+	public RegisterGetResponseUserData(RegisterGetJsonDeserializeTemplate userData, long timestamp) {
 		Account = userData.Account;
 		PasswordHash = userData.PasswordHash;
 		PasswordSalt = userData.PasswordSalt;
@@ -64,4 +81,15 @@ public readonly struct RegisterUserDataOutput {
 	public byte[]? PasswordSalt { get; init; }
 
 	public long? Timestamp { get; init; }
+}
+
+
+/// <summary>
+/// RegisterController Import 方法的响应。
+/// </summary>
+public readonly struct RegisterImportResponse {
+	public bool Success { get; init; }
+	public int Code { get; init; }
+	public string? Message { get; init; }
+	public string? Data { get; init; }
 }

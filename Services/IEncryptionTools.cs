@@ -113,14 +113,15 @@ public interface IEncryptionTools {
 	/// <summary>
 	/// 加密 UserData。
 	/// </summary>
-	/// <param name="userData">待加密的 <see cref="RegisterUserData"/></param>
+	/// <param name="userData">待加密的 <see cref="RegisterUserPostJsonSerializeTemplate"/></param>
 	/// <returns>加密后的结果</returns>
-	public string EncryptUserData(RegisterUserData userData);
+	public string EncryptUserData(RegisterUserPostJsonSerializeTemplate userData);
 
 	/// <summary>
 	/// 解密注册数据。
 	/// </summary>
 	/// <param name="input">待解密的字符串</param>
+	/// <param name="output">输出的 <see cref="RegisterGetResponseUserData"/></param>
 	/// <returns>解密后的数据</returns>
-	public bool TryDecryptUserData(string[] input, out RegisterUserDataOutput? output);
+	public bool TryDecryptUserData(string[] input, out RegisterGetResponseUserData? output);
 }
