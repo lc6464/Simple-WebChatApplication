@@ -61,7 +61,7 @@ function formCheck() {
 			message: "用户名或密码为空！",
 		};
 	}
-	const {result, message} = AccountCheckingTools.isPasswordComplicated(passwordInput.value);
+	const {result} = AccountCheckingTools.isPasswordComplicated(passwordInput.value);
 	if (AccountCheckingTools.isNameUnable(accountInput.value) || !result) {
 		return {
 			result: false,
