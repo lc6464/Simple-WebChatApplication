@@ -225,6 +225,6 @@ export const AccountCheckingTools = {
 	},
 
 	isNullOrWhiteSpace(value: string) {
-		return (value ?? true) || value.trim() === "";
+		return value == null || false || value.trim() === "";
 	},
 };
