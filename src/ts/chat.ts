@@ -47,16 +47,12 @@ function messageAddToScreen(
 	container.appendChild(messageTimeSpan);
 	container.appendChild(contentDiv);
 	
-	let isBottom = false;
-	if ((messagesDiv.scrollTop + messagesDiv.clientHeight) === messagesDiv.scrollHeight) {
-		isBottom = true;
+	if (Math.abs(messagesDiv.scrollTop + messagesDiv.clientHeight - messagesDiv.scrollHeight) < 5) {
+		messagesDiv.scrollTop = messagesDiv.scrollHeight;
 	}
 	
 	messagesDiv.appendChild(container);
 	
-	if (isBottom) {
-		messagesDiv.scrollTop = messagesDiv.scrollHeight;
-	}
 	return container;
 }
 
