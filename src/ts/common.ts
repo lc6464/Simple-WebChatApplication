@@ -211,7 +211,7 @@ export const AccountCheckingTools = {
 			result,
 			message: result
 				? ""
-				: "密码必须包含大写字母、小写字母、特殊符号和数字中任意3种或以上，且包含的每种字符必须超过2个。",
+				: "密码必须包含大写字母、小写字母、特殊符号和数字中任意3种或以上，且包含的每种字符必须超过2个！",
 		};
 	},
 
@@ -223,7 +223,8 @@ export const AccountCheckingTools = {
 			!AccountCheckingTools.nameRegex.test(name)
 		);
 	},
-	isEmptyOrWhiteSpace(value: string) {
-		return value.trim() === "";
+
+	isNullOrWhiteSpace(value: string) {
+		return value == null || value.trim() === "";
 	},
 };
