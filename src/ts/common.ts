@@ -225,6 +225,6 @@ export const AccountCheckingTools = {
 	},
 
 	isNullOrWhiteSpace(value: string) {
-		return value == null || value.trim() === "";
+		return value == null || value.trim() === ""; // skipcq: JS-0050 此处的确需要同时判断 null 和 undefined
 	},
 };
