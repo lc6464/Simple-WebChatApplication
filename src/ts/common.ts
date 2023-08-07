@@ -173,6 +173,12 @@ export const AccountCheckingTools = {
 
 	// 验证密码是否足够复杂
 	isPasswordComplicated(password: string) {
+		if (AccountCheckingTools.isNullOrWhiteSpace(password)) {
+			return {
+				result: false,
+				message: "密码不能为空",
+			};
+		}
 		if (password.length < 10 || password.length > 64) {
 			return {
 				result: false,
@@ -215,9 +221,10 @@ export const AccountCheckingTools = {
 		};
 	},
 
-	// 验证用户名是否不符合规范
+	// 验证用户名不符合规范
 	isNameUnable(name: string) {
 		return (
+			AccountCheckingTools.isNullOrWhiteSpace(name) ||
 			name.length < 4 ||
 			name.length > 32 ||
 			!AccountCheckingTools.nameRegex.test(name)
