@@ -1,6 +1,10 @@
 import "../css/chat.css";
 
-import { HubConnection, HubConnectionBuilder, HttpTransportType } from "@microsoft/signalr";
+import {
+	HubConnection,
+	HubConnectionBuilder,
+	HttpTransportType,
+} from "@microsoft/signalr";
 import { MessagePackHubProtocol } from "@microsoft/signalr-protocol-msgpack";
 import Swal, { SweetAlertIcon } from "sweetalert2/dist/sweetalert2.min.js";
 
@@ -47,12 +51,12 @@ function messageAddToScreen(
 	container.appendChild(messageTimeSpan);
 	container.appendChild(contentDiv);
 
-
-	const isButtom = Math.abs(
-		messagesDiv.scrollTop +
-		messagesDiv.clientHeight -
-		messagesDiv.scrollHeight,
-	) < 5;
+	const isButtom =
+		Math.abs(
+			messagesDiv.scrollTop +
+				messagesDiv.clientHeight -
+				messagesDiv.scrollHeight,
+		) < 5;
 
 	messagesDiv.appendChild(container);
 
