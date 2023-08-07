@@ -177,7 +177,7 @@ export const AccountCheckingTools = {
 			return {
 				result: false,
 				message: "密码不能为空",
-			}
+			};
 		}
 		if (password.length < 10 || password.length > 64) {
 			return {
@@ -223,7 +223,12 @@ export const AccountCheckingTools = {
 
 	// 验证用户名不符合规范
 	isNameUnable(name: string) {
-		return AccountCheckingTools.isNullOrWhiteSpace(name) || name.length  < 4 || name.length > 32 || !AccountCheckingTools.nameRegex.test(name);
+		return (
+			AccountCheckingTools.isNullOrWhiteSpace(name) ||
+			name.length < 4 ||
+			name.length > 32 ||
+			!AccountCheckingTools.nameRegex.test(name)
+		);
 	},
 
 	isNullOrWhiteSpace(value: string) {
