@@ -56,7 +56,7 @@ function messageAddToScreen(
 
 function addEventListeners(connection: HubConnection) {
 	const messageInput: HTMLInputElement =
-		document.querySelector("#content-input"),
+			document.querySelector("#content-input"),
 		sendMessageButton: HTMLButtonElement =
 			document.querySelector("#send-content"),
 		groupNameInput: HTMLInputElement =
@@ -201,11 +201,7 @@ function connectSignalR() {
 				break;
 			case "failed":
 				joiningGroupName = null;
-				Swal.fire(
-					"加入失败",
-					message,
-					"error"
-				);
+				Swal.fire("加入失败", message, "error");
 				break;
 			default:
 				console.warn(`未知的 groupEnter 类型：${type}`);
