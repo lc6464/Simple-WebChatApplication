@@ -54,8 +54,10 @@ public class RegisterController : ControllerBase {
 			return new() { Success = false, Code = 4, Message = "两次输入的密码不一致。" };
 		}
 		if (!ICheckingTools.IsPasswordComplicated(password)) {
-			return new() { Success = false, Code = 8, Message = "密码复杂度不足（最少10位且包含数字、大写字母、小写字母、特殊符号中" +
-				"至少三种且每种超过两个）或过长（最多64位）。" };
+			return new() {
+				Success = false, Code = 8, Message = "密码复杂度不足（最少10位且包含数字、大写字母、小写字母、特殊符号中" +
+				"至少三种且每种超过两个）或过长（最多64位）。"
+			};
 		}
 		if (!_tools.IsNameAvailable(account)) {
 			return new() { Success = false, Code = 9, Message = "用户名不符合要求或已被占用（4~32位，字母开头，允许数字、字母、下划线、减号）。" };
