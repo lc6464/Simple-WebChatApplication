@@ -2,7 +2,7 @@ import "../css/login.css";
 
 import Swal from "sweetalert2/dist/sweetalert2.min.js";
 
-import {AccountCheckingTools, fetchText} from "./common";
+import { AccountCheckingTools, fetchText } from "./common";
 
 const form: HTMLFormElement = document.querySelector("form"),
 	loginButton: HTMLButtonElement = document.querySelector("#login"),
@@ -23,12 +23,12 @@ resetPasswordAnchor.addEventListener("click", (e) => {
 });
 
 loginButton.addEventListener("click", () => {
-	const {result, message} = formCheck();
+	const { result, message } = formCheck();
 	if (!result) {
-		Swal.fire("登陆失败", message, "warning")
+		Swal.fire("登陆失败", message, "warning");
 		return;
 	}
-	
+
 	(async () => {
 		const { success, result, message } = await fetchText("api/login", {
 			body: new FormData(form),
@@ -54,14 +54,19 @@ loginButton.addEventListener("click", () => {
 
 // 表单检查
 function formCheck() {
-	if (AccountCheckingTools.isNullOrWhiteSpace(accountInput.value) || 
-		AccountCheckingTools.isNullOrWhiteSpace(passwordInput.value)) {
+	if (
+		AccountCheckingTools.isNullOrWhiteSpace(accountInput.value) ||
+		AccountCheckingTools.isNullOrWhiteSpace(passwordInput.value)
+	) {
 		return {
 			result: false,
 			message: "用户名或密码为空！",
 		};
 	}
-	if (AccountCheckingTools.isNameUnable(accountInput.value) || !AccountCheckingTools.isPasswordComplicated(passwordInput.value).result) {
+	if (
+		AccountCheckingTools.isNameUnable(accountInput.value) ||
+		!AccountCheckingTools.isPasswordComplicated(passwordInput.value).result
+	) {
 		return {
 			result: false,
 			message: "用户名或密码错误！",
