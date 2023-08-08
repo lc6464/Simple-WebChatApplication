@@ -12,11 +12,6 @@ public class ChatHub : Hub {
 	/// </summary>
 	private string? DisplayName => $"{Session?.GetString("Nick")} ({Session?.GetString("Name")})";
 
-	/// <summary>
-	/// 当前时间戳
-	/// </summary>
-	private static long Timestamp => new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
-
 
 	public ChatHub(ICheckingTools checkingTools) => _tools = checkingTools;
 
@@ -40,12 +35,8 @@ public class ChatHub : Hub {
 		if (JointGroup is null) {
 			await Clients.Caller.SendAsync("notice", "发送失败", "您尚未加入任何群组！", "error");
 		} else if (!string.IsNullOrEmpty(message)) {
-			if (message.Length > 100_000) { // 字数限制：0.1M
-				await Clients.Caller.SendAsync("notice", "发送失败", "您发送的消息超过了长度限制！", "error");
-				return;
-			}
-			await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageOthers", DisplayName, message, Timestamp);
-			await Clients.Caller.SendAsync("messageSelf", Timestamp, echo);
+			await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageOthers", DisplayName, message, ICheckingTools.Timestamp);
+			await Clients.Caller.SendAsync("messageSelf", ICheckingTools.Timestamp, echo);
 		}
 	}
 
@@ -92,7 +83,7 @@ public class ChatHub : Hub {
 			}
 			await Groups.AddToGroupAsync(Context.ConnectionId, name);
 			await Clients.Caller.SendAsync("groupEnter", "jSuccess");
-			await Clients.OthersInGroup(name).SendAsync("messageServer", "Server", $"{DisplayName} 已加入群组。", Timestamp);
+			await Clients.OthersInGroup(name).SendAsync("messageServer", "Server", $"{DisplayName} 已加入群组。", ICheckingTools.Timestamp);
 		} else {
 			await Clients.Caller.SendAsync("groupEnter", "failed", $"加入群聊的方式 {type} 未定义！");
 		}
@@ -123,7 +114,7 @@ public class ChatHub : Hub {
 		JointGroup = null;
 
 		await Clients.Caller.SendAsync("groupLeave", "success");
-		await Clients.Group(groupName).SendAsync("messageServer", "Server", $"{DisplayName} 已离开群组。", Timestamp);
+		await Clients.Group(groupName).SendAsync("messageServer", "Server", $"{DisplayName} 已离开群组。", ICheckingTools.Timestamp);
 	}
 
 
@@ -138,7 +129,7 @@ public class ChatHub : Hub {
 				}
 			}
 
-			await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageServer", "Server", $"{DisplayName} 已离开群组。", Timestamp);
+			await Clients.OthersInGroup(JointGroup.Name).SendAsync("messageServer", "Server", $"{DisplayName} 已离开群组。", ICheckingTools.Timestamp);
 			await Groups.RemoveFromGroupAsync(Context.ConnectionId, JointGroup.Name);
 			JointGroup = null;
 		}

@@ -80,6 +80,9 @@ function addEventListeners(connection: HubConnection) {
 	// 发消息
 	sendMessageButton.addEventListener("click", () => {
 		const value = messageInput.value;
+		if (value.length > 100000) {
+			Swal.fire("发送失败", "消息发送长度不可超过100,000个字符", "warning");
+		}
 		if (value.trim() !== "") {
 			messageInput.value = "";
 			const uuid = `${randomUUID()}-${Date.now()}`,

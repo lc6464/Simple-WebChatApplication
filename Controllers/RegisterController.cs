@@ -8,11 +8,13 @@ public class RegisterController : ControllerBase {
 	private readonly ICheckingTools _tools;
 	private readonly IEncryptionTools _encryptionTools;
 	private readonly IDataProvider _provider;
+	private readonly ILogger<RegisterController> _logger;
 
-	public RegisterController(ICheckingTools tools, IEncryptionTools encryptionTools, IDataProvider provider) {
+	public RegisterController(ICheckingTools tools, IEncryptionTools encryptionTools, IDataProvider provider, ILogger<RegisterController> logger) {
 		_tools = tools;
 		_encryptionTools = encryptionTools;
 		_provider = provider;
+		_logger = logger;
 	}
 
 
@@ -20,7 +22,7 @@ public class RegisterController : ControllerBase {
 	[ResponseCache(CacheProfileName = "NoStore")]
 	public RegisterGetResponse Get([FromForm(Name = "access-token")] string? accessToken,
 		[FromForm(Name = "register-data")] string? registerData) {
-
+		_logger.LogDebug("Register(GET), access-token: {}, register-data: {}", accessToken, registerData);
 		if (string.IsNullOrWhiteSpace(accessToken) || HttpContext.Session.GetString("ManageAccessToken") != accessToken) {
 			return new() { Code = 6, Success = false, Message = "未登录管理后台。" };
 		}
@@ -45,7 +47,7 @@ public class RegisterController : ControllerBase {
 	[ResponseCache(CacheProfileName = "NoStore")]
 	public RegisterUserPostResponse UserPost([FromForm] string? account, [FromForm] string? password,
 		[FromForm(Name = "repeat-password")] string? repeatPassword) {
-
+		
 		if (_tools.IsLogin()) {
 			return new() { Success = false, Code = 2, Message = "您当前已登录。" };
 		}
@@ -70,11 +72,12 @@ public class RegisterController : ControllerBase {
 			PasswordHash = ICheckingTools.HashPassword(password, out var salt).ToArray(),
 			PasswordSalt = salt.ToArray()
 		};
-
+		var encryptUserData = _encryptionTools.EncryptUserData(userData);
+		_logger.LogDebug("Register(POST): Encrypt user data success! Encryption: {}", encryptUserData);
 		return new() {
 			Success = true,
 			Code = 0,
-			Data = _encryptionTools.EncryptUserData(userData)
+			Data = encryptUserData
 		};
 	}
 
@@ -83,7 +86,7 @@ public class RegisterController : ControllerBase {
 	[ResponseCache(CacheProfileName = "NoStore")]
 	public RegisterImportResponse Import([FromForm(Name = "access-token")] string? accessToken,
 		[FromForm(Name = "register-data")] string? registerData) {
-
+		_logger.LogDebug("Import, access-token: {}, register-data: {}", accessToken, registerData);
 		if (string.IsNullOrWhiteSpace(accessToken) || HttpContext.Session.GetString("ManageAccessToken") != accessToken) {
 			return new() { Code = 6, Success = false, Message = "未登录管理后台。" };
 		}
@@ -112,7 +115,7 @@ public class RegisterController : ControllerBase {
 				command.Parameters.AddWithValue("@hash", output.PasswordHash);
 				command.Parameters.AddWithValue("@salt", output.PasswordSalt);
 				command.Parameters.AddWithValue("@rT", output.Timestamp);
-				command.Parameters.AddWithValue("@iT", new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds());
+				command.Parameters.AddWithValue("@iT", ICheckingTools.Timestamp);
 				command.ExecuteNonQuery();
 				using var cmdQuery = _provider.Connection.CreateCommand();
 				cmdQuery.Transaction = transaction;

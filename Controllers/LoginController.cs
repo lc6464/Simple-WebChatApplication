@@ -61,6 +61,7 @@ public class LoginController : ControllerBase {
 		HttpContext.Session.Set("Hash", hash);
 		HttpContext.Session.Set("Salt", salt);
 		cmd.Dispose();
+		_logger.LogDebug("Login: {}登陆成功!", account);
 		return new() { Success = true, Code = 0 };
 
 	}
