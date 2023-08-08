@@ -57,7 +57,7 @@ label {
 	cursor: pointer;
 }
 
-input {
+input, textarea {
 	height: 2.5em;
 	width: 85%;
 	border-radius: 1em;
@@ -106,10 +106,12 @@ input {
 
 #message-input {
 	display: inline-block;
-	height: 100%;
+	height: calc(100% - .6em);
 	width: 95%;
 	background: rgba(255, 255, 255, 0.2);
 	border: 0.1em solid rgba(255, 255, 255, 0.6);
+	padding-top: .6em;
+	resize: none;
 }
 
 #messages {

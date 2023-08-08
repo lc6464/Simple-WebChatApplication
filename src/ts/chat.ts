@@ -103,7 +103,14 @@ function addEventListeners(connection: HubConnection) {
 
 	messageInput.addEventListener("keydown", (e: KeyboardEvent) => {
 		if (e.key === "Enter") {
-			sendMessageButton.click();
+			if (e.ctrlKey) {
+				messageInput.value += "\n";
+				return;
+			}
+			if (!e.shiftKey) {
+				e.preventDefault();
+				sendMessageButton.click();
+			}
 		}
 	});
 

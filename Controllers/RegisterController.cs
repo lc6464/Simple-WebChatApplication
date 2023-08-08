@@ -84,9 +84,9 @@ public class RegisterController : ControllerBase {
 	public RegisterImportResponse Import([FromForm(Name = "access-token")] string? accessToken,
 		[FromForm(Name = "register-data")] string? registerData) {
 
-		//if (string.IsNullOrWhiteSpace(accessToken) || HttpContext.Session.GetString("ManageAccessToken") != accessToken) {
-		//	return new() { Code = 6, Success = false, Message = "未登录管理后台。" };
-		//}
+		if (string.IsNullOrWhiteSpace(accessToken) || HttpContext.Session.GetString("ManageAccessToken") != accessToken) {
+			return new() { Code = 6, Success = false, Message = "未登录管理后台。" };
+		}
 		if (string.IsNullOrWhiteSpace(registerData)) {
 			return new() { Code = 5, Success = false, Message = "未提供注册数据。" };
 		}
