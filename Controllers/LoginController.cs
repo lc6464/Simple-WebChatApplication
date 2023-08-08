@@ -61,6 +61,7 @@ public class LoginController : ControllerBase {
 		HttpContext.Session.Set("Hash", hash);
 		HttpContext.Session.Set("Salt", salt);
 		cmd.Dispose();
-		return new() { Success = true, Code = 0, Message = "" };
+		return new() { Success = true, Code = 0 };
+
 	}
 }
