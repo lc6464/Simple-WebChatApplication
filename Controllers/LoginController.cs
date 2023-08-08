@@ -18,7 +18,8 @@ public class LoginController : ControllerBase {
 	[HttpGet]
 	[ResponseCache(CacheProfileName = "NoStore")]
 	public Models.Login Get() => _tools.IsLogin(out var displayName)
-			? new() { Success = true, Code = 0, Message = "", DisplayName = displayName }
+			? new() { Success = true, Code = 0, DisplayName = displayName }
+
 			: new() { Success = false, Code = 3, Message = "" };
 
 
