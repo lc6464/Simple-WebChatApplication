@@ -41,10 +41,10 @@ public partial interface ICheckingTools {
 			return false;
 		}
 		var kind = 0;
-		KindConfirm(SymbolRegex(), ref kind, password); // 特殊字符
-		KindConfirm(UpperLetterRegex(), ref kind, password); // 大写字母
-		KindConfirm(LowerLetterRegex(), ref kind, password); // 小写字母
-		KindConfirm(NumberRegex(), ref kind, password); // 数字
+		KindConfirm(SymbolRegex(), password, ref kind); // 特殊字符
+		KindConfirm(UpperLetterRegex(), password, ref kind); // 大写字母
+		KindConfirm(LowerLetterRegex(), password, ref kind); // 小写字母
+		KindConfirm(NumberRegex(), password, ref kind); // 数字
 		return kind > 2; // 至少三种类型
 	}
 
@@ -99,7 +99,7 @@ public partial interface ICheckingTools {
 	/// <returns>若正确，则为 <see langword="true"/>，否则为 <see langword="false"/>。</returns>
 	public static bool VerifyPassword(string password, ReadOnlySpan<byte> hash, ReadOnlySpan<byte> salt) => hash.SequenceEqual(HashPassword(password, salt));
 
-	private static void KindConfirm(Regex regex, ref int kind, string password) {
+	private static void KindConfirm(Regex regex, string password, ref int kind) {
 		var matches = regex.Matches(password);
 		if (matches.Count > 1) { // 两个及以上视为有效种类
 			kind++;
