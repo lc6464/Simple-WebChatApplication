@@ -6,12 +6,12 @@ namespace SimpleWebChatApplication.Services;
 /// 检查工具接口。
 /// </summary>
 public partial interface ICheckingTools {
-	
+
 	/// <summary>
 	/// 当前时间戳
 	/// </summary>
 	public static long Timestamp => new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
-	
+
 	/// <summary>
 	/// 检查用户名是否可用。
 	/// </summary>
