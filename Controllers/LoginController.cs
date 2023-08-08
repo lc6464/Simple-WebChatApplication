@@ -20,7 +20,8 @@ public class LoginController : ControllerBase {
 	public Models.Login Get() => _tools.IsLogin(out var displayName)
 			? new() { Success = true, Code = 0, DisplayName = displayName }
 
-			: new() { Success = false, Code = 3, Message = "" };
+			: new() { Success = false, Code = 3 };
+
 
 
 	[HttpPost]
