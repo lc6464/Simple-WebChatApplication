@@ -47,7 +47,7 @@ public class RegisterController : ControllerBase {
 	[ResponseCache(CacheProfileName = "NoStore")]
 	public RegisterUserPostResponse UserPost([FromForm] string? account, [FromForm] string? password,
 		[FromForm(Name = "repeat-password")] string? repeatPassword) {
-		
+
 		if (_tools.IsLogin()) {
 			return new() { Success = false, Code = 2, Message = "您当前已登录。" };
 		}
