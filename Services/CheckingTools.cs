@@ -9,6 +9,8 @@ public partial class CheckingTools : ICheckingTools {
 	private readonly HttpContext HttpContext;
 	private ISession Session => HttpContext.Session;
 	private readonly IDataProvider _provider;
+	private readonly ILogger<CheckingTools> _logger;
+	private readonly IHttpConnectionInfo _info;
 	private SqliteDataReader GetUserReader(string? name, out SqliteCommand cmd) => _provider.GetUserReader(name, out cmd);
 
 
@@ -17,9 +19,11 @@ public partial class CheckingTools : ICheckingTools {
 	/// </summary>
 	/// <param name="accessor">注入的 <see cref="IHttpContextAccessor"/></param>
 	/// <param name="provider">注入的 <see cref="IDataProvider"/></param>
-	public CheckingTools(IHttpContextAccessor accessor, IDataProvider provider) {
+	public CheckingTools(IHttpContextAccessor accessor, IDataProvider provider, ILogger<CheckingTools> logger, IHttpConnectionInfo info) {
 		HttpContext = accessor.HttpContext!;
 		_provider = provider;
+		_logger = logger;
+		_info = info;
 	}
 
 
@@ -60,6 +64,7 @@ public partial class CheckingTools : ICheckingTools {
 		}
 		using var reader = GetUserReader(account, out var cmd);
 		if (!reader.Read()) {
+			_logger.LogWarning("IsLogin: {} 于 {} 在数据库中不存在，可能是此用户在其他地方注销了账号！", account, _info.RemoteAddress);
 			Session.Clear();
 			return false;
 		}
@@ -70,10 +75,12 @@ public partial class CheckingTools : ICheckingTools {
 		var sessionHash = Session.Get("Hash");
 		var sessionSalt = Session.Get("Salt");
 		if (sessionHash is null || sessionSalt is null) {
+			_logger.LogWarning("IsLogin: {} 于 {} 在 Session 中没有 Hash 或 Salt，此现象不符合应用程序正常运行预期！", account, _info.RemoteAddress);
 			Session.Clear();
 			return false;
 		}
 		if (!hash.SequenceEqual(sessionHash) || !salt.SequenceEqual(sessionSalt)) {
+			_logger.LogWarning("IsLogin: {} 于 {} 的 Session Hash 或 Salt 与数据库中的不匹配，可能是此用户在其他地方修改了密码！", account, _info.RemoteAddress);
 			Session.Clear();
 			return false;
 		}

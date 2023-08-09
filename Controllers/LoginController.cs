@@ -19,9 +19,7 @@ public class LoginController : ControllerBase {
 	[ResponseCache(CacheProfileName = "NoStore")]
 	public Models.Login Get() => _tools.IsLogin(out var displayName)
 			? new() { Success = true, Code = 0, DisplayName = displayName }
-
 			: new() { Success = false, Code = 3 };
-
 
 
 	[HttpPost]
@@ -35,7 +33,7 @@ public class LoginController : ControllerBase {
 		}
 		_ = Hubs.Cache.MemoryCache.TryGetValue($"TryLoginCount of {account}", out int count);
 		if (count > 5) {
-			_logger.LogWarning("用户 {} 尝试登录次数过多，最后一次 IP 地址为 {}。", account, HttpContext.Connection.RemoteIpAddress);
+			_logger.LogWarning("Post: 用户 {} 尝试登录次数过多，最后一次 IP 地址为 {}。", account, HttpContext.Connection.RemoteIpAddress);
 			return new() { Success = false, Code = 7, Message = "尝试登录次数过多，请在30分钟后重试。" };
 		}
 		if (account.Length is < 4 or > 32 || !ICheckingTools.IsPasswordComplicated(password)) {
@@ -61,7 +59,7 @@ public class LoginController : ControllerBase {
 		HttpContext.Session.Set("Hash", hash);
 		HttpContext.Session.Set("Salt", salt);
 		cmd.Dispose();
-		_logger.LogDebug("Login: 用户 {} 于 {} 登录成功。", account, HttpContext.Connection.RemoteIpAddress);
+		_logger.LogDebug("Post: 用户 {} 于 {} 登录成功。", account, HttpContext.Connection.RemoteIpAddress);
 		return new() { Success = true, Code = 0 };
 
 	}

@@ -20,7 +20,7 @@ public class EncryptionTools : IEncryptionTools {
 	/// <returns>加密后的结果</returns>
 	public string EncryptUserData(RegisterUserPostJsonSerializeTemplate userData) {
 		var utf8UserData = JsonSerializer.SerializeToUtf8Bytes(userData); // 序列化 UserData
-		var timestamp = BitConverter.GetBytes(new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds()); // 获取当前时间戳数据
+		var timestamp = BitConverter.GetBytes(ICheckingTools.Timestamp); // 获取当前时间戳数据
 
 		var signRawData = new byte[timestamp.Length + utf8UserData.Length]; // 创建签名前的原始数据
 		Buffer.BlockCopy(timestamp, 0, signRawData, 0, timestamp.Length); // 将时间戳数据复制到原始数据中
