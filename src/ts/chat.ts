@@ -83,7 +83,7 @@ function addEventListeners(connection: HubConnection) {
 		if (value.length > 100000) {
 			Swal.fire(
 				"发送失败",
-				"消息发送长度不可超过100,000个字符",
+				"发送的消息不可超过 100,000 个字符。",
 				"warning",
 			);
 		}
