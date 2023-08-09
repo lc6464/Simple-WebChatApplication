@@ -6,8 +6,8 @@ namespace SimpleWebChatApplication.Services;
 /// 检查工具类。
 /// </summary>
 public partial class CheckingTools : ICheckingTools {
-	private readonly HttpContext HttpContext;
-	private ISession Session => HttpContext.Session;
+	private readonly HttpContext _httpContext;
+	private ISession Session => _httpContext.Session;
 	private readonly IDataProvider _provider;
 	private readonly ILogger<CheckingTools> _logger;
 	private readonly IHttpConnectionInfo _info;
@@ -22,7 +22,7 @@ public partial class CheckingTools : ICheckingTools {
 	/// <param name="logger">注入的 <see cref="ILogger"/></param>
 	/// <param name="info">注入的 <see cref="IHttpConnectionInfo"/></param>
 	public CheckingTools(IHttpContextAccessor accessor, IDataProvider provider, ILogger<CheckingTools> logger, IHttpConnectionInfo info) {
-		HttpContext = accessor.HttpContext!;
+		_httpContext = accessor.HttpContext!;
 		_provider = provider;
 		_logger = logger;
 		_info = info;
