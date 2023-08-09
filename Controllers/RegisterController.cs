@@ -9,12 +9,14 @@ public class RegisterController : ControllerBase {
 	private readonly IEncryptionTools _encryptionTools;
 	private readonly IDataProvider _provider;
 	private readonly ILogger<RegisterController> _logger;
+	private readonly IHttpConnectionInfo _info;
 
-	public RegisterController(ICheckingTools tools, IEncryptionTools encryptionTools, IDataProvider provider, ILogger<RegisterController> logger) {
+	public RegisterController(ICheckingTools tools, IEncryptionTools encryptionTools, IDataProvider provider, ILogger<RegisterController> logger, IHttpConnectionInfo info) {
 		_tools = tools;
 		_encryptionTools = encryptionTools;
 		_provider = provider;
 		_logger = logger;
+		_info = info;
 	}
 
 
@@ -22,7 +24,8 @@ public class RegisterController : ControllerBase {
 	[ResponseCache(CacheProfileName = "NoStore")]
 	public RegisterGetResponse Get([FromForm(Name = "access-token")] string? accessToken,
 		[FromForm(Name = "register-data")] string? registerData) {
-		_logger.LogDebug("Register(GET), access-token: {}, register-data: {}, IP: {}", accessToken, registerData, HttpContext.Connection.RemoteIpAddress);
+
+		_logger.LogDebug("Get: access-token: {}, register-data: {}, IP: {}", accessToken, registerData, _info.RemoteAddress);
 		if (string.IsNullOrWhiteSpace(accessToken) || HttpContext.Session.GetString("ManageAccessToken") != accessToken) {
 			return new() { Code = 6, Success = false, Message = "未登录管理后台。" };
 		}
@@ -37,10 +40,10 @@ public class RegisterController : ControllerBase {
 			if (_encryptionTools.TryDecryptUserData(registerParts, out var output)) {
 				return new() { Code = 0, Success = true, Data = output };
 			}
-			_logger.LogWarning("Register(GET), 来自IP: {}的签名验证失败：{}", HttpContext.Connection.RemoteIpAddress);
+			_logger.LogWarning("Get: 签名验证失败：{}", registerData);
 			return new() { Code = 4, Success = false, Message = "已解析数据，但签名验证失败！" };
 		} catch (Exception e) {
-			_logger.LogInformation("Register(GET), 无法解析来自IP: {}的注册数据{}", HttpContext.Connection.RemoteIpAddress, e.ToString());
+			_logger.LogInformation("Get: 无法解析注册数据：{}", e);
 			return new() { Code = 4, Success = false, Message = $"无法解析注册数据：{e}" };
 		}
 	}
@@ -62,8 +65,9 @@ public class RegisterController : ControllerBase {
 		}
 		if (!ICheckingTools.IsPasswordComplicated(password)) {
 			return new() {
-				Success = false, Code = 8, Message = "密码复杂度不足（最少10位且包含数字、大写字母、小写字母、特殊符号中" +
-				"至少三种且每种超过两个）或过长（最多64位）。"
+				Success = false, Code = 8,
+				Message = "密码复杂度不足（最少10位且包含数字、大写字母、小写字母、特殊符号中" +
+					"至少三种且每种超过两个）或过长（最多64位）。"
 			};
 		}
 		if (!_tools.IsNameAvailable(account)) {
@@ -76,7 +80,7 @@ public class RegisterController : ControllerBase {
 			PasswordSalt = salt.ToArray()
 		};
 		var encryptUserData = _encryptionTools.EncryptUserData(userData);
-		_logger.LogDebug("Register::UserPOST: Encrypt user {} data success!IP: {}", account, HttpContext.Connection.RemoteIpAddress);
+		_logger.LogDebug("UserPost: Encrypt user {} data success! IP: {}", account, _info.RemoteAddress);
 		return new() {
 			Success = true,
 			Code = 0,
@@ -89,7 +93,8 @@ public class RegisterController : ControllerBase {
 	[ResponseCache(CacheProfileName = "NoStore")]
 	public RegisterImportResponse Import([FromForm(Name = "access-token")] string? accessToken,
 		[FromForm(Name = "register-data")] string? registerData) {
-		_logger.LogDebug("Import, access-token: {}, register-data: {}, IP: {}", accessToken, registerData, HttpContext.Connection.RemoteIpAddress);
+
+		_logger.LogDebug("Import: access-token: {}, register-data: {}, IP: {}", accessToken, registerData, _info.RemoteAddress);
 		if (string.IsNullOrWhiteSpace(accessToken) || HttpContext.Session.GetString("ManageAccessToken") != accessToken) {
 			return new() { Code = 6, Success = false, Message = "未登录管理后台。" };
 		}
@@ -102,7 +107,7 @@ public class RegisterController : ControllerBase {
 		}
 		try {
 			if (!_encryptionTools.TryDecryptUserData(registerParts, out var nullableOutput)) {
-				_logger.LogWarning("Import, 来自IP: {}的签名验证失败：{}", HttpContext.Connection.RemoteIpAddress, registerData);
+				_logger.LogWarning("Import: 签名验证失败：{}", registerData);
 				return new() { Code = 4, Success = false, Message = "已解析数据，但签名验证失败！" };
 			}
 			var output = (RegisterGetResponseUserData)nullableOutput!;
@@ -127,7 +132,7 @@ public class RegisterController : ControllerBase {
 				cmdQuery.Parameters.AddWithValue("@account", output.Account);
 				using var reader = cmdQuery.ExecuteReader();
 				if (!reader.Read()) {
-					_logger.LogError("数据库异常！似乎已导入却无法查询到相关数据！");
+					_logger.LogError("Import: 数据库异常！用户 {} 似乎已导入却无法查询到相关数据！", output.Account);
 					return new() { Code = 10, Success = false, Message = "数据库异常！似乎已导入却无法查询到相关数据！" };
 				}
 				var id = reader.GetInt64(0);
@@ -135,11 +140,11 @@ public class RegisterController : ControllerBase {
 				transaction.Commit();
 				return new() { Code = 0, Success = true, Data = new(output, id, importTime) };
 			} catch (Exception e) {
-				_logger.LogError("写入注册数据到数据库失败：{}", e);
+				_logger.LogError("Import: 写入注册数据到数据库失败：{}", e);
 				return new() { Code = 10, Success = false, Message = $"写入注册数据到数据库失败：{e}" };
 			}
 		} catch (Exception e) {
-			_logger.LogInformation("Import, 无法解析来自IP: {}的注册数据{}", HttpContext.Connection.RemoteIpAddress, e);
+			_logger.LogInformation("Import: 无法解析注册数据：{}", e);
 			return new() { Code = 4, Success = false, Message = $"无法解析注册数据：{e}" };
 		}
 	}
