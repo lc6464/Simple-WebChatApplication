@@ -24,6 +24,7 @@ public interface IDataProvider {
 	/// 获取用户信息读取器。
 	/// </summary>
 	/// <param name="name">用户名</param>
+	/// <param name="cmd">创建的 <see cref="SqliteCommand"/> 实例</param>
 	/// <returns>对应的 <see cref="SqliteDataReader"/>。</returns>
 	public SqliteDataReader GetUserReader(string? name, out SqliteCommand cmd);
 

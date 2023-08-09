@@ -11,6 +11,7 @@ public partial class DataProvider : IDataProvider {
 	/// <summary>
 	/// 初始化应用程序信息。
 	/// </summary>
+	/// <param name="transaction">数据库事务</param>
 	/// <param name="key">数据键</param>
 	/// <param name="initData">要初始化的数据值</param>
 	/// <param name="existData">已有的数据值</param>
