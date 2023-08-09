@@ -95,6 +95,7 @@ public partial class DataProvider : IDataProvider {
 	/// 获取用户信息读取器。
 	/// </summary>
 	/// <param name="name">用户名</param>
+	/// <param name="cmd">sqlite命令</param>
 	/// <returns>对应的 <see cref="SqliteDataReader"/>。</returns>
 	public SqliteDataReader GetUserReader(string? name, out SqliteCommand cmd) {
 		using var transaction = Connection.BeginTransaction();
