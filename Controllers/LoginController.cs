@@ -7,11 +7,13 @@ public class LoginController : ControllerBase {
 	private readonly ILogger<LoginController> _logger;
 	private readonly IDataProvider _provider;
 	private readonly ICheckingTools _tools;
+	private readonly IHttpConnectionInfo _info;
 
-	public LoginController(ILogger<LoginController> logger, IDataProvider provider, ICheckingTools tools) {
+	public LoginController(ILogger<LoginController> logger, IDataProvider provider, ICheckingTools tools, IHttpConnectionInfo info) {
 		_logger = logger;
 		_provider = provider;
 		_tools = tools;
+		_info = info;
 	}
 
 
@@ -61,7 +63,7 @@ public class LoginController : ControllerBase {
 		HttpContext.Session.Set("Hash", hash);
 		HttpContext.Session.Set("Salt", salt);
 		cmd.Dispose();
-		_logger.LogDebug("Login: {}登陆成功!", account);
+		_logger.LogDebug("Login: 用户 {} 于 {} 登录成功。", account, _info.RemoteAddress);
 		return new() { Success = true, Code = 0 };
 
 	}

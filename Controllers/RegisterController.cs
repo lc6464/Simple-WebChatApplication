@@ -34,10 +34,13 @@ public class RegisterController : ControllerBase {
 			return new() { Code = 4, Success = false, Message = "无法解析注册数据。" };
 		}
 		try {
-			return _encryptionTools.TryDecryptUserData(registerParts, out var output)
-				? new() { Code = 0, Success = true, Data = output }
-				: new() { Code = 4, Success = false, Message = "已解析数据，但签名验证失败！" };
+			if (_encryptionTools.TryDecryptUserData(registerParts, out var output)) {
+				return new() { Code = 0, Success = true, Data = output };
+			}
+			_logger.LogWarning("Register(GET), 签名验证失败：{}", registerData);
+			return new() { Code = 4, Success = false, Message = "已解析数据，但签名验证失败！" };
 		} catch (Exception e) {
+			_logger.LogInformation("Register(GET), 无法解析注册数据{}", e);
 			return new() { Code = 4, Success = false, Message = $"无法解析注册数据：{e}" };
 		}
 	}
@@ -73,7 +76,7 @@ public class RegisterController : ControllerBase {
 			PasswordSalt = salt.ToArray()
 		};
 		var encryptUserData = _encryptionTools.EncryptUserData(userData);
-		_logger.LogDebug("Register(POST): Encrypt user data success! Encryption: {}", encryptUserData);
+		_logger.LogDebug("Register::UserPOST: Encrypt user {} data success!", account);
 		return new() {
 			Success = true,
 			Code = 0,
@@ -99,6 +102,7 @@ public class RegisterController : ControllerBase {
 		}
 		try {
 			if (!_encryptionTools.TryDecryptUserData(registerParts, out var nullableOutput)) {
+				_logger.LogWarning("Import, 签名验证失败：{}", registerData);
 				return new() { Code = 4, Success = false, Message = "已解析数据，但签名验证失败！" };
 			}
 			var output = (RegisterGetResponseUserData)nullableOutput!;
@@ -123,6 +127,7 @@ public class RegisterController : ControllerBase {
 				cmdQuery.Parameters.AddWithValue("@account", output.Account);
 				using var reader = cmdQuery.ExecuteReader();
 				if (!reader.Read()) {
+					_logger.LogError("数据库异常！似乎已导入却无法查询到相关数据！");
 					return new() { Code = 10, Success = false, Message = "数据库异常！似乎已导入却无法查询到相关数据！" };
 				}
 				var id = reader.GetInt64(0);
@@ -130,9 +135,11 @@ public class RegisterController : ControllerBase {
 				transaction.Commit();
 				return new() { Code = 0, Success = true, Data = new(output, id, importTime) };
 			} catch (Exception e) {
-				return new() { Code = 4, Success = false, Message = $"无法解析注册数据：{e}" };
+				_logger.LogError("写入注册数据到数据库失败：{}", e);
+				return new() { Code = 10, Success = false, Message = $"写入注册数据到数据库失败：{e}" };
 			}
 		} catch (Exception e) {
+			_logger.LogInformation("Import, 无法解析注册数据{}", e);
 			return new() { Code = 4, Success = false, Message = $"无法解析注册数据：{e}" };
 		}
 	}
