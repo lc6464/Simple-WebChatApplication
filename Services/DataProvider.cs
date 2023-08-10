@@ -5,8 +5,7 @@ namespace SimpleWebChatApplication.Services;
 /// <summary>
 /// 数据提供类。
 /// </summary>
-public partial class DataProvider : IDataProvider {
-	//private readonly ILogger<DataProvider> _logger;
+public class DataProvider : IDataProvider {
 
 	/// <summary>
 	/// 初始化应用程序信息。
