@@ -5,13 +5,13 @@ namespace SimpleWebChatApplication.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 public class RegisterController : ControllerBase {
-	private readonly ICheckingTools _tools;
+	private readonly IGeneralTools _tools;
 	private readonly IEncryptionTools _encryptionTools;
 	private readonly IDataProvider _provider;
 	private readonly ILogger<RegisterController> _logger;
 	private readonly IHttpConnectionInfo _info;
 
-	public RegisterController(ICheckingTools tools, IEncryptionTools encryptionTools, IDataProvider provider, ILogger<RegisterController> logger, IHttpConnectionInfo info) {
+	public RegisterController(IGeneralTools tools, IEncryptionTools encryptionTools, IDataProvider provider, ILogger<RegisterController> logger, IHttpConnectionInfo info) {
 		_tools = tools;
 		_encryptionTools = encryptionTools;
 		_provider = provider;
@@ -63,7 +63,7 @@ public class RegisterController : ControllerBase {
 		if (password != repeatPassword) {
 			return new() { Success = false, Code = 4, Message = "两次输入的密码不一致。" };
 		}
-		if (!ICheckingTools.IsPasswordComplicated(password)) {
+		if (!IGeneralTools.IsPasswordComplicated(password)) {
 			return new() {
 				Success = false, Code = 8,
 				Message = "密码复杂度不足（最少10位且包含数字、大写字母、小写字母、特殊符号中" +
@@ -76,7 +76,7 @@ public class RegisterController : ControllerBase {
 
 		RegisterUserPostJsonSerializeTemplate userData = new() {
 			Account = account,
-			PasswordHash = ICheckingTools.HashPassword(password, out var salt).ToArray(),
+			PasswordHash = IGeneralTools.HashPassword(password, out var salt).ToArray(),
 			PasswordSalt = salt.ToArray()
 		};
 		var encryptUserData = _encryptionTools.EncryptUserData(userData);
@@ -124,7 +124,7 @@ public class RegisterController : ControllerBase {
 				command.Parameters.AddWithValue("@hash", output.PasswordHash);
 				command.Parameters.AddWithValue("@salt", output.PasswordSalt);
 				command.Parameters.AddWithValue("@rT", output.Timestamp);
-				command.Parameters.AddWithValue("@iT", ICheckingTools.Timestamp);
+				command.Parameters.AddWithValue("@iT", IGeneralTools.Timestamp);
 				command.ExecuteNonQuery();
 				using var cmdQuery = _provider.Connection.CreateCommand();
 				cmdQuery.Transaction = transaction;

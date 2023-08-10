@@ -10,6 +10,6 @@ public static class IServiceCollectionExtensions {
 	/// <returns>当前的 <see cref="IServiceCollection"/>，用于链式调用。</returns>
 	public static IServiceCollection AddServicesInProject(this IServiceCollection services) =>
 		services.AddSingleton<IDataProvider, DataProvider>()
-			.AddScoped<ICheckingTools, CheckingTools>()
+			.AddScoped<IGeneralTools, GeneralTools>()
 			.AddSingleton<IEncryptionTools, EncryptionTools>();
 }

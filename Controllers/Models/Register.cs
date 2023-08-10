@@ -18,7 +18,7 @@ public readonly struct RegisterUserPostResponse {
 /// RegisterController 用户 Post 方法用户数据序列化模板。
 /// </summary>
 public readonly struct RegisterUserPostJsonSerializeTemplate {
-	public RegisterUserPostJsonSerializeTemplate() => HMACKey = ICheckingTools.GenerateRandomData(16).ToArray();
+	public RegisterUserPostJsonSerializeTemplate() => HMACKey = IGeneralTools.GenerateRandomData(16).ToArray();
 
 	[JsonPropertyName("a")]
 	public string? Account { get; init; }

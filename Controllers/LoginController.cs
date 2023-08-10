@@ -6,12 +6,14 @@ namespace SimpleWebChatApplication.Controllers;
 public class LoginController : ControllerBase {
 	private readonly ILogger<LoginController> _logger;
 	private readonly IDataProvider _provider;
-	private readonly ICheckingTools _tools;
+	private readonly IGeneralTools _tools;
+	private readonly IHttpConnectionInfo _info;
 
-	public LoginController(ILogger<LoginController> logger, IDataProvider provider, ICheckingTools tools) {
+	public LoginController(ILogger<LoginController> logger, IDataProvider provider, IGeneralTools tools, IHttpConnectionInfo info) {
 		_logger = logger;
 		_provider = provider;
 		_tools = tools;
+		_info = info;
 	}
 
 
@@ -33,10 +35,10 @@ public class LoginController : ControllerBase {
 		}
 		_ = Hubs.Cache.MemoryCache.TryGetValue($"TryLoginCount of {account}", out int count);
 		if (count > 5) {
-			_logger.LogWarning("Post: 用户 {} 尝试登录次数过多，最后一次 IP 地址为 {}。", account, HttpContext.Connection.RemoteIpAddress);
+			_logger.LogWarning("Post: 用户 {} 尝试登录次数过多，最后一次 IP 地址为 {}。", account, _info.RemoteAddress);
 			return new() { Success = false, Code = 7, Message = "尝试登录次数过多，请在30分钟后重试。" };
 		}
-		if (account.Length is < 4 or > 32 || !ICheckingTools.IsPasswordComplicated(password)) {
+		if (account.Length is < 4 or > 32 || !IGeneralTools.IsPasswordComplicated(password)) {
 			_ = Hubs.Cache.Set($"TryLoginCount of {account}", ++count, TimeSpan.FromMinutes(30), TimeSpan.FromHours(2));
 			return new() { Success = false, Code = 6, Message = "用户名或密码错误。" };
 		}
@@ -49,7 +51,7 @@ public class LoginController : ControllerBase {
 		_ = reader.GetBytes(3, 0, hash, 0, 64);
 		var salt = new byte[16];
 		_ = reader.GetBytes(4, 0, salt, 0, 16);
-		if (!ICheckingTools.VerifyPassword(password, hash, salt)) {
+		if (!IGeneralTools.VerifyPassword(password, hash, salt)) {
 			_ = Hubs.Cache.Set($"TryLoginCount of {account}", ++count, TimeSpan.FromMinutes(30), TimeSpan.FromHours(2));
 			return new() { Success = false, Code = 6, Message = "用户名或密码错误。" };
 		}
@@ -59,7 +61,7 @@ public class LoginController : ControllerBase {
 		HttpContext.Session.Set("Hash", hash);
 		HttpContext.Session.Set("Salt", salt);
 		cmd.Dispose();
-		_logger.LogDebug("Post: 用户 {} 于 {} 登录成功。", account, HttpContext.Connection.RemoteIpAddress);
+		_logger.LogDebug("Post: 用户 {} 于 {} 登录成功。", account, _info.RemoteAddress);
 		return new() { Success = true, Code = 0 };
 
 	}

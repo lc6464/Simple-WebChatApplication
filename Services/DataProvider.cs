@@ -84,9 +84,9 @@ public partial class DataProvider : IDataProvider {
 			logger.LogInformation("数据库初始化成功！");
 		}
 		// 初始化注册加密密钥及初始化向量
-		_ = InitAppInfo(transaction, "RegisterEncryptionKey", ICheckingTools.GenerateRandomData(32), out existData);
+		_ = InitAppInfo(transaction, "RegisterEncryptionKey", IGeneralTools.GenerateRandomData(32), out existData);
 		RegisterEncryptionKey = existData.ToArray();
-		_ = InitAppInfo(transaction, "RegisterEncryptionIV", ICheckingTools.GenerateRandomData(16), out existData);
+		_ = InitAppInfo(transaction, "RegisterEncryptionIV", IGeneralTools.GenerateRandomData(16), out existData);
 		RegisterEncryptionIV = existData.ToArray();
 		transaction.Commit();
 	}
