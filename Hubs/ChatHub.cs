@@ -114,7 +114,7 @@ public class ChatHub : Hub {
 				if (groups.Count == 0) {
 					return;
 				}
-				lock (groups) {
+				lock (GroupsInMemory) {
 					_ = groups.Remove(JointGroup);
 				}
 			}
@@ -134,7 +134,7 @@ public class ChatHub : Hub {
 			lock (JointGroup) {
 				if (--JointGroup.MemberCount == 0) {
 					var groups = GroupsInMemory;
-					lock (groups) {
+					lock (GroupsInMemory) {
 						_ = groups.Remove(JointGroup);
 					}
 				}
