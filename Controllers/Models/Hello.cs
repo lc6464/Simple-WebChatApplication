@@ -10,7 +10,7 @@ public readonly struct Hello {
 
 	public Hello(IHttpConnectionInfo info) => IP = new(info);
 
-	public readonly DateTime Time => DateTime.Now;
+	public readonly DateTime Time => DateTime.UtcNow;
 
 	public static readonly string Copyright = ((AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyCopyrightAttribute))!).Copyright;
 

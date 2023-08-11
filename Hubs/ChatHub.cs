@@ -6,6 +6,17 @@ public class ChatHub : Hub {
 	private readonly IGeneralTools _tools;
 	private HttpContext? HttpContext => Context.GetHttpContext();
 	private ISession? Session => HttpContext?.Session;
+	private List<Group> GroupsInMemory {
+		get {
+			var groups = Cache.MemoryCache.Get<List<Group>>("ChatHub Groups");
+			if (groups is null) {
+				Clients.Caller.SendAsync("groupLeave", "failed", "服务端群组数据可能已被清除，请尝试重新进入聊天。");
+				return Cache.Set("ChatHub Groups", new List<Group>(), TimeSpan.FromHours(12));
+			}
+			return groups;
+		}
+	}
+
 
 	/// <summary>
 	/// 显示的用户名称
@@ -58,7 +69,7 @@ public class ChatHub : Hub {
 			if (groups is null) {
 				_ = Cache.Set("ChatHub Groups", new List<Group> { group }, TimeSpan.FromHours(12));
 			} else {
-				lock (groups) {
+				lock (GroupsInMemory) {
 					groups.Add(group);
 				}
 			}
@@ -71,7 +82,7 @@ public class ChatHub : Hub {
 				await Clients.Caller.SendAsync("groupEnter", "nFailed");
 				return;
 			}
-			var group = groups!.First(group => group.Name == name);
+			var group = groups.First(group => group.Name == name);
 
 			if (!group.VerifyPassword(password)) {
 				// 密码错误
@@ -79,7 +90,7 @@ public class ChatHub : Hub {
 				return;
 			}
 			JointGroup = group;
-			lock (group) {
+			lock (GroupsInMemory) {
 				group.MemberCount++;
 			}
 			await Groups.AddToGroupAsync(Context.ConnectionId, name);
@@ -99,9 +110,8 @@ public class ChatHub : Hub {
 
 		lock (JointGroup) {
 			if (--JointGroup.MemberCount == 0) {
-				var groups = Cache.MemoryCache.Get<List<Group>>("ChatHub Groups");
-				if (groups is null) {
-					Clients.Caller.SendAsync("groupLeave", "failed", "服务端群组数据可能已被清除，请尝试重新进入聊天。");
+				var groups = GroupsInMemory;
+				if (groups.Count == 0) {
 					return;
 				}
 				lock (groups) {
@@ -123,7 +133,7 @@ public class ChatHub : Hub {
 		if (JointGroup is not null) {
 			lock (JointGroup) {
 				if (--JointGroup.MemberCount == 0) {
-					var groups = Cache.MemoryCache.Get<List<Group>>("ChatHub Groups")!;
+					var groups = GroupsInMemory;
 					lock (groups) {
 						_ = groups.Remove(JointGroup);
 					}
