@@ -71,7 +71,8 @@ public class ChatHub : Hub {
 				await Clients.Caller.SendAsync("groupEnter", "nFailed");
 				return;
 			}
-			var group = groups.First(group => group.Name == name);
+			var group = groups!.First(group => group.Name == name);
+
 			if (!group.VerifyPassword(password)) {
 				// 密码错误
 				await Clients.Caller.SendAsync("groupEnter", "pwdError");
