@@ -157,3 +157,82 @@ export function formatTime(time: Date) {
 		time.getSeconds(),
 	)}`;
 }
+
+export const AccountCheckingTools = {
+	// 验证密码是否符合匹配两次及以上
+	kindConfirm(regex: RegExp, password: string) {
+		const result = password.match(regex);
+		return result !== null && result.length > 1;
+	},
+
+	repeatRegex: /(?<a>.)\k<a>{3}/,
+	symbolRegex: /[ `~!@#$%^&*()_+=[{\]};:'"<>|./\\?,-]/g,
+	lowerLetterRegex: /[a-z]/g,
+	upperLetterRegex: /[A-Z]/g,
+	numberRegex: /\d/g,
+	nameRegex: /^[A-Za-z][A-Za-z\d\-_]+$/,
+
+	// 验证密码是否足够复杂
+	isPasswordComplicated(password: string) {
+		if (AccountCheckingTools.isNullOrWhiteSpace(password)) {
+			return {
+				result: false,
+				message: "密码不能为空",
+			};
+		}
+		if (password.length < 10 || password.length > 64) {
+			return {
+				result: false,
+				message: "密码长度必须大于等于10个字符且小于等于64个字符！",
+			};
+		}
+		if (AccountCheckingTools.repeatRegex.test(password)) {
+			return {
+				result: false,
+				message: "单个字符不允许重复出现4次或以上！",
+			};
+		}
+
+		let kind = 0;
+		AccountCheckingTools.kindConfirm(
+			AccountCheckingTools.symbolRegex,
+			password,
+		) && ++kind; // 特殊字符
+		AccountCheckingTools.kindConfirm(
+			AccountCheckingTools.lowerLetterRegex,
+			password,
+		) && ++kind; // 小写字母
+		AccountCheckingTools.kindConfirm(
+			AccountCheckingTools.upperLetterRegex,
+			password,
+		) && ++kind; // 大写字母
+		const result =
+			((AccountCheckingTools.kindConfirm(
+				AccountCheckingTools.numberRegex,
+				password,
+			) &&
+				++kind) ||
+				kind) > 2; // 数字
+
+		return {
+			result,
+			message: result
+				? ""
+				: "密码必须包含大写字母、小写字母、特殊符号和数字中任意3种或以上，且包含的每种字符必须超过2个！",
+		};
+	},
+
+	// 验证用户名不符合规范
+	isNameUnable(name: string) {
+		return (
+			AccountCheckingTools.isNullOrWhiteSpace(name) ||
+			name.length < 4 ||
+			name.length > 32 ||
+			!AccountCheckingTools.nameRegex.test(name)
+		);
+	},
+
+	isNullOrWhiteSpace(value: string) {
+		return value == null || value.trim() === ""; // skipcq: JS-0050 此处的确需要同时判断 null 和 undefined
+	},
+};

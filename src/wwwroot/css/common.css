@@ -76,7 +76,7 @@ nav {
 	border-radius: 0 0 0.7em 0.7em;
 	border: 0.05em solid #999;
 	display: grid;
-	grid-template-columns: 1fr 20em;
+	grid-template-columns: 1fr 21em;
 	align-items: center;
 	transition: all ease-in-out 0.3s;
 }

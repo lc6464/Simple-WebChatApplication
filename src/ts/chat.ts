@@ -1,8 +1,12 @@
 import "../css/chat.css";
 
-import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
+import {
+	HubConnection,
+	HubConnectionBuilder,
+	HttpTransportType,
+} from "@microsoft/signalr";
 import { MessagePackHubProtocol } from "@microsoft/signalr-protocol-msgpack";
-import { Swal, SweetAlertIcon } from "sweetalert2/dist/sweetalert2.min.js";
+import Swal, { SweetAlertIcon } from "sweetalert2/dist/sweetalert2.min.js";
 
 import { fetchText, formatTime, randomUUID } from "./common";
 
@@ -31,15 +35,15 @@ function messageAddToScreen(
 		messageTimeSpan = document.createElement("span"),
 		contentDiv = document.createElement("div");
 
-	container.className = "content";
+	container.className = "message";
 
 	senderSpan.className = "sender";
 	messageTimeSpan.className = "time";
-	contentDiv.className = "content-content";
+	contentDiv.className = "message-content";
 
 	senderSpan.innerText = sender;
 	messageTimeSpan.innerText = formatTime(
-		typeof time === "number" ? new Date(time) : time,
+		typeof time === "number" ? new Date(time * 1000) : time,
 	);
 	contentDiv.innerText = content;
 
@@ -47,18 +51,27 @@ function messageAddToScreen(
 	container.appendChild(messageTimeSpan);
 	container.appendChild(contentDiv);
 
+	const isButtom =
+		Math.abs(
+			messagesDiv.scrollTop +
+				messagesDiv.clientHeight -
+				messagesDiv.scrollHeight,
+		) < 5;
+
 	messagesDiv.appendChild(container);
 
-	//messagesDiv.scrollTop = messagesDiv.scrollHeight;
+	if (isButtom) {
+		messagesDiv.scrollTop = messagesDiv.scrollHeight;
+	}
 
 	return container;
 }
 
 function addEventListeners(connection: HubConnection) {
 	const messageInput: HTMLInputElement =
-			document.querySelector("#content-input"),
+			document.querySelector("#message-input"),
 		sendMessageButton: HTMLButtonElement =
-			document.querySelector("#send-content"),
+			document.querySelector("#send-message"),
 		groupNameInput: HTMLInputElement =
 			document.querySelector("#group-name"),
 		groupPasswordInput: HTMLInputElement =
@@ -67,6 +80,13 @@ function addEventListeners(connection: HubConnection) {
 	// 发消息
 	sendMessageButton.addEventListener("click", () => {
 		const value = messageInput.value;
+		if (value.length > 100000) {
+			Swal.fire(
+				"发送失败",
+				"发送的消息不可超过 100,000 个字符。",
+				"warning",
+			);
+		}
 		if (value.trim() !== "") {
 			messageInput.value = "";
 			const uuid = `${randomUUID()}-${Date.now()}`,
@@ -90,7 +110,14 @@ function addEventListeners(connection: HubConnection) {
 
 	messageInput.addEventListener("keydown", (e: KeyboardEvent) => {
 		if (e.key === "Enter") {
-			sendMessageButton.click();
+			if (e.ctrlKey) {
+				messageInput.value += "\n";
+				return;
+			}
+			if (!e.shiftKey) {
+				e.preventDefault();
+				sendMessageButton.click();
+			}
 		}
 	});
 
@@ -158,12 +185,15 @@ function connectSignalR() {
 		document.querySelector("#joint-group-name");
 
 	const connection = new HubConnectionBuilder()
-		.withUrl("/chathub")
+		.withUrl("/chathub", {
+			skipNegotiation: true,
+			transport: HttpTransportType.WebSockets,
+		})
 		.withHubProtocol(new MessagePackHubProtocol())
 		.build();
 
-	// 群聊相关
-	connection.on("groupEnter", (type: string) => {
+	// 通知进入群聊状态相关
+	connection.on("groupEnter", (type: string, message?: string) => {
 		createGroupButton.disabled = false;
 		joinGroupButton.disabled = false;
 		let title: string = null,
@@ -185,11 +215,10 @@ function connectSignalR() {
 				break;
 			case "pwdError":
 				joiningGroupName = null;
-				Swal.fire("密码错误", "您输入的密码错误！", "error");
+				Swal.fire("加入失败", "您输入的密码错误！", "error");
 				break;
 			case "eFailed":
 			case "nFailed":
-				joiningGroupName = null;
 				[title, error] = type.startsWith("e")
 					? ["创建", "已存在"]
 					: ["加入", "不存在"];
@@ -198,12 +227,18 @@ function connectSignalR() {
 					`群聊 ${joiningGroupName} ${error}！`,
 					"error",
 				);
+				joiningGroupName = null;
+				break;
+			case "failed":
+				joiningGroupName = null;
+				Swal.fire("加入失败", message, "error");
 				break;
 			default:
 				console.warn(`未知的 groupEnter 类型：${type}`);
 		}
 	});
 
+	// 通知群组退出状态
 	connection.on("groupLeave", (type: string, message?: string) => {
 		leaveGroupButton.disabled = false;
 		if (type === "success") {
@@ -248,7 +283,7 @@ function connectSignalR() {
 			if (e.dataset.echo === echo) {
 				e.classList.remove("sending");
 				e.querySelector<HTMLSpanElement>(".time").innerText =
-					formatTime(new Date(time));
+					formatTime(new Date(time * 1000));
 			}
 		});
 	});

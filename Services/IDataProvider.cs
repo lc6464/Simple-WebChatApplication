@@ -2,7 +2,7 @@
 
 namespace SimpleWebChatApplication.Services;
 /// <summary>
-/// 获取数据库。
+/// 数据提供接口。
 /// </summary>
 public interface IDataProvider {
 	/// <summary>
@@ -21,18 +21,12 @@ public interface IDataProvider {
 	public bool IsCreatedBefore { get; init; }
 
 	/// <summary>
-	/// 检查用户名是否可用。
-	/// </summary>
-	/// <param name="name">用户名</param>
-	/// <returns>若被使用或长度不合适，则为 <see langword="false"/>，若可用则为 <see langword="true"/>。</returns>
-	public bool IsNameAvailable(string name);
-
-	/// <summary>
 	/// 获取用户信息读取器。
 	/// </summary>
 	/// <param name="name">用户名</param>
+	/// <param name="cmd">创建的 <see cref="SqliteCommand"/> 实例</param>
 	/// <returns>对应的 <see cref="SqliteDataReader"/>。</returns>
-	public SqliteDataReader GetUserReader(string name);
+	public SqliteDataReader GetUserReader(string? name, out SqliteCommand cmd);
 
 	/// <summary>
 	/// 在指定的事务中执行指定的命令。
@@ -69,4 +63,14 @@ public interface IDataProvider {
 	/// 当前应用程序版本。
 	/// </summary>
 	public Version AppVersion => typeof(DataProvider).Assembly.GetName().Version!;
+
+	/// <summary>
+	/// 注册时使用的加密密钥。
+	/// </summary>
+	public byte[] RegisterEncryptionKey { get; init; }
+
+	/// <summary>
+	/// 注册时使用的加密初始化向量。
+	/// </summary>
+	public byte[] RegisterEncryptionIV { get; init; }
 }

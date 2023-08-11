@@ -1,14 +1,55 @@
-﻿using System.Text.RegularExpressions;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
+using SimpleWebChatApplication.Controllers.Models;
+
 namespace SimpleWebChatApplication.Services;
 /// <summary>
-/// 获取数据库的类。
+/// 数据提供类。
 /// </summary>
-public partial class DataProvider : IDataProvider {
+public class DataProvider : IDataProvider {
+
+	/// <summary>
+	/// 初始化应用程序信息。
+	/// </summary>
+	/// <param name="transaction">数据库事务</param>
+	/// <param name="key">数据键</param>
+	/// <param name="initData">要初始化的数据值</param>
+	/// <param name="existData">已有的数据值</param>
+	/// <returns>若原数据已存在，则 <paramref name="initData"/> 无意义，<paramref name="existData"/> 被输出，且返回 true；若元数据不存在，则将 <paramref name="initData"/> 写入 <paramref name="key"/>，并返回 false。</returns>
+	private bool InitAppInfo(SqliteTransaction transaction, string key, ReadOnlySpan<byte> initData, out ReadOnlySpan<byte> existData) {
+		using var readerCmd = Connection.CreateCommand();
+		readerCmd.Transaction = transaction;
+		readerCmd.CommandText = "Select Value, Length from AppInfo where Key = @Key";
+		readerCmd.Parameters.AddWithValue("@Key", key);
+		using var reader = readerCmd.ExecuteReader();
+
+		// 处理已有数据
+		if (reader.Read()) {
+			var dataLength = reader.GetInt32(1);
+			var data = new byte[dataLength];
+			_ = reader.GetBytes(0, 0, data, 0, dataLength);
+			existData = data;
+			return true;
+		}
+
+		// 写入数据
+		using var cmd = Connection.CreateCommand();
+		cmd.Transaction = transaction;
+		cmd.CommandText = "Insert into AppInfo (Key, Value, Length) values (@Key, @Value, @Length)";
+		_ = cmd.Parameters.AddWithValue("Key", key);
+		_ = cmd.Parameters.AddWithValue("Value", initData.ToArray());
+		_ = cmd.Parameters.AddWithValue("Length", initData.Length);
+		_ = cmd.ExecuteNonQuery();
+		existData = initData;
+		return false;
+
+	}
+
+
 	/// <summary>
 	/// 默认构造函数。
 	/// </summary>
 	public DataProvider(IHostEnvironment hostEnvironment, IConfiguration configuration, ILogger<DataProvider> logger) {
+		//_logger = logger;
 		// 构建连接字符串
 		SqliteConnectionStringBuilder builder = new() {
 			DataSource = Path.Combine(hostEnvironment.ContentRootPath, "data.db"),
@@ -25,15 +66,11 @@ public partial class DataProvider : IDataProvider {
 		Connection = new(ConnectionString);
 		Connection.Open();
 		using var transaction = Connection.BeginTransaction();
-		_ = CmdExeNonQuery(transaction, "Create Table if not exists Users (ID integer primary key autoincrement, Name varchar(32) unique not null, Nick varchar(32), Hash blob not null, Salt blob not null)");
+		_ = CmdExeNonQuery(transaction, "Create Table if not exists Users (ID integer primary key autoincrement, Name varchar(32) unique not null, Nick varchar(32) not null, Hash blob not null, Salt blob not null, RegisterTime integer not null, ImportTime integer not null)");
 		_ = CmdExeNonQuery(transaction, "Create Table if not exists AppInfo (ID integer primary key autoincrement, Key varchar(128) unique not null, Value blob, Length integer not null)");
-		using var reader = CmdExeReader(transaction, "Select Value, Length from AppInfo where Key = 'Version'", out var readerCmd);
-		// 处理版本
-		if (reader.Read()) {
-			var dataLength = reader.GetInt32(1);
-			var data = new byte[dataLength];
-			_ = reader.GetBytes(0, 0, data, 0, dataLength);
-			Version version = new(Encoding.UTF8.GetString(data));
+		// 版本相关
+		if (InitAppInfo(transaction, "Version", Encoding.UTF8.GetBytes(AppVersion.ToString()), out var existData)) {
+			Version version = new(Encoding.UTF8.GetString(existData));
 			var result = AppVersion.CompareTo(version);
 			if (result < 0) {
 				logger.LogWarning("此应用程序的版本高于数据库中的版本，有可能导致应用程序无法正常运行，请特别留意！");
@@ -43,42 +80,35 @@ public partial class DataProvider : IDataProvider {
 				logger.LogInformation("数据库已就绪。");
 			}
 		} else {
-			// 写入版本
-			using var cmd = Connection.CreateCommand();
-			cmd.Transaction = transaction;
-			cmd.CommandText = "Insert into AppInfo (Key, Value, Length) values ('Version', @Version, @Length)";
-			var data = Encoding.UTF8.GetBytes(AppVersion.ToString());
-			_ = cmd.Parameters.AddWithValue("Version", data);
-			_ = cmd.Parameters.AddWithValue("Length", data.Length);
-			_ = cmd.ExecuteNonQuery();
 			logger.LogInformation("数据库初始化成功！");
 		}
-		readerCmd.Dispose();
+		// 初始化注册加密密钥及初始化向量
+		_ = InitAppInfo(transaction, "RegisterEncryptionKey", IGeneralTools.GenerateRandomData(32), out existData);
+		RegisterEncryptionKey = existData.ToArray();
+		_ = InitAppInfo(transaction, "RegisterEncryptionIV", IGeneralTools.GenerateRandomData(16), out existData);
+		RegisterEncryptionIV = existData.ToArray();
 		transaction.Commit();
 	}
+
 
 	/// <summary>
 	/// 获取用户信息读取器。
 	/// </summary>
 	/// <param name="name">用户名</param>
+	/// <param name="cmd">生成的 <see cref="SqliteCommand"/></param>
+
 	/// <returns>对应的 <see cref="SqliteDataReader"/>。</returns>
-	public SqliteDataReader GetUserReader(string name) {
+	public SqliteDataReader GetUserReader(string? name, out SqliteCommand cmd) {
 		using var transaction = Connection.BeginTransaction();
-		using var cmd = Connection.CreateCommand();
+		cmd = Connection.CreateCommand();
 		cmd.Transaction = transaction;
-		cmd.CommandText = "SELECT * FROM Users WHERE Name = '@Name'";
+		cmd.CommandText = "SELECT * FROM Users WHERE Name = @Name";
 		_ = cmd.Parameters.AddWithValue("@Name", name);
 		var reader = cmd.ExecuteReader();
 		transaction.Commit();
 		return reader;
 	}
 
-	/// <summary>
-	/// 检查用户名是否可用。
-	/// </summary>
-	/// <param name="name">用户名</param>
-	/// <returns>若可用则为 <see langword="false"/>，否则为 <see langword="true"/>。</returns>
-	public bool IsNameAvailable(string name) => !(name.Length is < 4 or > 32 || !NameRegex().IsMatch(name) || GetUserReader(name).HasRows);
 
 	/// <summary>
 	/// 在指定的事务中执行指定的命令。
@@ -93,6 +123,7 @@ public partial class DataProvider : IDataProvider {
 		return command.ExecuteNonQuery();
 	}
 
+
 	/// <summary>
 	/// 在指定的事务中执行指定的命令。
 	/// </summary>
@@ -103,6 +134,7 @@ public partial class DataProvider : IDataProvider {
 		command.Dispose();
 		return result;
 	}
+
 
 	/// <summary>
 	/// 在指定的事务中执行指定的命令。
@@ -118,6 +150,7 @@ public partial class DataProvider : IDataProvider {
 		return command.ExecuteReader();
 	}
 
+
 	/// <summary>
 	/// 在指定的事务中执行指定的命令。
 	/// </summary>
@@ -129,27 +162,38 @@ public partial class DataProvider : IDataProvider {
 		return reader;
 	}
 
+
 	/// <summary>
 	/// 获取数据库连接字符串。
 	/// </summary>
 	public string ConnectionString { get; init; }
+
 
 	/// <summary>
 	/// 获取数据库连接。
 	/// </summary>
 	public SqliteConnection Connection { get; init; }
 
+
 	/// <summary>
 	/// 获取数据库是否在过去已经被创建。
 	/// </summary>
 	public bool IsCreatedBefore { get; init; }
 
+
 	/// <summary>
 	/// 当前应用程序版本。
 	/// </summary>
-	public Version AppVersion => Controllers.Models.Hello.Version;
+	public Version AppVersion => Hello.Version;
 
 
-	[GeneratedRegex(@"^[A-Za-z][A-Za-z\d\-_]+$")]
-	private static partial Regex NameRegex();
+	/// <summary>
+	/// 注册时使用的加密密钥。
+	/// </summary>
+	public byte[] RegisterEncryptionKey { get; init; }
+
+	/// <summary>
+	/// 注册时使用的加密初始化向量。
+	/// </summary>
+	public byte[] RegisterEncryptionIV { get; init; }
 }

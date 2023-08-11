@@ -1,16 +1,17 @@
 ﻿using LC6464.ASPNET.AddResponseHeaders;
 using MessagePack;
+using Microsoft.AspNetCore.Http.Connections;
 using SimpleWebChatApplication.Hubs;
 using SimpleWebChatApplication.Services;
 
-if (args.Length == 2 && args[0] == "install") { // install <Password>
+if (args is ["install", _]) { // install <Password>
 	Console.WriteLine("请保证你的密码强度足够，否则可能会被破解！");
 	var password = args[1].Trim();
-	if (!ICheckingTools.IsPasswordComplicated(password)) {
+	if (!IGeneralTools.IsPasswordComplicated(password)) {
 		Console.WriteLine("密码强度不足！");
 		return;
 	}
-	var hash = ICheckingTools.HashPassword(password, out var salt);
+	var hash = IGeneralTools.HashPassword(password, out var salt);
 	Console.WriteLine($"密码为：{password}");
 	Console.WriteLine($"密码的哈希值为：{Convert.ToBase64String(hash)}");
 	Console.WriteLine($"密码的盐值为：{Convert.ToBase64String(salt)}");
@@ -53,13 +54,19 @@ builder.Services
 
 
 builder.Services // 添加 SignalR 服务
-	.AddSignalR()
+	.AddSignalR(options => options.SupportedProtocols = new[] { "messagepack" })
 	.AddMessagePackProtocol(options =>
 		options.SerializerOptions = MessagePackSerializerOptions.Standard.WithSecurity(MessagePackSecurity.UntrustedData));
 
 builder.Services.AddRazorPages();
 
-builder.Services.AddServicesInProject();
+builder.Services
+	.AddDistributedMemoryCache()
+	.AddSession(options => { // 添加 Session 服务
+		options.IdleTimeout = TimeSpan.FromHours(1);
+		options.Cookie.IsEssential = true;
+		options.Cookie.Name = "Session";
+	}).AddServicesInProject(); // 添加自定义服务
 
 
 var app = builder.Build();
@@ -79,7 +86,6 @@ if (!app.Environment.IsDevelopment()) {
 }
 
 app.UseResponseCompression()
-	.UseCors()
 	.UseResponseCaching()
 	.UseAddResponseHeaders(new HeaderDictionary {
 		{ "X-Content-Type-Options", "nosniff" },
@@ -97,10 +103,13 @@ app.UseResponseCompression()
 	});
 
 
+app.UseSession();
+
+
 app.MapRazorPages();
 
 app.MapControllers();
 
-app.MapHub<ChatHub>("/chathub");
+app.MapHub<ChatHub>("/chathub", options => options.Transports = HttpTransportType.WebSockets);
 
 app.Run();
