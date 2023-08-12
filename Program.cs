@@ -4,9 +4,8 @@ using Microsoft.AspNetCore.Http.Connections;
 using SimpleWebChatApplication.Hubs;
 using SimpleWebChatApplication.Services;
 
-if (args is ["install", _]) { // install <Password>
+if (args is ["install", var password]) { // install <Password>
 	Console.WriteLine("请保证你的密码强度足够，否则可能会被破解！");
-	var password = args[1].Trim();
 	if (!IGeneralTools.IsPasswordComplicated(password)) {
 		Console.WriteLine("密码强度不足！");
 		return;
