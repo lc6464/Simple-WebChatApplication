@@ -18,19 +18,34 @@ public readonly struct RegisterUserPostResponse {
 /// RegisterController 用户 Post 方法用户数据序列化模板。
 /// </summary>
 public readonly struct RegisterUserPostJsonSerializeTemplate {
-	public RegisterUserPostJsonSerializeTemplate() => HMACKey = IGeneralTools.GenerateRandomData(16).ToArray();
+	public RegisterUserPostJsonSerializeTemplate() => _hmacKey = IGeneralTools.GenerateRandomData(16).ToArray();
 
 	[JsonPropertyName("a")]
 	public string? Account { get; init; }
 
+	private readonly byte[]? _passwordHash;
+
 	[JsonPropertyName("h")]
-	public byte[]? PasswordHash { get; init; }
+	public byte[]? PasswordHash {
+		get => (byte[]?)_passwordHash?.Clone();
+		init => _passwordHash = value;
+	}
+
+	private readonly byte[]? _passwordSalt;
 
 	[JsonPropertyName("s")]
-	public byte[]? PasswordSalt { get; init; }
+	public byte[]? PasswordSalt {
+		get => (byte[]?)_passwordSalt?.Clone();
+		init => _passwordSalt = value;
+	}
+
+	private readonly byte[] _hmacKey;
 
 	[JsonPropertyName("k")]
-	public byte[] HMACKey { get; init; }
+	public byte[] HMACKey {
+		get => (byte[])_hmacKey.Clone();
+		init => _hmacKey = value;
+	}
 }
 
 
