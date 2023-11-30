@@ -39,13 +39,8 @@ public readonly struct RegisterUserPostJsonSerializeTemplate {
 		init => _passwordSalt = value;
 	}
 
-	private readonly byte[] _hmacKey;
-
 	[JsonPropertyName("k")]
-	public byte[] HMACKey {
-		get => (byte[])_hmacKey.Clone();
-		init => _hmacKey = value;
-	}
+	public byte[] HMACKey { get; init; }
 }
 
 
