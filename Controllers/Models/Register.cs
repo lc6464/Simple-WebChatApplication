@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using SimpleWebChatApplication.Services;
 
 namespace SimpleWebChatApplication.Controllers.Models;
@@ -41,9 +42,11 @@ public readonly struct RegisterUserPostJsonSerializeTemplate {
 
 	private readonly byte[]? _hmacKey;
 
+	private byte[]? GetHMACKey() => (byte[]?)_hmacKey?.Clone();
+
 	[JsonPropertyName("k")]
 	public byte[]? HMACKey {
-		get => (byte[]?)_hmacKey!.Clone();
+		get => GetHMACKey();
 		init => _hmacKey = value;
 	}
 }
