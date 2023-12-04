@@ -47,7 +47,7 @@ builder.Services
 		options.CacheProfiles.Add("Private10m", new() { Duration = 600, Location = ResponseCacheLocation.Client });
 		options.CacheProfiles.Add("Private5m", new() { Duration = 300, Location = ResponseCacheLocation.Client });
 		options.CacheProfiles.Add("Private1m", new() { Duration = 60, Location = ResponseCacheLocation.Client });
-		options.CacheProfiles.Add("NoCache", new() { Duration = 0, Location = ResponseCacheLocation.None });
+		options.CacheProfiles.Add("NoCache", new() { Location = ResponseCacheLocation.None });
 		options.CacheProfiles.Add("NoStore", new() { NoStore = true });
 	});
 
